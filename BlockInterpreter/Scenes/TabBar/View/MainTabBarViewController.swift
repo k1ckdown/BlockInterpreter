@@ -52,5 +52,4 @@ class MainTabBarViewController: UITabBarController {
         navigationItem.rightBarButtonItem = settingsBarButtonItem
     }
     
-    
 }

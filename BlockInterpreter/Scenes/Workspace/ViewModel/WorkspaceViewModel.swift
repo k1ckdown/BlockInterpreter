@@ -8,9 +8,11 @@
 import Foundation
 
 final class WorkspaceViewModel {
-    
+    var didGoToConsoleTab: (() -> Void)?
 }
 
 extension WorkspaceViewModel: WorkspaceViewModelType {
-    
+    func showConsole() {
+        didGoToConsoleTab?()
+    }
 }

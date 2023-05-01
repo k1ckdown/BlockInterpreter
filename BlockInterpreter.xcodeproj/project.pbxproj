@@ -13,13 +13,14 @@
 		495B417529FCEFD400DEF375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495B417429FCEFD400DEF375 /* Assets.xcassets */; };
 		495B417829FCEFD400DEF375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495B417629FCEFD400DEF375 /* LaunchScreen.storyboard */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
+		498971C22A0049FB00448D4F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 498971C12A0049FB00448D4F /* RxCocoa */; };
+		498971C42A0049FB00448D4F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 498971C32A0049FB00448D4F /* RxSwift */; };
 		49D8A2AF29FEB8FF00DF5B8E /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 49D8A2AE29FEB8FF00DF5B8E /* SnapKit */; };
 		49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */; };
 		49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B629FEB9C800DF5B8E /* BaseCoordinator.swift */; };
 		49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B929FEB9DB00DF5B8E /* Coordinator.swift */; };
 		49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2BC29FEBD1000DF5B8E /* MainTabBarViewController.swift */; };
 		49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2BE29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift */; };
-		49D8A2C129FEBE1300DF5B8E /* MainTabBarBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2C029FEBE1300DF5B8E /* MainTabBarBuilder.swift */; };
 		49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2C529FEBFC100DF5B8E /* CodeBlocksViewController.swift */; };
 		49D8A2C829FEC05A00DF5B8E /* WorkspaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2C729FEC05A00DF5B8E /* WorkspaceViewController.swift */; };
 		49D8A2CA29FEC09100DF5B8E /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2C929FEC09100DF5B8E /* ConsoleViewController.swift */; };
@@ -51,7 +52,6 @@
 		49D8A2B929FEB9DB00DF5B8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		49D8A2BC29FEBD1000DF5B8E /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		49D8A2BE29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarCoordinator.swift; sourceTree = "<group>"; };
-		49D8A2C029FEBE1300DF5B8E /* MainTabBarBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarBuilder.swift; sourceTree = "<group>"; };
 		49D8A2C529FEBFC100DF5B8E /* CodeBlocksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksViewController.swift; sourceTree = "<group>"; };
 		49D8A2C729FEC05A00DF5B8E /* WorkspaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceViewController.swift; sourceTree = "<group>"; };
 		49D8A2C929FEC09100DF5B8E /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
@@ -74,6 +74,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				498971C42A0049FB00448D4F /* RxSwift in Frameworks */,
+				498971C22A0049FB00448D4F /* RxCocoa in Frameworks */,
 				49D8A2AF29FEB8FF00DF5B8E /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -175,7 +177,6 @@
 				49D8A2ED29FED9FA00DF5B8E /* View */,
 				49D8A2EE29FED9FF00DF5B8E /* ViewModel */,
 				49D8A2BE29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift */,
-				49D8A2C029FEBE1300DF5B8E /* MainTabBarBuilder.swift */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -342,6 +343,8 @@
 			name = BlockInterpreter;
 			packageProductDependencies = (
 				49D8A2AE29FEB8FF00DF5B8E /* SnapKit */,
+				498971C12A0049FB00448D4F /* RxCocoa */,
+				498971C32A0049FB00448D4F /* RxSwift */,
 			);
 			productName = BlockInterpreter;
 			productReference = 495B416829FCEFD300DEF375 /* BlockInterpreter.app */;
@@ -373,6 +376,7 @@
 			mainGroup = 495B415F29FCEFD300DEF375;
 			packageReferences = (
 				49D8A2AD29FEB8FF00DF5B8E /* XCRemoteSwiftPackageReference "SnapKit" */,
+				498971C02A0049FB00448D4F /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = 495B416929FCEFD300DEF375 /* Products */;
 			projectDirPath = "";
@@ -413,7 +417,6 @@
 				495B416C29FCEFD300DEF375 /* AppDelegate.swift in Sources */,
 				49D8A2EC29FED9F600DF5B8E /* MainTabBarViewModel.swift in Sources */,
 				49D8A2D029FEC5D100DF5B8E /* CodeBlocksViewModelType.swift in Sources */,
-				49D8A2C129FEBE1300DF5B8E /* MainTabBarBuilder.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
@@ -634,6 +637,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		498971C02A0049FB00448D4F /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift?ysclid=lh57vlih5e230092989";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		49D8A2AD29FEB8FF00DF5B8E /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit?ysclid=ldhh9l9d77943341286#installation";
@@ -645,6 +656,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		498971C12A0049FB00448D4F /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 498971C02A0049FB00448D4F /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		498971C32A0049FB00448D4F /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 498971C02A0049FB00448D4F /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
 		49D8A2AE29FEB8FF00DF5B8E /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 49D8A2AD29FEB8FF00DF5B8E /* XCRemoteSwiftPackageReference "SnapKit" */;

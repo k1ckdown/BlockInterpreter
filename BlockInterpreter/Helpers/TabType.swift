@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum TabType {
+enum TabType: CaseIterable {
     case codeblocks, workspace, console
     
     var title: String {
@@ -32,25 +32,25 @@ enum TabType {
         }
     }
     
-    var nameImageSelected: String {
+    var image: UIImage? {
         switch self {
         case .codeblocks:
-            return "codeblocks-icon-selected"
+            return UIImage(named: "codeblocks-icon")
         case .workspace:
-            return "workspace-icon-selected"
+            return UIImage(named: "workspace-icon")
         case .console:
-            return "console-icon-selected"
+            return UIImage(named: "console-icon")
         }
     }
     
-    var nameImageUnselected: String {
+    var imageSelected: UIImage? {
         switch self {
         case .codeblocks:
-            return "codeblocks-icon-unselected"
+            return UIImage(named: "codeblocks-icon-selected")
         case .workspace:
-            return "workspace-icon-unselected"
+            return UIImage(named: "workspace-icon-selected")
         case .console:
-            return "console-icon-unselected"
+            return UIImage(named: "console-icon-selected")
         }
     }
 }
