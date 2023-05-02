@@ -21,7 +21,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
     
     override func start() {
         
-        let viewControllers = TabType.allCases.map { createViewController(tabType: $0) }
+        let viewControllers = TabType.allCases.map { getTab(with: $0) }
         
         mainTabBarViewModel.didGoToSettingsScreen = { [weak self] in
             self?.showSettingsScene()
@@ -35,49 +35,30 @@ final class MainTabBarCoordinator: BaseCoordinator {
         mainTabBarController.selectedIndex = type.orderNumber
     }
     
-    private func makeCodeBlocksViewController() -> UIViewController {
-        let codeBlocksViewModel = CodeBlocksViewModel()
-        let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
-        
-        return codeBlocksViewController
-    }
-    
-    private func makeWorkspaceViewController() -> UIViewController {
-        let workspaceViewModel = WorkspaceViewModel()
-        let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
-        
-        workspaceViewModel.didGoToConsoleTab = { [weak self] in
-            self?.selectTab(with: .console)
-        }
-        
-        return workspaceViewController
-    }
-    
-    private func makeConsoleViewController() -> UIViewController {
-        let consoleViewModel = ConsoleViewModel()
-        let consoleViewController = ConsoleViewController(with: consoleViewModel)
-        
-        return consoleViewController
-    }
-    
-    private func createViewController(tabType: TabType) -> UIViewController {
-        let viewController: UIViewController
+    private func getTab(with tabType: TabType) -> UIViewController {
+        let navigationController = UINavigationController()
         
         switch tabType {
         case .codeblocks:
-            viewController = makeCodeBlocksViewController()
+            let codeBlocksCoordinator = CodeBlocksCoordinator(navigationController: navigationController)
+            coordinate(to: codeBlocksCoordinator)
             
         case .workspace:
-            viewController = makeWorkspaceViewController()
+            let workspaceCoordinator = WorkspaceCoordinator(navigationController: navigationController)
+            workspaceCoordinator.delegate = self
+            coordinate(to: workspaceCoordinator)
             
         case .console:
-            viewController = makeConsoleViewController()
+            let consoleCoordinator = ConsoleCoordinator(navigationController: navigationController)
+            coordinate(to: consoleCoordinator)
+            
         }
         
-        viewController.tabBarItem = UITabBarItem(title: tabType.title,
-                                                 image: tabType.imageSelected,
-                                                 tag: tabType.orderNumber)
-        return viewController
+        navigationController.tabBarItem = UITabBarItem(title: tabType.title,
+                                                       image: tabType.image,
+                                                       tag: tabType.orderNumber)
+        
+        return navigationController
     }
 }
 
@@ -85,5 +66,11 @@ private extension MainTabBarCoordinator {
     func showSettingsScene() {
         let settingsCoordinator = SettingsCoordinator(navigationController: navigationController)
         coordinate(to: settingsCoordinator)
+    }
+}
+
+extension MainTabBarCoordinator: WorkspaceCoordinatorDelegate {
+    func goToConsoleTab() {
+        selectTab(with: .console)
     }
 }

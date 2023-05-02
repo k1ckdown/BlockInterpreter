@@ -12,6 +12,9 @@
 		495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B416D29FCEFD300DEF375 /* SceneDelegate.swift */; };
 		495B417529FCEFD400DEF375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495B417429FCEFD400DEF375 /* Assets.xcassets */; };
 		495B417829FCEFD400DEF375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495B417629FCEFD400DEF375 /* LaunchScreen.storyboard */; };
+		496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */; };
+		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
+		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
 		498971C22A0049FB00448D4F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 498971C12A0049FB00448D4F /* RxCocoa */; };
 		498971C42A0049FB00448D4F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 498971C32A0049FB00448D4F /* RxSwift */; };
@@ -46,6 +49,9 @@
 		495B417429FCEFD400DEF375 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		495B417729FCEFD400DEF375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495B417929FCEFD400DEF375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksCoordinator.swift; sourceTree = "<group>"; };
+		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
+		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
 		49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		49D8A2B629FEB9C800DF5B8E /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
@@ -186,6 +192,7 @@
 			children = (
 				49D8A2D129FEC6B100DF5B8E /* View */,
 				49D8A2D329FEC6BF00DF5B8E /* ViewModel */,
+				496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -195,6 +202,7 @@
 			children = (
 				49D8A2CB29FEC4E300DF5B8E /* View */,
 				49D8A2CC29FEC4EA00DF5B8E /* ViewModel */,
+				496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */,
 			);
 			path = CodeBlocks;
 			sourceTree = "<group>";
@@ -204,6 +212,7 @@
 			children = (
 				49D8A2D429FEC6C300DF5B8E /* View */,
 				49D8A2D529FEC6C600DF5B8E /* ViewModel */,
+				496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */,
 			);
 			path = Console;
 			sourceTree = "<group>";
@@ -408,8 +417,10 @@
 				49D8A2D929FEC6E000DF5B8E /* WorkspaceViewModelType.swift in Sources */,
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
+				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49D8A2D729FEC6D500DF5B8E /* WorkspaceViewModel.swift in Sources */,
 				492E820C29FEFA2F000C909A /* UIColor+AppColors.swift in Sources */,
+				496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */,
 				49D8A2E529FED87C00DF5B8E /* SettingsViewController.swift in Sources */,
 				498971BC2A002F0700448D4F /* TabType.swift in Sources */,
 				49D8A2CA29FEC09100DF5B8E /* ConsoleViewController.swift in Sources */,
@@ -419,6 +430,7 @@
 				49D8A2D029FEC5D100DF5B8E /* CodeBlocksViewModelType.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
+				496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */,
 				49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */,

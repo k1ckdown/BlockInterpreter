@@ -12,6 +12,17 @@ import RxCocoa
 
 class WorkspaceViewController: UIViewController {
     
+    private enum Constants {
+            enum RunButton {
+                static let size: CGFloat = 60
+                static let cornerRadius: CGFloat = size / 2
+                static let insetRight: CGFloat = 40
+                static let insetBotton: CGFloat = 130
+            }
+    }
+    
+    private let runButton = UIButton(type: .system)
+    
     private let viewModel: WorkspaceViewModelType
     
     init(with viewModel: WorkspaceViewModelType) {
@@ -29,12 +40,34 @@ class WorkspaceViewController: UIViewController {
         setup()
     }
     
+    @objc
+    private func handleRunButton() {
+        viewModel.showConsole()
+    }
+    
     private func setup() {
         setupSuperView()
+        setupRunButton()
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .darkGray
+        view.backgroundColor = .systemBlue
+    }
+    
+    private func setupRunButton() {
+        view.addSubview(runButton)
+        
+        runButton.backgroundColor = .appBlack
+        runButton.tintColor = .systemGreen
+        runButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        runButton.layer.cornerRadius = Constants.RunButton.cornerRadius
+        runButton.addTarget(self, action: #selector(handleRunButton), for: .touchUpInside)
+        
+        runButton.snp.makeConstraints { make in
+            make.width.height.equalTo(Constants.RunButton.size)
+            make.right.equalToSuperview().inset(Constants.RunButton.insetRight)
+            make.bottom.equalToSuperview().inset(Constants.RunButton.insetBotton)
+        }
     }
 
 }

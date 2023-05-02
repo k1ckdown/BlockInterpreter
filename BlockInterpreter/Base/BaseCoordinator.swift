@@ -8,7 +8,7 @@
 import UIKit
 
 class BaseCoordinator: Coordinator {
-    weak var rootCoordinator: Coordinator?
+    weak var parentCoordinator: Coordinator?
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
     
@@ -22,7 +22,7 @@ class BaseCoordinator: Coordinator {
     
     func coordinate(to coordinator: Coordinator) {
         childCoordinators.append(coordinator)
-        coordinator.rootCoordinator = self
+        coordinator.parentCoordinator = self
         coordinator.start()
     }
     
