@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import WaveTab
 
-class MainTabBarViewController: UITabBarController {
+class MainTabBarViewController: WaveTabBarController {
     
     private let viewModel: MainTabBarViewModelType
     
@@ -37,24 +38,7 @@ class MainTabBarViewController: UITabBarController {
     }
     
     private func setupTabBar() {
-        let positionOnX: CGFloat = 10
-        let positionOnY: CGFloat = 14
-        let width = tabBar.bounds.width - positionOnX * 2
-        let height = tabBar.bounds.height + positionOnY * 2
-        
-        let roundLayer = CAShapeLayer()
-        
-        let bezierPath = UIBezierPath(roundedRect: CGRect(x: positionOnX, y: tabBar.bounds.minY - positionOnY, width: width, height: height), cornerRadius: height / 2)
-        
-        roundLayer.path = bezierPath.cgPath
-
-        tabBar.layer.insertSublayer(roundLayer, at: 0)
-        
-        tabBar.itemWidth = width / 2
-        tabBar.itemPositioning = .centered
-        
-        roundLayer.fillColor = UIColor.appWhite?.cgColor
-        
+        tabBar.barTintColor = .appWhite
         tabBar.tintColor = .appBlue
         tabBar.unselectedItemTintColor = .appBlack
     }
