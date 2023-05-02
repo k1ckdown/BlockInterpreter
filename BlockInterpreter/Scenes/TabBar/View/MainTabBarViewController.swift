@@ -53,14 +53,14 @@ class MainTabBarViewController: UITabBarController {
         tabBar.itemWidth = width / 2
         tabBar.itemPositioning = .centered
         
-        roundLayer.fillColor = UIColor.appBlack?.cgColor
+        roundLayer.fillColor = UIColor.appWhite?.cgColor
         
         tabBar.tintColor = .appBlue
-        tabBar.unselectedItemTintColor = .appWhite
+        tabBar.unselectedItemTintColor = .appBlack
     }
     
     private func setupSettingsBarButtonItem() {
-        let settingsBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"),
+        let settingsBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gear"),
                                                     style: .plain,
                                                     target: self,
                                                     action: #selector(handleSettingsBarButtonItem))

@@ -35,11 +35,11 @@ enum TabType: CaseIterable {
     var image: UIImage? {
         switch self {
         case .codeblocks:
-            return UIImage(named: "codeblocks-icon")
+            return UIImage(systemName: "square.stack.3d.up.fill")
         case .workspace:
-            return UIImage(named: "workspace-icon")
+            return UIImage(systemName: "ellipsis.curlybraces")
         case .console:
-            return UIImage(named: "console-icon")
+            return UIImage(systemName: "terminal")
         }
     }
     
