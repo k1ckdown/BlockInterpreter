@@ -7,14 +7,8 @@
 
 import UIKit
 
-protocol WorkspaceCoordinatorDelegate: AnyObject {
-    func goToConsoleTab()
-}
-
 final class WorkspaceCoordinator: BaseCoordinator {
     
-    weak var delegate: WorkspaceCoordinatorDelegate?
-
     override init(navigationController: UINavigationController) {
         super.init(navigationController: navigationController)
     }
@@ -23,7 +17,7 @@ final class WorkspaceCoordinator: BaseCoordinator {
         let workspaceViewModel = WorkspaceViewModel()
         let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
         
-        workspaceViewModel.didGoToConsoleTab = { [weak self] in
+        workspaceViewModel.didGoToConsole = { [weak self] in
             self?.showConsoleScene()
         }
         
@@ -33,6 +27,21 @@ final class WorkspaceCoordinator: BaseCoordinator {
 
 private extension WorkspaceCoordinator {
     func showConsoleScene() {
-        delegate?.goToConsoleTab()
+        let consoleViewModel = ConsoleViewModel()
+        let consoleViewController = ConsoleViewController(with: consoleViewModel)
+        
+        consoleViewController.navigationItem.title = "Console"
+        let consoleNavController = UINavigationController(rootViewController: consoleViewController)
+
+        if #available(iOS 15.0, *) {
+            if let sheet = consoleNavController.sheetPresentationController {
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 30
+                sheet.detents = [.medium(), .large()]
+            }
+        }
+        
+        navigationController.present(consoleNavController,
+                                     animated: true)
     }
 }

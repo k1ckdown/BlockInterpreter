@@ -8,7 +8,7 @@
 import UIKit
 
 enum TabType: CaseIterable {
-    case codeblocks, workspace, console
+    case codeblocks, workspace, settings
     
     var title: String {
         switch self {
@@ -16,8 +16,8 @@ enum TabType: CaseIterable {
             return "CodeBlocks"
         case .workspace:
             return "Workspace"
-        case .console:
-            return "Console"
+        case .settings:
+            return "Settings"
         }
     }
     
@@ -27,7 +27,7 @@ enum TabType: CaseIterable {
             return 0
         case .workspace:
             return 1
-        case .console:
+        case .settings:
             return 2
         }
     }
@@ -38,8 +38,8 @@ enum TabType: CaseIterable {
             return UIImage(systemName: "square.stack.3d.up.fill")
         case .workspace:
             return UIImage(systemName: "ellipsis.curlybraces")
-        case .console:
-            return UIImage(systemName: "terminal")
+        case .settings:
+            return UIImage(systemName: "gear")
         }
     }
     
@@ -49,8 +49,8 @@ enum TabType: CaseIterable {
             return UIImage(named: "codeblocks-icon-selected")
         case .workspace:
             return UIImage(named: "workspace-icon-selected")
-        case .console:
-            return UIImage(named: "console-icon-selected")
+        case .settings:
+            return UIImage(named: "settings-icon-selected")
         }
     }
 }

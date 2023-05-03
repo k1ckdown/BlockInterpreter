@@ -34,23 +34,12 @@ class MainTabBarViewController: WaveTabBarController {
     
     private func setup() {
         setupTabBar()
-        setupSettingsBarButtonItem()
     }
     
     private func setupTabBar() {
         tabBar.barTintColor = .appWhite
         tabBar.tintColor = .appBlue
         tabBar.unselectedItemTintColor = .appBlack
-    }
-    
-    private func setupSettingsBarButtonItem() {
-        let settingsBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gear"),
-                                                    style: .plain,
-                                                    target: self,
-                                                    action: #selector(handleSettingsBarButtonItem))
-        
-        settingsBarButtonItem.tintColor = .appWhite
-        navigationItem.rightBarButtonItem = settingsBarButtonItem
     }
     
 }

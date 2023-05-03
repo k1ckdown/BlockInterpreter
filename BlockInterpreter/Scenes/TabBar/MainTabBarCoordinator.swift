@@ -20,12 +20,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        
         let viewControllers = TabType.allCases.map { getTab(with: $0) }
-        
-        mainTabBarViewModel.didGoToSettingsScreen = { [weak self] in
-            self?.showSettingsScene()
-        }
         
         mainTabBarController.setViewControllers(viewControllers, animated: true)
         navigationController.setViewControllers([mainTabBarController], animated: true)
@@ -36,41 +31,28 @@ final class MainTabBarCoordinator: BaseCoordinator {
     }
     
     private func getTab(with tabType: TabType) -> UIViewController {
-        let navigationController = UINavigationController()
+        let navController = UINavigationController()
+        let coordinator: Coordinator
         
         switch tabType {
         case .codeblocks:
-            let codeBlocksCoordinator = CodeBlocksCoordinator(navigationController: navigationController)
-            coordinate(to: codeBlocksCoordinator)
+            coordinator = CodeBlocksCoordinator(navigationController: navController)
             
         case .workspace:
-            let workspaceCoordinator = WorkspaceCoordinator(navigationController: navigationController)
-            workspaceCoordinator.delegate = self
-            coordinate(to: workspaceCoordinator)
+            coordinator = WorkspaceCoordinator(navigationController: navController)
             
-        case .console:
-            let consoleCoordinator = ConsoleCoordinator(navigationController: navigationController)
-            coordinate(to: consoleCoordinator)
-            
+        case .settings:
+            coordinator = SettingsCoordinator(navigationController: navController)
         }
         
-        navigationController.tabBarItem = UITabBarItem(title: tabType.title,
+        coordinator.parentCoordinator = parentCoordinator
+        parentCoordinator?.childCoordinators.append(coordinator)
+        coordinator.start()
+        
+        navController.tabBarItem = UITabBarItem(title: tabType.title,
                                                        image: tabType.image,
                                                        tag: tabType.orderNumber)
         
-        return navigationController
-    }
-}
-
-private extension MainTabBarCoordinator {
-    func showSettingsScene() {
-        let settingsCoordinator = SettingsCoordinator(navigationController: navigationController)
-        coordinate(to: settingsCoordinator)
-    }
-}
-
-extension MainTabBarCoordinator: WorkspaceCoordinatorDelegate {
-    func goToConsoleTab() {
-        selectTab(with: .console)
+        return navController
     }
 }

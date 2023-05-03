@@ -17,6 +17,6 @@ final class SettingsCoordinator: BaseCoordinator {
         let settingsViewModel = SettingsViewModel()
         let settingsViewController = SettingsViewController(with: settingsViewModel)
         
-        navigationController.present(settingsViewController, animated: true)
+        navigationController.pushViewController(settingsViewController, animated: true)
     }
 }
