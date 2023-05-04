@@ -8,5 +8,7 @@
 import Foundation
 
 protocol CodeBlocksViewModelType {
+    var variableBlockCellViewModels: [VariableBlockCellViewModel] { get }
     
+    func viewDidLoad()
 }

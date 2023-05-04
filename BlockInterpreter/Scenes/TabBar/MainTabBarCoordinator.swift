@@ -22,6 +22,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
     override func start() {
         let viewControllers = TabType.allCases.map { getTab(with: $0) }
         
+        navigationController.navigationBar.isHidden = true
         mainTabBarController.setViewControllers(viewControllers, animated: true)
         navigationController.setViewControllers([mainTabBarController], animated: true)
     }

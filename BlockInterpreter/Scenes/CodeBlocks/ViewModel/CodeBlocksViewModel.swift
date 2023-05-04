@@ -8,9 +8,10 @@
 import Foundation
 
 final class CodeBlocksViewModel {
-    
+    private(set) var variableBlockCellViewModels = [VariableBlockCellViewModel]()
 }
 
 extension CodeBlocksViewModel: CodeBlocksViewModelType {
-    
+    func viewDidLoad() {
+    }
 }

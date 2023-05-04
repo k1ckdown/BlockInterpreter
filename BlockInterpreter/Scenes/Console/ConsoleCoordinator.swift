@@ -17,6 +17,7 @@ final class ConsoleCoordinator: BaseCoordinator {
         let consoleViewModel = ConsoleViewModel()
         let consoleViewController = ConsoleViewController(with: consoleViewModel)
         
+        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(consoleViewController, animated: true)
     }
 }

@@ -21,6 +21,7 @@ final class WorkspaceCoordinator: BaseCoordinator {
             self?.showConsoleScene()
         }
         
+        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(workspaceViewController, animated: true)
     }
 }

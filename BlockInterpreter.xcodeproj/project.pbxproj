@@ -16,7 +16,10 @@
 		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
-		49A4C2992A01972500A0FA1C /* ExampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A4C2982A01972500A0FA1C /* ExampleModel.swift */; };
+		49A946592A038C7C00BBE172 /* VariableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A946582A038C7C00BBE172 /* VariableType.swift */; };
+		49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BA2A02D99A00439E2A /* ExampleService.swift */; };
+		49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */; };
+		49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */; };
 		49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */; };
 		49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B629FEB9C800DF5B8E /* BaseCoordinator.swift */; };
 		49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B929FEB9DB00DF5B8E /* Coordinator.swift */; };
@@ -53,7 +56,10 @@
 		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
-		49A4C2982A01972500A0FA1C /* ExampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleModel.swift; sourceTree = "<group>"; };
+		49A946582A038C7C00BBE172 /* VariableType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableType.swift; sourceTree = "<group>"; };
+		49C661BA2A02D99A00439E2A /* ExampleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleService.swift; sourceTree = "<group>"; };
+		49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCell.swift; sourceTree = "<group>"; };
+		49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		49D8A2B629FEB9C800DF5B8E /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
 		49D8A2B929FEB9DB00DF5B8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
@@ -119,6 +125,7 @@
 		495B416A29FCEFD300DEF375 /* BlockInterpreter */ = {
 			isa = PBXGroup;
 			children = (
+				49C661B92A02D97A00439E2A /* Services */,
 				498971BA2A002EF700448D4F /* Helpers */,
 				49D8A2F329FEDD4600DF5B8E /* Views */,
 				49D8A2F229FEDD3C00DF5B8E /* Extensions */,
@@ -138,6 +145,31 @@
 				498971BB2A002F0700448D4F /* TabType.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		49C661B92A02D97A00439E2A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				49C661BA2A02D99A00439E2A /* ExampleService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		49C661BC2A02D9A600439E2A /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				49C661BD2A02D9AC00439E2A /* VariableBlock */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		49C661BD2A02D9AC00439E2A /* VariableBlock */ = {
+			isa = PBXGroup;
+			children = (
+				49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */,
+				49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */,
+			);
+			path = VariableBlock;
 			sourceTree = "<group>";
 		};
 		49D8A2B029FEB93B00DF5B8E /* Application */ = {
@@ -326,7 +358,7 @@
 		49D8A2F129FEDD3400DF5B8E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				49A4C2982A01972500A0FA1C /* ExampleModel.swift */,
+				49A946582A038C7C00BBE172 /* VariableType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -342,6 +374,7 @@
 		49D8A2F329FEDD4600DF5B8E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				49C661BC2A02D9A600439E2A /* Cells */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -472,11 +505,13 @@
 				49D8A2DB29FEC75700DF5B8E /* ConsoleViewModel.swift in Sources */,
 				49D8A2D929FEC6E000DF5B8E /* WorkspaceViewModelType.swift in Sources */,
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
+				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
 				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49D8A2D729FEC6D500DF5B8E /* WorkspaceViewModel.swift in Sources */,
 				492E820C29FEFA2F000C909A /* UIColor+AppColors.swift in Sources */,
 				496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */,
+				49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */,
 				49D8A2E529FED87C00DF5B8E /* SettingsViewController.swift in Sources */,
 				498971BC2A002F0700448D4F /* TabType.swift in Sources */,
 				49D8A2CA29FEC09100DF5B8E /* ConsoleViewController.swift in Sources */,
@@ -487,7 +522,8 @@
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
 				496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */,
-				49A4C2992A01972500A0FA1C /* ExampleModel.swift in Sources */,
+				49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */,
+				49A946592A038C7C00BBE172 /* VariableType.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */,
 				49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */,

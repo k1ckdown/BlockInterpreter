@@ -17,6 +17,7 @@ final class CodeBlocksCoordinator: BaseCoordinator {
         let codeBlocksViewModel = CodeBlocksViewModel()
         let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
         
+        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(codeBlocksViewController, animated: true)
     }
 }

@@ -17,6 +17,7 @@ final class SettingsCoordinator: BaseCoordinator {
         let settingsViewModel = SettingsViewModel()
         let settingsViewController = SettingsViewController(with: settingsViewModel)
         
+        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(settingsViewController, animated: true)
     }
 }
