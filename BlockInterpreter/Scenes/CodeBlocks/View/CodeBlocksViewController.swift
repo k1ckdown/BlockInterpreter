@@ -39,7 +39,7 @@ class CodeBlocksViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .systemIndigo
+        view.backgroundColor = .appPurple
     }
     
     private func setupBlocksTableView() {
@@ -62,45 +62,73 @@ class CodeBlocksViewController: UIViewController {
 extension CodeBlocksViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return viewModel.getNumberOfSections()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return viewModel.getNumberOfItemsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Variables \(section + 1)"
+        return viewModel.getTitleForHeaderInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: VariableBlockCell.identifier, for: indexPath) as? VariableBlockCell else {
+        let section = viewModel.getSection(at: indexPath)
+        
+        switch section {
+        case .variables:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: VariableBlockCell.identifier, for: indexPath) as? VariableBlockCell else {
+                return VariableBlockCell()
+            }
+            
+            cell.variableNameTextField.delegate = self
+            cell.variableValueTextField.delegate = self
+            
+            cell.variableNameTextField.tag = TextFieldType.variableName.tag
+            cell.variableValueTextField.tag = TextFieldType.variableValue.tag
+            
+            cell.configure(with: viewModel.variableBlockCellViewModels[indexPath.row])
+            return cell
+            
+        case .control:
+            return VariableBlockCell()
+        case .loops:
+            return VariableBlockCell()
+        case .arrays:
+            return VariableBlockCell()
+        case .functions:
             return VariableBlockCell()
         }
-        
-        cell.configure(with: viewModel.variableBlockCellViewModels[indexPath.item])
-        return cell
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UITableViewHeaderFooterView()
+        let headerView = BlockHeaderView()
+        headerView.headerTitle = viewModel.getTitleForHeaderInSection(section)
         
-        view.textLabel?.textColor = .appBlack
-        view.contentView.backgroundColor = .appWhite
-        view.layer.cornerRadius = 8
-        view.layer.masksToBounds = true
-        
-        return view
+        return headerView
     }
     
 }
 
 extension CodeBlocksViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 85
+        return viewModel.getHeightForRowAt(indexPath)
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
+    }
+}
+
+
+extension CodeBlocksViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

@@ -13,13 +13,15 @@ final class VariableBlockCell: UITableViewCell {
     static let identifier = "VariableBlockCell"
     
     private let containerView = UIView()
+    
     private let variableTypeLabel = UILabel()
-    private let variableNameTextField = UITextField()
     private let equalSignImageView = UIImageView()
-    private let variableValueTextField = UITextField()
     
     private let assignmentStackView = UIStackView()
     private var assignmentSVCenterXConstraint: Constraint?
+    
+    private(set) var variableNameTextField = UITextField()
+    private(set) var variableValueTextField = UITextField()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -38,6 +40,13 @@ final class VariableBlockCell: UITableViewCell {
         guard viewModel.shouldShowVariableType == false else { return }
         variableTypeLabel.isHidden = true
         assignmentSVCenterXConstraint?.update(priority: .high)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        variableTypeLabel.isHidden = false
+        assignmentSVCenterXConstraint?.update(priority: .low)
     }
     
     private func setup() {

@@ -16,6 +16,11 @@
 		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
+		49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49969FFA2A054F8B00F86EFE /* TextFieldType.swift */; };
+		49A175F32A042A4F003CEBB3 /* ControlBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */; };
+		49A3465B2A058F8F003BC2B9 /* IfStatementBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */; };
+		49A3465D2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */; };
+		49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */; };
 		49A946592A038C7C00BBE172 /* VariableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A946582A038C7C00BBE172 /* VariableType.swift */; };
 		49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BA2A02D99A00439E2A /* ExampleService.swift */; };
 		49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */; };
@@ -40,6 +45,8 @@
 		49D8A2EA29FED8DB00DF5B8E /* SettingsViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2E929FED8DB00DF5B8E /* SettingsViewModelType.swift */; };
 		49D8A2EC29FED9F600DF5B8E /* MainTabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EB29FED9F600DF5B8E /* MainTabBarViewModel.swift */; };
 		49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */; };
+		49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2A2A03A78700BB869A /* BlocksSection.swift */; };
+		49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */; };
 		EBBC16255CF6FADB6C3D678F /* Pods_BlockInterpreter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +63,11 @@
 		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
+		49969FFA2A054F8B00F86EFE /* TextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldType.swift; sourceTree = "<group>"; };
+		49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBlockType.swift; sourceTree = "<group>"; };
+		49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfStatementBlockCell.swift; sourceTree = "<group>"; };
+		49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfStatementBlockCellViewModel.swift; sourceTree = "<group>"; };
+		49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockHeaderView.swift; sourceTree = "<group>"; };
 		49A946582A038C7C00BBE172 /* VariableType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableType.swift; sourceTree = "<group>"; };
 		49C661BA2A02D99A00439E2A /* ExampleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleService.swift; sourceTree = "<group>"; };
 		49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCell.swift; sourceTree = "<group>"; };
@@ -80,6 +92,8 @@
 		49D8A2E929FED8DB00DF5B8E /* SettingsViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelType.swift; sourceTree = "<group>"; };
 		49D8A2EB29FED9F600DF5B8E /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
 		49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModelType.swift; sourceTree = "<group>"; };
+		49E30E2A2A03A78700BB869A /* BlocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksSection.swift; sourceTree = "<group>"; };
+		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
 		C7DE8AEE618197EB591F20EE /* Pods-BlockInterpreter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlockInterpreter.release.xcconfig"; path = "Target Support Files/Pods-BlockInterpreter/Pods-BlockInterpreter.release.xcconfig"; sourceTree = "<group>"; };
 		D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlockInterpreter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -125,13 +139,12 @@
 		495B416A29FCEFD300DEF375 /* BlockInterpreter */ = {
 			isa = PBXGroup;
 			children = (
-				49C661B92A02D97A00439E2A /* Services */,
-				498971BA2A002EF700448D4F /* Helpers */,
-				49D8A2F329FEDD4600DF5B8E /* Views */,
 				49D8A2F229FEDD3C00DF5B8E /* Extensions */,
-				49D8A2F129FEDD3400DF5B8E /* Models */,
 				49D8A2B829FEB9CE00DF5B8E /* Protocols */,
 				49D8A2B529FEB9BC00DF5B8E /* Base */,
+				49C661B92A02D97A00439E2A /* Services */,
+				49D8A2F329FEDD4600DF5B8E /* Views */,
+				49D8A2F129FEDD3400DF5B8E /* Models */,
 				49D8A2B229FEB9A400DF5B8E /* Scenes */,
 				49D8A2B129FEB95D00DF5B8E /* Resources */,
 				49D8A2B029FEB93B00DF5B8E /* Application */,
@@ -139,12 +152,55 @@
 			path = BlockInterpreter;
 			sourceTree = "<group>";
 		};
-		498971BA2A002EF700448D4F /* Helpers */ = {
+		49969FFC2A05598C00F86EFE /* BlockTypes */ = {
+			isa = PBXGroup;
+			children = (
+				49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */,
+				49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */,
+			);
+			path = BlockTypes;
+			sourceTree = "<group>";
+		};
+		49A346592A058F69003BC2B9 /* IfStatementBlock */ = {
+			isa = PBXGroup;
+			children = (
+				49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */,
+				49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */,
+			);
+			path = IfStatementBlock;
+			sourceTree = "<group>";
+		};
+		49A3465E2A059153003BC2B9 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				49A346612A0592E2003BC2B9 /* BlockHeaderView */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		49A3465F2A0591B6003BC2B9 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
 				498971BB2A002F0700448D4F /* TabType.swift */,
 			);
-			path = Helpers;
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		49A346602A0591C0003BC2B9 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				49969FFA2A054F8B00F86EFE /* TextFieldType.swift */,
+				49E30E2A2A03A78700BB869A /* BlocksSection.swift */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		49A346612A0592E2003BC2B9 /* BlockHeaderView */ = {
+			isa = PBXGroup;
+			children = (
+				49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */,
+			);
+			path = BlockHeaderView;
 			sourceTree = "<group>";
 		};
 		49C661B92A02D97A00439E2A /* Services */ = {
@@ -158,6 +214,7 @@
 		49C661BC2A02D9A600439E2A /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				49A346592A058F69003BC2B9 /* IfStatementBlock */,
 				49C661BD2A02D9AC00439E2A /* VariableBlock */,
 			);
 			path = Cells;
@@ -263,6 +320,7 @@
 		49D8A2CB29FEC4E300DF5B8E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				49A346602A0591C0003BC2B9 /* Configurations */,
 				49D8A2C529FEBFC100DF5B8E /* CodeBlocksViewController.swift */,
 			);
 			path = View;
@@ -341,6 +399,7 @@
 		49D8A2ED29FED9FA00DF5B8E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				49A3465F2A0591B6003BC2B9 /* Configurations */,
 				49D8A2BC29FEBD1000DF5B8E /* MainTabBarViewController.swift */,
 			);
 			path = View;
@@ -358,6 +417,7 @@
 		49D8A2F129FEDD3400DF5B8E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				49969FFC2A05598C00F86EFE /* BlockTypes */,
 				49A946582A038C7C00BBE172 /* VariableType.swift */,
 			);
 			path = Models;
@@ -374,6 +434,7 @@
 		49D8A2F329FEDD4600DF5B8E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				49A3465E2A059153003BC2B9 /* CustomViews */,
 				49C661BC2A02D9A600439E2A /* Cells */,
 			);
 			path = Views;
@@ -503,9 +564,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				49D8A2DB29FEC75700DF5B8E /* ConsoleViewModel.swift in Sources */,
+				49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */,
 				49D8A2D929FEC6E000DF5B8E /* WorkspaceViewModelType.swift in Sources */,
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
+				49A3465D2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift in Sources */,
 				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
+				49A175F32A042A4F003CEBB3 /* ControlBlockType.swift in Sources */,
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
 				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49D8A2D729FEC6D500DF5B8E /* WorkspaceViewModel.swift in Sources */,
@@ -527,10 +591,14 @@
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */,
 				49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */,
+				49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */,
+				49A3465B2A058F8F003BC2B9 /* IfStatementBlockCell.swift in Sources */,
+				49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */,
 				49D8A2E329FED81900DF5B8E /* SettingsCoordinator.swift in Sources */,
 				49D8A2E729FED8CB00DF5B8E /* SettingsViewModel.swift in Sources */,
 				495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */,
 				49D8A2C829FEC05A00DF5B8E /* WorkspaceViewController.swift in Sources */,
+				49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */,
 				49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */,
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
 			);

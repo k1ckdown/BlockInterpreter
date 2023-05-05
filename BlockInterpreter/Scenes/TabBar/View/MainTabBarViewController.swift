@@ -37,8 +37,7 @@ class MainTabBarViewController: WaveTabBarController {
     }
     
     private func setupTabBar() {
-        tabBar.barTintColor = .appWhite
-        tabBar.tintColor = .appBlue
+        tabBar.tintColor = .appPurple
         tabBar.unselectedItemTintColor = .appBlack
     }
     

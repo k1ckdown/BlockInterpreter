@@ -15,9 +15,9 @@ final class VariableBlockCellViewModel {
     private(set) var variableValuePlaceholder: String
     
     init(variableType: String?) {
-        self.variableValuePlaceholder = "17"
-        self.variableNamePlaceHolder = "name"
+        variableValuePlaceholder = "17"
+        variableNamePlaceHolder = "name"
         self.variableType = variableType?.capitalized ?? ""
-        self.shouldShowVariableType = variableType == nil ? false : true
+        shouldShowVariableType = variableType == nil ? false : true
     }
 }
