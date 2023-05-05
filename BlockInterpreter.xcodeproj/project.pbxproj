@@ -173,7 +173,7 @@
 		49A3465E2A059153003BC2B9 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
-				49A346612A0592E2003BC2B9 /* BlockHeaderView */,
+				49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -193,14 +193,6 @@
 				49E30E2A2A03A78700BB869A /* BlocksSection.swift */,
 			);
 			path = Configurations;
-			sourceTree = "<group>";
-		};
-		49A346612A0592E2003BC2B9 /* BlockHeaderView */ = {
-			isa = PBXGroup;
-			children = (
-				49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */,
-			);
-			path = BlockHeaderView;
 			sourceTree = "<group>";
 		};
 		49C661B92A02D97A00439E2A /* Services */ = {

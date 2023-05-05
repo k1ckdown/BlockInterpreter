@@ -7,6 +7,6 @@
 
 import UIKit
 
-class IfStatementBlockCell: UITableViewCell {
+final class IfStatementBlockCell: UITableViewCell {
     
 }

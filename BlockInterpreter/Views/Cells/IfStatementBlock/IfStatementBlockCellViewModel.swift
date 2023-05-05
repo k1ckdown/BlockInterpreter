@@ -7,7 +7,7 @@
 
 import UIKit
 
-class IfStatementBlockCellViewModel: UITableViewCell {
+final class IfStatementBlockCellViewModel: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()

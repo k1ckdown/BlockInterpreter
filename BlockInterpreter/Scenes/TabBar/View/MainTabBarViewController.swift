@@ -8,7 +8,7 @@
 import UIKit
 import WaveTab
 
-class MainTabBarViewController: WaveTabBarController {
+final class MainTabBarViewController: WaveTabBarController {
     
     private let viewModel: MainTabBarViewModelType
     

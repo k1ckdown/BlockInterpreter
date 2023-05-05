@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CodeBlocksViewController: UIViewController {
+final class CodeBlocksViewController: UIViewController {
     
     private let blocksTableView = UITableView(frame: .zero, style: .plain)
     

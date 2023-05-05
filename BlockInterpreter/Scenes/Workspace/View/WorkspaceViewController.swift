@@ -10,7 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-class WorkspaceViewController: UIViewController {
+final class WorkspaceViewController: UIViewController {
     
     private enum Constants {
             enum RunButton {

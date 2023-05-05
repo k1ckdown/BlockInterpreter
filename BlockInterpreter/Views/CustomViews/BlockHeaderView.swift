@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BlockHeaderView: UIView {
+final class BlockHeaderView: UIView {
     
     private let headerTitleLabel = UILabel()
     

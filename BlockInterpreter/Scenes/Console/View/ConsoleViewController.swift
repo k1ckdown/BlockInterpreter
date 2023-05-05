@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ConsoleViewController: UIViewController {
+final class ConsoleViewController: UIViewController {
     
     private let viewModel: ConsoleViewModelType
     
