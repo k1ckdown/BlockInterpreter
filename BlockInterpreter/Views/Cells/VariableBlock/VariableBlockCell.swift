@@ -2,8 +2,6 @@
 //  VariableBlockCell.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 04.05.2023.
-//
 
 import UIKit
 import SnapKit
@@ -11,6 +9,39 @@ import SnapKit
 final class VariableBlockCell: UITableViewCell {
     
     static let identifier = "VariableBlockCell"
+    
+    private enum Constants {
+            enum ContainerView {
+                static let cornerRadius: CGFloat = 15
+                static let multiplierHeight: CGFloat = 0.7
+            }
+            
+            enum VariableTypeLabel {
+                static let insetLeading: CGFloat = 15
+            }
+            
+            enum AssignmentStackView {
+                static let spacing: CGFloat = 5
+                static let muiltiplierWidth: CGFloat = 0.75
+                static let insetLeading: CGFloat = 20
+            }
+            
+            enum VariableNameTextField {
+                static let multiplierHeight: CGFloat = 0.7
+                static let multiplierWidth: CGFloat = 0.4
+            }
+            
+            enum EqualSignLabel {
+                static let insetLeading: CGFloat = 20
+                static let multiplierHeight: CGFloat = 0.4
+                static let multiplierWidth: CGFloat = 0.1
+            }
+            
+            enum VariableValueTextField {
+                static let multiplierWidth: CGFloat = 0.4
+                static let multiplierHeight: CGFloat = 0.7
+            }
+    }
     
     private let containerView = UIView()
     
@@ -20,8 +51,8 @@ final class VariableBlockCell: UITableViewCell {
     private let assignmentStackView = UIStackView()
     private var assignmentSVCenterXConstraint: Constraint?
     
-    private(set) var variableNameTextField = UITextField()
-    private(set) var variableValueTextField = UITextField()
+    private(set) var variableNameTextField = BlockTextField()
+    private(set) var variableValueTextField = BlockTextField()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -67,11 +98,11 @@ final class VariableBlockCell: UITableViewCell {
         contentView.addSubview(containerView)
         
         containerView.backgroundColor = .appBlack
-        containerView.layer.cornerRadius = 10
+        containerView.layer.cornerRadius = Constants.ContainerView.cornerRadius
         
         containerView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.7)
+            make.height.equalToSuperview().multipliedBy(Constants.ContainerView.multiplierHeight)
             make.leading.trailing.equalToSuperview()
         }
     }
@@ -79,14 +110,14 @@ final class VariableBlockCell: UITableViewCell {
     private func setupVariableTypeLabel() {
         containerView.addSubview(variableTypeLabel)
         
-        variableTypeLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
+        variableTypeLabel.textColor = .appTeal
+        variableTypeLabel.font = .variableType
         variableTypeLabel.textAlignment = .center
         variableTypeLabel.adjustsFontSizeToFitWidth = true
-        variableTypeLabel.textColor = .systemTeal
         variableTypeLabel.backgroundColor = .clear
         
         variableTypeLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(15)
+            make.leading.equalToSuperview().offset(Constants.VariableTypeLabel.insetLeading)
             make.height.equalToSuperview()
         }
     }
@@ -94,7 +125,7 @@ final class VariableBlockCell: UITableViewCell {
     private func setupAssignmentStackView() {
         containerView.addSubview(assignmentStackView)
         
-        assignmentStackView.spacing = 5
+        assignmentStackView.spacing = Constants.AssignmentStackView.spacing
         assignmentStackView.alignment = .center
         assignmentStackView.axis = .horizontal
         assignmentStackView.distribution = .equalSpacing
@@ -102,8 +133,8 @@ final class VariableBlockCell: UITableViewCell {
         
         assignmentStackView.snp.makeConstraints { make in
             make.height.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.75)
-            make.leading.equalTo(variableTypeLabel.snp.trailing).offset(20)
+            make.width.equalToSuperview().multipliedBy(Constants.AssignmentStackView.muiltiplierWidth)
+            make.leading.equalTo(variableTypeLabel.snp.trailing).offset(Constants.AssignmentStackView.insetLeading)
             assignmentSVCenterXConstraint = make.centerX.equalToSuperview().priority(.low).constraint
         }
     }
@@ -111,19 +142,9 @@ final class VariableBlockCell: UITableViewCell {
     private func setupVariableNameTextField() {
         assignmentStackView.addArrangedSubview(variableNameTextField)
         
-        variableNameTextField.textAlignment = .center
-        variableNameTextField.borderStyle = .none
-        variableTypeLabel.font = UIFont.systemFont(ofSize: 17)
-        variableNameTextField.adjustsFontSizeToFitWidth = true
-        variableNameTextField.clearButtonMode = .never
-        variableNameTextField.returnKeyType = .done
-        variableNameTextField.textColor = .appBlack
-        variableNameTextField.backgroundColor = .appWhite
-        variableNameTextField.layer.cornerRadius = 10
-        
         variableNameTextField.snp.makeConstraints { make in
-            make.height.equalToSuperview().multipliedBy(0.7)
-            make.width.equalToSuperview().multipliedBy(0.4)
+            make.height.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierHeight)
+            make.width.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierWidth)
             make.centerY.equalToSuperview()
         }
     }
@@ -136,28 +157,18 @@ final class VariableBlockCell: UITableViewCell {
         equalSignImageView.image = UIImage(systemName: "equal")
         
         equalSignImageView.snp.makeConstraints { make in
-            make.leading.equalTo(variableNameTextField.snp.trailing).offset(20)
-            make.height.equalToSuperview().multipliedBy(0.4)
-            make.width.equalToSuperview().multipliedBy(0.1)
+            make.leading.equalTo(variableNameTextField.snp.trailing).offset(Constants.EqualSignLabel.insetLeading)
+            make.height.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierHeight)
+            make.width.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierWidth)
         }
     }
     
     private func setupVariableValueTextField() {
         assignmentStackView.addArrangedSubview(variableValueTextField)
         
-        variableValueTextField.font = UIFont.systemFont(ofSize: 17)
-        variableValueTextField.borderStyle = .none
-        variableValueTextField.adjustsFontSizeToFitWidth = true
-        variableValueTextField.returnKeyType = .done
-        variableValueTextField.textAlignment = .center
-        variableValueTextField.clearButtonMode = .never
-        variableValueTextField.textColor = .appBlack
-        variableValueTextField.backgroundColor = .appWhite
-        variableValueTextField.layer.cornerRadius = 10
-        
         variableValueTextField.snp.makeConstraints { make in
-            make.width.equalToSuperview().multipliedBy(0.4)
-            make.height.equalToSuperview().multipliedBy(0.7)
+            make.width.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierWidth)
+            make.height.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierHeight)
             make.centerY.equalToSuperview()
         }
     }

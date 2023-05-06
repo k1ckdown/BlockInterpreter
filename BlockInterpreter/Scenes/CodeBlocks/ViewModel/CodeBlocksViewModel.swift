@@ -2,20 +2,23 @@
 //  CodeBlocksViewModel.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import Foundation
 
 final class CodeBlocksViewModel {
+    
     private let blocksSections = BlocksSection.allCases
+    
     private(set) var variableBlockCellViewModels = [VariableBlockCellViewModel]()
+    private(set) var conditionBlockCellViewModels = [ConditionBlockCellViewModel]()
+    
 }
 
 extension CodeBlocksViewModel: CodeBlocksViewModelType {
     
     func viewDidLoad() {
         variableBlockCellViewModels = VariableBlockType.allCases.map { VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue) }
+        conditionBlockCellViewModels = ConditionBlockType.allCases.map { ConditionBlockCellViewModel(conditionBlockType: $0) }
     }
     
     func getNumberOfSections() -> Int {
@@ -40,8 +43,8 @@ extension CodeBlocksViewModel: CodeBlocksViewModelType {
         switch section {
         case .variables:
             return variableBlockCellViewModels.count
-        case .control:
-            return 2
+        case .conditions:
+            return conditionBlockCellViewModels.count
         case .loops:
             return 2
         case .arrays:

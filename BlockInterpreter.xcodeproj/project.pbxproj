@@ -12,14 +12,16 @@
 		495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B416D29FCEFD300DEF375 /* SceneDelegate.swift */; };
 		495B417529FCEFD400DEF375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495B417429FCEFD400DEF375 /* Assets.xcassets */; };
 		495B417829FCEFD400DEF375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495B417629FCEFD400DEF375 /* LaunchScreen.storyboard */; };
+		495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B9EB52A06781600A825E5 /* BlockTextField.swift */; };
+		495B9EB82A06A92100A825E5 /* UIFont+AppFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B9EB72A06A92100A825E5 /* UIFont+AppFonts.swift */; };
 		496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */; };
 		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
 		49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49969FFA2A054F8B00F86EFE /* TextFieldType.swift */; };
-		49A175F32A042A4F003CEBB3 /* ControlBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */; };
-		49A3465B2A058F8F003BC2B9 /* IfStatementBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */; };
-		49A3465D2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */; };
+		49A175F32A042A4F003CEBB3 /* ConditionBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A175F22A042A4F003CEBB3 /* ConditionBlockType.swift */; };
+		49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */; };
+		49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */; };
 		49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */; };
 		49A946592A038C7C00BBE172 /* VariableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A946582A038C7C00BBE172 /* VariableType.swift */; };
 		49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BA2A02D99A00439E2A /* ExampleService.swift */; };
@@ -59,14 +61,16 @@
 		495B417429FCEFD400DEF375 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		495B417729FCEFD400DEF375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495B417929FCEFD400DEF375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		495B9EB52A06781600A825E5 /* BlockTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTextField.swift; sourceTree = "<group>"; };
+		495B9EB72A06A92100A825E5 /* UIFont+AppFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+AppFonts.swift"; sourceTree = "<group>"; };
 		496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksCoordinator.swift; sourceTree = "<group>"; };
 		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
 		49969FFA2A054F8B00F86EFE /* TextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldType.swift; sourceTree = "<group>"; };
-		49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlBlockType.swift; sourceTree = "<group>"; };
-		49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfStatementBlockCell.swift; sourceTree = "<group>"; };
-		49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfStatementBlockCellViewModel.swift; sourceTree = "<group>"; };
+		49A175F22A042A4F003CEBB3 /* ConditionBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockType.swift; sourceTree = "<group>"; };
+		49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCell.swift; sourceTree = "<group>"; };
+		49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockHeaderView.swift; sourceTree = "<group>"; };
 		49A946582A038C7C00BBE172 /* VariableType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableType.swift; sourceTree = "<group>"; };
 		49C661BA2A02D99A00439E2A /* ExampleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleService.swift; sourceTree = "<group>"; };
@@ -152,22 +156,30 @@
 			path = BlockInterpreter;
 			sourceTree = "<group>";
 		};
+		495B9EB42A0677DC00A825E5 /* TextFields */ = {
+			isa = PBXGroup;
+			children = (
+				495B9EB52A06781600A825E5 /* BlockTextField.swift */,
+			);
+			path = TextFields;
+			sourceTree = "<group>";
+		};
 		49969FFC2A05598C00F86EFE /* BlockTypes */ = {
 			isa = PBXGroup;
 			children = (
 				49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */,
-				49A175F22A042A4F003CEBB3 /* ControlBlockType.swift */,
+				49A175F22A042A4F003CEBB3 /* ConditionBlockType.swift */,
 			);
 			path = BlockTypes;
 			sourceTree = "<group>";
 		};
-		49A346592A058F69003BC2B9 /* IfStatementBlock */ = {
+		49A346592A058F69003BC2B9 /* ConditionBlock */ = {
 			isa = PBXGroup;
 			children = (
-				49A3465A2A058F8F003BC2B9 /* IfStatementBlockCell.swift */,
-				49A3465C2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift */,
+				49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */,
+				49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */,
 			);
-			path = IfStatementBlock;
+			path = ConditionBlock;
 			sourceTree = "<group>";
 		};
 		49A3465E2A059153003BC2B9 /* CustomViews */ = {
@@ -206,7 +218,7 @@
 		49C661BC2A02D9A600439E2A /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				49A346592A058F69003BC2B9 /* IfStatementBlock */,
+				49A346592A058F69003BC2B9 /* ConditionBlock */,
 				49C661BD2A02D9AC00439E2A /* VariableBlock */,
 			);
 			path = Cells;
@@ -419,6 +431,7 @@
 			isa = PBXGroup;
 			children = (
 				492E820B29FEFA2F000C909A /* UIColor+AppColors.swift */,
+				495B9EB72A06A92100A825E5 /* UIFont+AppFonts.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -426,6 +439,7 @@
 		49D8A2F329FEDD4600DF5B8E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				495B9EB42A0677DC00A825E5 /* TextFields */,
 				49A3465E2A059153003BC2B9 /* CustomViews */,
 				49C661BC2A02D9A600439E2A /* Cells */,
 			);
@@ -558,10 +572,11 @@
 				49D8A2DB29FEC75700DF5B8E /* ConsoleViewModel.swift in Sources */,
 				49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */,
 				49D8A2D929FEC6E000DF5B8E /* WorkspaceViewModelType.swift in Sources */,
+				495B9EB82A06A92100A825E5 /* UIFont+AppFonts.swift in Sources */,
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
-				49A3465D2A058FA9003BC2B9 /* IfStatementBlockCellViewModel.swift in Sources */,
+				49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */,
 				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
-				49A175F32A042A4F003CEBB3 /* ControlBlockType.swift in Sources */,
+				49A175F32A042A4F003CEBB3 /* ConditionBlockType.swift in Sources */,
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
 				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49D8A2D729FEC6D500DF5B8E /* WorkspaceViewModel.swift in Sources */,
@@ -581,10 +596,11 @@
 				49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */,
 				49A946592A038C7C00BBE172 /* VariableType.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
+				495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */,
 				49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */,
 				49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */,
 				49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */,
-				49A3465B2A058F8F003BC2B9 /* IfStatementBlockCell.swift in Sources */,
+				49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */,
 				49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */,
 				49D8A2E329FED81900DF5B8E /* SettingsCoordinator.swift in Sources */,
 				49D8A2E729FED8CB00DF5B8E /* SettingsViewModel.swift in Sources */,

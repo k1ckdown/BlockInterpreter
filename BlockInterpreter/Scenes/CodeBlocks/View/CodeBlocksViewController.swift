@@ -2,12 +2,16 @@
 //  CodeBlocksViewController.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import UIKit
 
 final class CodeBlocksViewController: UIViewController {
+    
+    private enum Constants {
+            enum BlocksTableView {
+                static let inset: CGFloat = 30
+            }
+    }
     
     private let blocksTableView = UITableView(frame: .zero, style: .plain)
     
@@ -51,10 +55,11 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.backgroundColor = .clear
         blocksTableView.showsVerticalScrollIndicator = false
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
+        blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
         blocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
-            make.leading.trailing.bottom.equalToSuperview().inset(30)
+            make.leading.trailing.bottom.equalToSuperview().inset(Constants.BlocksTableView.inset)
         }
     }
 }
@@ -69,8 +74,11 @@ extension CodeBlocksViewController: UITableViewDataSource {
         return viewModel.getNumberOfItemsInSection(section)
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return viewModel.getTitleForHeaderInSection(section)
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = BlockHeaderView()
+        headerView.headerTitle = viewModel.getTitleForHeaderInSection(section)
+        
+        return headerView
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -91,8 +99,17 @@ extension CodeBlocksViewController: UITableViewDataSource {
             cell.configure(with: viewModel.variableBlockCellViewModels[indexPath.row])
             return cell
             
-        case .control:
-            return VariableBlockCell()
+        case .conditions:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ConditionBlockCell.identifier, for: indexPath) as? ConditionBlockCell else {
+                return ConditionBlockCell()
+            }
+            
+            cell.conditionTextField.delegate = self
+            cell.conditionTextField.tag = TextFieldType.condition.tag
+            
+            cell.configure(with: viewModel.conditionBlockCellViewModels[indexPath.row])
+            return cell
+            
         case .loops:
             return VariableBlockCell()
         case .arrays:
@@ -102,16 +119,10 @@ extension CodeBlocksViewController: UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = BlockHeaderView()
-        headerView.headerTitle = viewModel.getTitleForHeaderInSection(section)
-        
-        return headerView
-    }
-    
 }
 
 extension CodeBlocksViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return viewModel.getHeightForRowAt(indexPath)
     }
@@ -119,10 +130,12 @@ extension CodeBlocksViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
     }
+    
 }
 
 
 extension CodeBlocksViewController: UITextFieldDelegate {
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         
     }
@@ -131,4 +144,5 @@ extension CodeBlocksViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
+    
 }

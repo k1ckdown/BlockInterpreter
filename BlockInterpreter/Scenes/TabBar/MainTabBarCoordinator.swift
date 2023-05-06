@@ -2,8 +2,6 @@
 //  MainTabBarCoordinator.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import UIKit
 
@@ -51,8 +49,8 @@ final class MainTabBarCoordinator: BaseCoordinator {
         coordinator.start()
         
         navController.tabBarItem = UITabBarItem(title: tabType.title,
-                                                       image: tabType.image,
-                                                       tag: tabType.orderNumber)
+                                                image: tabType.image,
+                                                tag: tabType.orderNumber)
         
         return navController
     }
