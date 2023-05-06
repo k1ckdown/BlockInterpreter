@@ -47,8 +47,27 @@
 		49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */; };
 		49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2A2A03A78700BB869A /* BlocksSection.swift */; };
 		49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */; };
+		84751A5F2A061A62003096DA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A5E2A061A62003096DA /* main.swift */; };
+		84751A672A0639C6003096DA /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A662A0639C6003096DA /* Token.swift */; };
+		84751A692A063A02003096DA /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A682A063A02003096DA /* Variable.swift */; };
+		84751A6B2A063A47003096DA /* TokenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A6A2A063A47003096DA /* TokenType.swift */; };
+		84751A6D2A063A6C003096DA /* TypeVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A6C2A063A6C003096DA /* TypeVariable.swift */; };
+		84751A6F2A063AB3003096DA /* AssignVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A6E2A063AB3003096DA /* AssignVariable.swift */; };
+		84751A712A063AE6003096DA /* Calculate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A702A063AE6003096DA /* Calculate.swift */; };
 		EBBC16255CF6FADB6C3D678F /* Pods_BlockInterpreter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		84751A5A2A061A62003096DA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		012C3B7FBBA79B11BFD1040A /* Pods-BlockInterpreter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlockInterpreter.debug.xcconfig"; path = "Target Support Files/Pods-BlockInterpreter/Pods-BlockInterpreter.debug.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +113,14 @@
 		49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModelType.swift; sourceTree = "<group>"; };
 		49E30E2A2A03A78700BB869A /* BlocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksSection.swift; sourceTree = "<group>"; };
 		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
+		84751A5C2A061A62003096DA /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
+		84751A5E2A061A62003096DA /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		84751A662A0639C6003096DA /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		84751A682A063A02003096DA /* Variable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
+		84751A6A2A063A47003096DA /* TokenType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenType.swift; sourceTree = "<group>"; };
+		84751A6C2A063A6C003096DA /* TypeVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeVariable.swift; sourceTree = "<group>"; };
+		84751A6E2A063AB3003096DA /* AssignVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignVariable.swift; sourceTree = "<group>"; };
+		84751A702A063AE6003096DA /* Calculate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculate.swift; sourceTree = "<group>"; };
 		C7DE8AEE618197EB591F20EE /* Pods-BlockInterpreter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlockInterpreter.release.xcconfig"; path = "Target Support Files/Pods-BlockInterpreter/Pods-BlockInterpreter.release.xcconfig"; sourceTree = "<group>"; };
 		D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlockInterpreter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -104,6 +131,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBBC16255CF6FADB6C3D678F /* Pods_BlockInterpreter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84751A592A061A62003096DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				495B416A29FCEFD300DEF375 /* BlockInterpreter */,
+				84751A5D2A061A62003096DA /* ConsoleInterpreter */,
 				495B416929FCEFD300DEF375 /* Products */,
 				668EBE5A9857539E292171E1 /* Pods */,
 				1C482001D280CCB23BEEBDDC /* Frameworks */,
@@ -132,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				495B416829FCEFD300DEF375 /* BlockInterpreter.app */,
+				84751A5C2A061A62003096DA /* ConsoleInterpreter */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -441,6 +477,36 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		84751A5D2A061A62003096DA /* ConsoleInterpreter */ = {
+			isa = PBXGroup;
+			children = (
+				84751A652A06398F003096DA /* Services */,
+				84751A632A06396E003096DA /* Models */,
+				84751A5E2A061A62003096DA /* main.swift */,
+			);
+			path = ConsoleInterpreter;
+			sourceTree = "<group>";
+		};
+		84751A632A06396E003096DA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				84751A662A0639C6003096DA /* Token.swift */,
+				84751A682A063A02003096DA /* Variable.swift */,
+				84751A6A2A063A47003096DA /* TokenType.swift */,
+				84751A6C2A063A6C003096DA /* TypeVariable.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		84751A652A06398F003096DA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				84751A6E2A063AB3003096DA /* AssignVariable.swift */,
+				84751A702A063AE6003096DA /* Calculate.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -463,6 +529,23 @@
 			productReference = 495B416829FCEFD300DEF375 /* BlockInterpreter.app */;
 			productType = "com.apple.product-type.application";
 		};
+		84751A5B2A061A62003096DA /* ConsoleInterpreter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84751A622A061A62003096DA /* Build configuration list for PBXNativeTarget "ConsoleInterpreter" */;
+			buildPhases = (
+				84751A582A061A62003096DA /* Sources */,
+				84751A592A061A62003096DA /* Frameworks */,
+				84751A5A2A061A62003096DA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ConsoleInterpreter;
+			productName = ConsoleInterpreter;
+			productReference = 84751A5C2A061A62003096DA /* ConsoleInterpreter */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -470,11 +553,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					495B416729FCEFD300DEF375 = {
 						CreatedOnToolsVersion = 14.3;
+					};
+					84751A5B2A061A62003096DA = {
+						CreatedOnToolsVersion = 14.2;
 					};
 				};
 			};
@@ -492,6 +578,7 @@
 			projectRoot = "";
 			targets = (
 				495B416729FCEFD300DEF375 /* BlockInterpreter */,
+				84751A5B2A061A62003096DA /* ConsoleInterpreter */,
 			);
 		};
 /* End PBXProject section */
@@ -593,6 +680,20 @@
 				49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */,
 				49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */,
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84751A582A061A62003096DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84751A6F2A063AB3003096DA /* AssignVariable.swift in Sources */,
+				84751A712A063AE6003096DA /* Calculate.swift in Sources */,
+				84751A6D2A063A6C003096DA /* TypeVariable.swift in Sources */,
+				84751A5F2A061A62003096DA /* main.swift in Sources */,
+				84751A6B2A063A47003096DA /* TokenType.swift in Sources */,
+				84751A692A063A02003096DA /* Variable.swift in Sources */,
+				84751A672A0639C6003096DA /* Token.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -782,6 +883,28 @@
 			};
 			name = Release;
 		};
+		84751A602A061A62003096DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		84751A612A061A62003096DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -799,6 +922,15 @@
 			buildConfigurations = (
 				495B417D29FCEFD400DEF375 /* Debug */,
 				495B417E29FCEFD400DEF375 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84751A622A061A62003096DA /* Build configuration list for PBXNativeTarget "ConsoleInterpreter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84751A602A061A62003096DA /* Debug */,
+				84751A612A061A62003096DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
