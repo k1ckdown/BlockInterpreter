@@ -103,3 +103,9 @@ iOSInjectionProject/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 .DS_Store
+.history
+.vscode
+backup
+*.exe
+*.exp
+*.lib
