@@ -1,8 +1,7 @@
-
 import Foundation
  
- 
-class Calculate {
+
+class CalculateAST {
     private(set) var text: String
     private(set) var position: Int
     private(set) var currentToken: Token?

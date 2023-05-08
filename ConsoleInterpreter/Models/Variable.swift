@@ -1,11 +1,20 @@
 import Foundation
- 
- 
-class Variable {
-    private(set) var id: Int
-    private(set) var type: TypeVariable
-    private(set) var name: String
-    private(set) var value: String
+
+
+enum TypeVariable {
+    case int
+    case double
+    case String
+    case bool
+    case another
+}
+
+
+struct Variable {
+    private let id: Int
+    private let type: TypeVariable
+    private let name: String
+    private let value: String
  
     init(id: Int, type: TypeVariable, value: String, name: String) {
         self.id = id
@@ -13,9 +22,24 @@ class Variable {
         self.value = value
         self.name = name
     }
- 
-    func setValue(value: String) {
-        self.value = value
+    
+    func toString() -> String {
+        return "Variable(id: \(id), type: \(type), name: \(name), value: \(value))"
+    }
+    
+    func getId() -> Int {
+        return id
+    }
+    
+    func getType() -> TypeVariable {
+        return type
+    }
+    
+    func getName() -> String {
+        return name
+    }
+    
+    func getValue() -> String {
+        return value
     }
 }
-

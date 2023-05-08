@@ -1,21 +1,9 @@
 import Foundation
  
- 
-var mapOfVariablesInt: [String: String] = [:]
- 
- 
-var variableForInt = Variable(id: 1, type: TypeVariable.int,
-                              value: "12 + 15", name: "a")
-var assignVariableInt = AssignmentVariableInt(mapOfVariablesInt)
-var nameAndValueOfVariable = assignVariableInt.assignInt(variable: variableForInt)
-mapOfVariablesInt[nameAndValueOfVariable.0] = nameAndValueOfVariable.1
-print(mapOfVariablesInt)
- 
- 
-variableForInt = Variable(id: 2, type: TypeVariable.int,
-                          value: "a / 3", name: "b")
-assignVariableInt = AssignmentVariableInt(mapOfVariablesInt)
-nameAndValueOfVariable = assignVariableInt.assignInt(variable: variableForInt)
-mapOfVariablesInt[nameAndValueOfVariable.0] = nameAndValueOfVariable.1
-print(mapOfVariablesInt)
 
+let root = TreeNode(value: "", type: AllTypes.assign)
+let node1 = TreeNode(value: "a", type: AllTypes.variable)
+let node2 = TreeNode(value: "12 + 15 - 2", type: AllTypes.arithmetic)
+
+root.addChild(node1)
+root.addChild(node2)
