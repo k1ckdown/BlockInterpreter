@@ -7,18 +7,46 @@ import Foundation
 
 final class CodeBlocksViewModel {
     
-    private let blocksSections = BlocksSection.allCases
+    var showOptionsMenu: (() -> Void)?
+    var hideOptionsMenu: (() -> Void)?
     
-    private(set) var variableBlockCellViewModels = [VariableBlockCellViewModel]()
-    private(set) var conditionBlockCellViewModels = [ConditionBlockCellViewModel]()
+    private let blocksSections = BlocksSection.allCases
+    private var selectedIndexPaths = [IndexPath]()
+    private(set) var cellViewModels: [[BlockCellViewModel]]
+    
+    init() {
+        cellViewModels = .init(repeating: .init(), count: blocksSections.count)
+    }
+    
+    private func selectIndexPath(_ indexPath: IndexPath) {
+        selectedIndexPaths.append(indexPath)
+        cellViewModels[indexPath.section][indexPath.row].select()
+    }
+    
+    private func deselectIndexPath(_ indexPath: IndexPath) {
+        guard let index = selectedIndexPaths.firstIndex(of: indexPath) else { return }
+        
+        selectedIndexPaths.remove(at: index)
+        cellViewModels[indexPath.section][indexPath.row].deselect()
+    }
     
 }
 
 extension CodeBlocksViewModel: CodeBlocksViewModelType {
     
     func viewDidLoad() {
-        variableBlockCellViewModels = VariableBlockType.allCases.map { VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue) }
-        conditionBlockCellViewModels = ConditionBlockType.allCases.map { ConditionBlockCellViewModel(conditionBlockType: $0) }
+        cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map { VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue) }
+        cellViewModels[BlocksSection.conditions.rawValue] = ConditionBlockType.allCases.map { ConditionBlockCellViewModel(conditionBlockType: $0) }
+    }
+    
+    func toggleSelectedIndexPath(_ indexPath: IndexPath) {
+        if selectedIndexPaths.contains(indexPath) {
+            deselectIndexPath(indexPath)
+        } else {
+            selectIndexPath(indexPath)
+        }
+        
+        selectedIndexPaths.count == 0 ? hideOptionsMenu?() : showOptionsMenu?()
     }
     
     func getNumberOfSections() -> Int {
@@ -38,20 +66,7 @@ extension CodeBlocksViewModel: CodeBlocksViewModelType {
     }
     
     func getNumberOfItemsInSection(_ section: Int) -> Int {
-        let section = blocksSections[section]
-        
-        switch section {
-        case .variables:
-            return variableBlockCellViewModels.count
-        case .conditions:
-            return conditionBlockCellViewModels.count
-        case .loops:
-            return 2
-        case .arrays:
-            return 1
-        case .functions:
-            return 3
-        }
+        return cellViewModels[section].count
     }
 
 }

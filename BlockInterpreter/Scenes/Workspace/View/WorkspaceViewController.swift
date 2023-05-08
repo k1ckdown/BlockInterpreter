@@ -5,21 +5,27 @@
 
 import UIKit
 import SnapKit
-import RxSwift
-import RxCocoa
 
 final class WorkspaceViewController: UIViewController {
     
     private enum Constants {
-            enum RunButton {
-                static let size: CGFloat = 60
-                static let cornerRadius: CGFloat = size / 2
-                static let insetRight: CGFloat = 40
-                static let insetBotton: CGFloat = 130
-            }
+        enum RunButton {
+            static let size: CGFloat = 60
+            static let cornerRadius: CGFloat = size / 2
+            static let insetRight: CGFloat = 40
+            static let insetBotton: CGFloat = 130
+        }
     }
     
+    private let codeTableView = UITableView()
     private let runButton = UIButton(type: .system)
+    
+    private lazy var backdrop: UIView = {
+        let backdrop = UIView()
+        backdrop.backgroundColor = .systemBlue.withAlphaComponent(0.7)
+        backdrop.isHidden = true
+        return backdrop
+    }()
     
     private let viewModel: WorkspaceViewModelType
     
@@ -34,7 +40,7 @@ final class WorkspaceViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setup()
     }
     
@@ -45,11 +51,23 @@ final class WorkspaceViewController: UIViewController {
     
     private func setup() {
         setupSuperView()
+        setupCodeTableView()
         setupRunButton()
     }
     
     private func setupSuperView() {
         view.backgroundColor = .systemBlue
+    }
+    
+    private func setupCodeTableView() {
+        view.addSubview(codeTableView)
+        
+        codeTableView.backgroundColor = .systemBlue
+        codeTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
+        
+        codeTableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     private func setupRunButton() {
@@ -67,5 +85,5 @@ final class WorkspaceViewController: UIViewController {
             make.bottom.equalToSuperview().inset(Constants.RunButton.insetBotton)
         }
     }
-
+    
 }

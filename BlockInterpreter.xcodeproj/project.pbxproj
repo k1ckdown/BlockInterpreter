@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		492E820C29FEFA2F000C909A /* UIColor+AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E820B29FEFA2F000C909A /* UIColor+AppColors.swift */; };
+		495147812A08CF8B00FD13AB /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495147802A08CF8B00FD13AB /* BlockCell.swift */; };
+		495147832A09386000FD13AB /* BlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495147822A09386000FD13AB /* BlockCellViewModel.swift */; };
 		495B416C29FCEFD300DEF375 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B416B29FCEFD300DEF375 /* AppDelegate.swift */; };
 		495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B416D29FCEFD300DEF375 /* SceneDelegate.swift */; };
 		495B417529FCEFD400DEF375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495B417429FCEFD400DEF375 /* Assets.xcassets */; };
@@ -55,6 +57,8 @@
 /* Begin PBXFileReference section */
 		012C3B7FBBA79B11BFD1040A /* Pods-BlockInterpreter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlockInterpreter.debug.xcconfig"; path = "Target Support Files/Pods-BlockInterpreter/Pods-BlockInterpreter.debug.xcconfig"; sourceTree = "<group>"; };
 		492E820B29FEFA2F000C909A /* UIColor+AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AppColors.swift"; sourceTree = "<group>"; };
+		495147802A08CF8B00FD13AB /* BlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCell.swift; sourceTree = "<group>"; };
+		495147822A09386000FD13AB /* BlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCellViewModel.swift; sourceTree = "<group>"; };
 		495B416829FCEFD300DEF375 /* BlockInterpreter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlockInterpreter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		495B416B29FCEFD300DEF375 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		495B416D29FCEFD300DEF375 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +124,17 @@
 				D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4951477F2A08CF4800FD13AB /* Blocks */ = {
+			isa = PBXGroup;
+			children = (
+				49C661BD2A02D9AC00439E2A /* VariableBlock */,
+				49A346592A058F69003BC2B9 /* ConditionBlock */,
+				495147802A08CF8B00FD13AB /* BlockCell.swift */,
+				495147822A09386000FD13AB /* BlockCellViewModel.swift */,
+			);
+			path = Blocks;
 			sourceTree = "<group>";
 		};
 		495B415F29FCEFD300DEF375 = {
@@ -218,8 +233,7 @@
 		49C661BC2A02D9A600439E2A /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				49A346592A058F69003BC2B9 /* ConditionBlock */,
-				49C661BD2A02D9AC00439E2A /* VariableBlock */,
+				4951477F2A08CF4800FD13AB /* Blocks */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -574,6 +588,7 @@
 				49D8A2D929FEC6E000DF5B8E /* WorkspaceViewModelType.swift in Sources */,
 				495B9EB82A06A92100A825E5 /* UIFont+AppFonts.swift in Sources */,
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
+				495147812A08CF8B00FD13AB /* BlockCell.swift in Sources */,
 				49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */,
 				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
 				49A175F32A042A4F003CEBB3 /* ConditionBlockType.swift in Sources */,
@@ -594,6 +609,7 @@
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
 				496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */,
 				49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */,
+				495147832A09386000FD13AB /* BlockCellViewModel.swift in Sources */,
 				49A946592A038C7C00BBE172 /* VariableType.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */,

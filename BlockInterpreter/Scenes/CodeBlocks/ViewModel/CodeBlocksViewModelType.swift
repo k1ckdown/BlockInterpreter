@@ -6,10 +6,13 @@
 import Foundation
 
 protocol CodeBlocksViewModelType {
-    var variableBlockCellViewModels: [VariableBlockCellViewModel] { get }
-    var conditionBlockCellViewModels: [ConditionBlockCellViewModel] { get }
+    var cellViewModels: [[BlockCellViewModel]] { get }
+    
+    var showOptionsMenu: (() -> Void)? { get set }
+    var hideOptionsMenu: (() -> Void)? { get set }
     
     func viewDidLoad()
+    func toggleSelectedIndexPath(_ indexPath: IndexPath)
     func getNumberOfSections() -> Int
     func getHeightForRowAt(_ indexPath: IndexPath) -> CGFloat
     func getSection(at indexPath: IndexPath) -> BlocksSection

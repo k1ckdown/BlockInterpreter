@@ -5,7 +5,7 @@
 
 import Foundation
 
-final class ConditionBlockCellViewModel {
+final class ConditionBlockCellViewModel: BlockCellViewModel {
     
     private(set) var conditionStatement: String
     private(set) var conditionTextPlaceholder: String

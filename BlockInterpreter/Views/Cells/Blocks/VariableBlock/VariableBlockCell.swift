@@ -6,15 +6,11 @@
 import UIKit
 import SnapKit
 
-final class VariableBlockCell: UITableViewCell {
+final class VariableBlockCell: BlockCell {
     
     static let identifier = "VariableBlockCell"
     
     private enum Constants {
-            enum ContainerView {
-                static let cornerRadius: CGFloat = 15
-                static let multiplierHeight: CGFloat = 0.7
-            }
             
             enum VariableTypeLabel {
                 static let insetLeading: CGFloat = 15
@@ -41,9 +37,8 @@ final class VariableBlockCell: UITableViewCell {
                 static let multiplierWidth: CGFloat = 0.4
                 static let multiplierHeight: CGFloat = 0.7
             }
+        
     }
-    
-    private let containerView = UIView()
     
     private let variableTypeLabel = UILabel()
     private let equalSignImageView = UIImageView()
@@ -63,7 +58,16 @@ final class VariableBlockCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        variableTypeLabel.isHidden = false
+        assignmentSVCenterXConstraint?.update(priority: .low)
+    }
+    
     func configure(with viewModel: VariableBlockCellViewModel) {
+        super.configure(with: viewModel)
+        
         variableTypeLabel.text = viewModel.variableType
         variableNameTextField.placeholder = viewModel.variableNamePlaceHolder
         variableValueTextField.placeholder = viewModel.variableValuePlaceholder
@@ -73,15 +77,7 @@ final class VariableBlockCell: UITableViewCell {
         assignmentSVCenterXConstraint?.update(priority: .high)
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        variableTypeLabel.isHidden = false
-        assignmentSVCenterXConstraint?.update(priority: .low)
-    }
-    
     private func setup() {
-        setupSuperView()
         setupContainerView()
         setupVariableTypeLabel()
         setupAssignmentStackView()
@@ -90,21 +86,8 @@ final class VariableBlockCell: UITableViewCell {
         setupVariableValueTextField()
     }
     
-    private func setupSuperView() {
-        backgroundColor = .clear
-    }
-    
     private func setupContainerView() {
-        contentView.addSubview(containerView)
-        
         containerView.backgroundColor = .appBlack
-        containerView.layer.cornerRadius = Constants.ContainerView.cornerRadius
-        
-        containerView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(Constants.ContainerView.multiplierHeight)
-            make.leading.trailing.equalToSuperview()
-        }
     }
     
     private func setupVariableTypeLabel() {

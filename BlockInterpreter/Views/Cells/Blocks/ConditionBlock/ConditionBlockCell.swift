@@ -5,16 +5,12 @@
 
 import UIKit
 
-final class ConditionBlockCell: UITableViewCell {
+final class ConditionBlockCell: BlockCell {
     
     static let identifier = "ConditionBlockCell"
     
     private enum Constants {
-            enum ContainerView {
-                static let cornerRadius: CGFloat = 15
-                static let multiplierWidth: CGFloat = 0.7
-            }
-            
+        
             enum ConditionTextField {
                 static let multiplierWidth: CGFloat = 0.7
                 static let multiplierHeight: CGFloat = 0.6
@@ -31,9 +27,9 @@ final class ConditionBlockCell: UITableViewCell {
             enum ThenLabel {
                 static let insetLeading: CGFloat = 20
             }
+        
     }
     
-    private let containerView = UIView()
     private let conditionStatementLabel = UILabel()
     
     private let conditionFieldView = UIView()
@@ -50,13 +46,14 @@ final class ConditionBlockCell: UITableViewCell {
     }
     
     func configure(with viewModel: ConditionBlockCellViewModel) {
+        super.configure(with: viewModel)
+        
         conditionStatementLabel.text = viewModel.conditionStatement
         conditionTextField.placeholder = viewModel.conditionTextPlaceholder
         conditionFieldView.isHidden = !viewModel.shouldShowConditionField
     }
     
     private func setup() {
-        setupSuperView()
         setupContainerView()
         setupConditionStatementLabel()
         setupConditionFieldView()
@@ -64,21 +61,8 @@ final class ConditionBlockCell: UITableViewCell {
         setupThenLabel()
     }
     
-    private func setupSuperView() {
-        backgroundColor = .clear
-    }
-    
     private func setupContainerView() {
-        contentView.addSubview(containerView)
-        
         containerView.backgroundColor = #colorLiteral(red: 0.6888309717, green: 0.7562592626, blue: 0.7880410552, alpha: 1)
-        containerView.layer.cornerRadius = Constants.ContainerView.cornerRadius
-        
-        containerView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(Constants.ContainerView.multiplierWidth)
-            make.centerY.equalToSuperview()
-        }
     }
     
     private func setupConditionStatementLabel() {

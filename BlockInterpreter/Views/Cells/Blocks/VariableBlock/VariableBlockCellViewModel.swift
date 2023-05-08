@@ -5,7 +5,7 @@
 
 import Foundation
 
-final class VariableBlockCellViewModel {
+final class VariableBlockCellViewModel: BlockCellViewModel {
     
     private(set) var variableType: String
     private(set) var shouldShowVariableType: Bool
