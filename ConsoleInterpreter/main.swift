@@ -27,4 +27,4 @@ array.append(Printing(value: "b"))
 
 
 tree.buildTree(blocks: array)
-print("Hi")
+
