@@ -25,8 +25,8 @@ class Node {
     init(value: String, type: AllTypes) {
         self.value = value
         self.type = type
-        self.countWasHere = 0
-        self.children = []
+        countWasHere = 0
+        children = []
     }
     
     func addChild(_ child: Node) {

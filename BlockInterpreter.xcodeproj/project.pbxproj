@@ -47,6 +47,8 @@
 		49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */; };
 		49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2A2A03A78700BB869A /* BlocksSection.swift */; };
 		49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */; };
+		5860313221A5CDD0534CFC0E /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
+		586036856102E48994B6B885 /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
 		84751A5F2A061A62003096DA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A5E2A061A62003096DA /* main.swift */; };
 		84751A672A0639C6003096DA /* TokenAST.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A662A0639C6003096DA /* TokenAST.swift */; };
 		84751A692A063A02003096DA /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A682A063A02003096DA /* Variable.swift */; };
@@ -116,6 +118,7 @@
 		49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModelType.swift; sourceTree = "<group>"; };
 		49E30E2A2A03A78700BB869A /* BlocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksSection.swift; sourceTree = "<group>"; };
 		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
+		5860385DC8E3125440F9BC09 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
 		84751A5C2A061A62003096DA /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		84751A5E2A061A62003096DA /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		84751A662A0639C6003096DA /* TokenAST.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAST.swift; sourceTree = "<group>"; };
@@ -501,6 +504,7 @@
 				84751A782A08EAC4003096DA /* Condition.swift */,
 				84751A7D2A090EC0003096DA /* Printing.swift */,
 				84751A7F2A090FB2003096DA /* BlockDelimiter.swift */,
+				5860385DC8E3125440F9BC09 /* Loop.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -689,6 +693,7 @@
 				49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */,
 				49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */,
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
+				5860313221A5CDD0534CFC0E /* Loop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +711,7 @@
 				84751A692A063A02003096DA /* Variable.swift in Sources */,
 				84751A672A0639C6003096DA /* TokenAST.swift in Sources */,
 				84751A802A090FB2003096DA /* BlockDelimiter.swift in Sources */,
+				586036856102E48994B6B885 /* Loop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
