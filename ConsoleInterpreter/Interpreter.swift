@@ -9,10 +9,16 @@ enum TokenType {
     case leftBrace
     case rightBrace
     case modulo
+    case equal
+    case notEqual
+    case greaterThan
+    case lessThan
+    case greaterEqual
+    case lessEqual 
 }
 
 
-enum TypeVariable {
+enum VariableType {
     case int
     case double
     case String
@@ -30,7 +36,10 @@ enum AllTypes {
     case function
     case variable
     case arithmetic
+    case print
+    case root
 }
+
 
 
 
@@ -64,10 +73,10 @@ class Token {
 
 class Variable {
     private let id: Int
-    private let type: TypeVariable
+    private let type: VariableType
     private var value: String
  
-    init(id: Int, type: TypeVariable, value: String) {
+    init(id: Int, type: VariableType, value: String) {
         self.id = id
         self.type = type
         self.value = value
@@ -77,7 +86,7 @@ class Variable {
         return self.id
     }
 
-    func getType() -> TypeVariable {
+    func getType() -> VariableType {
         return self.type
     }
 
@@ -90,6 +99,162 @@ class Variable {
     }
 }
 
+
+// class ConditionParser{
+//     private var text: String
+//     private var position: Int
+//     private var currentToken: Token?
+ 
+//     init(_ text: String) {
+//         self.text = text
+//         self.position = 0
+//         self.currentToken = nil
+//     }
+
+//     public func getText() -> String {
+//         return self.text
+//     }
+
+//     public func parse() -> Bool {
+//         self.currentToken = self.getNextToken()
+//         let leftValue = self.term()
+
+//         guard let token = self.currentToken else {
+//             return false
+//         }
+
+//         let tokenType = token.getType()
+//         if [TokenType.equal, TokenType.lessThan, TokenType.lessThanOrEqual, TokenType.greaterThan, TokenType.greaterThanOrEqual].contains(tokenType) {
+//             self.moveToken(tokenType)
+//             let rightValue = self.term()
+
+//             switch tokenType {
+//             case .equal:
+//                 return leftValue == rightValue
+//             case .lessThan:
+//                 return leftValue < rightValue
+//             case .lessThanOrEqual:
+//                 return leftValue <= rightValue
+//             case .greaterThan:
+//                 return leftValue > rightValue
+//             case .greaterThanOrEqual:
+//                 return leftValue >= rightValue
+//             default:
+//                 return false
+//             }
+//         }
+
+//         return false
+//     }
+    
+//     private func getNextToken() -> Token? {
+//         guard self.position < self.text.count else {
+//             return Token(.eof, nil)
+//         }
+ 
+//         let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
+ 
+//         if self.isSpace(currentChar) {
+//             self.position += 1
+//             return self.getNextToken()
+//         }
+ 
+//         if self.isNumber(currentChar) {
+//             var integerString = String(currentChar)
+//             self.position += 1
+ 
+//             while self.position < self.text.count {
+//                 let nextChar =
+//                 self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
+//                 if self.isNumber(nextChar) {
+//                     integerString += String(nextChar)
+//                     self.position += 1
+//                 } else {
+//                     break
+//                 }
+//             }
+
+//             return Token(.integer, integerString)
+//         }
+
+//         self.position += 1
+ 
+//         switch currentChar {
+//             case "+":
+//                 return Token(.plus, "+")
+//             case "-":
+//                 return Token(.minus, "-")
+//             case "*":
+//                 return Token(.multiply, "*")
+//             case "/":
+//                 return Token(.divide, "/")
+//             case "%":
+//                 return Token(.modulo, "%")
+//             case "(":
+//                 return Token(.leftBrace, "(")
+//             case ")":
+//                 return Token(.rightBrace, ")")
+//             default:
+//                 fatalError("Invalid character")
+//         }
+//     }
+
+//     private func term() -> Int {
+//         var result = self.factor()
+ 
+//         while let token = self.currentToken, token.getType() == .modulo || token.getType() == .multiply || token.getType() == .divide {
+//             let tokenType = token.getType()
+//             if  tokenType == .modulo {
+//                 self.moveToken(.modulo)
+//                 result %= self.factor()
+//             }
+//             else if tokenType == .multiply {
+//                 self.moveToken(.multiply)
+//                 result *= self.factor()
+//             } 
+//             else if tokenType == .divide {
+//                 self.moveToken(.divide)
+//                 result /= self.factor()
+//             }
+//         }
+//         return result
+//     }
+
+//     private func factor() -> Bool {
+//         let token = self.currentToken!
+ 
+//         if token.getType() == .integer {
+//             self.moveToken(.integer)
+//             guard let value = token.getValue(), let intValue =
+//                     Int(value) else { fatalError("Error parsing input")
+//             }
+//             return intValue
+//         } else if token.getType() == .leftBrace {
+//             self.moveToken(.leftBrace)
+//             let result = parse()
+//             self.moveToken(.rightBrace)
+//             return result
+//         }
+//         return 0
+//     }
+ 
+//     private func moveToken(_ type: TokenType) {
+//         if let token = self.currentToken, token.getType() == type, !(token.getType() == .leftBrace) {
+//             self.currentToken = getNextToken()
+//         } else {
+//             fatalError("Invalid syntax")
+//         }
+//     }
+
+//     private func isNumber(_ char: Character) -> Bool {
+//         return char >= "0" && char <= "9"
+//     }
+
+//     private func isSpace(_ char: Character) -> Bool {
+//         return char == " "
+//     }
+
+// }
 
 class Calculate {
     private var text: String
@@ -114,7 +279,7 @@ class Calculate {
         self.currentToken = self.getNextToken()
         var result = self.term()
  
-        while let token = self.currentToken, token.getType() == .plus || token.getType() == .minus {
+        while let token = self.currentToken, [TokenType.minus, TokenType.plus].contains(token.getType()) {
             if token.getType() == .plus {
                 self.moveToken(.plus)
                 result += self.term()
@@ -248,7 +413,7 @@ class AssignmentVariable {
     }
  
     public func assign(_ variable: Variable) -> String {
-        if variable.getType() == TypeVariable.int{
+        if variable.getType() == VariableType.int{
 
             return assignInt(variable.getValue())
         }
@@ -328,8 +493,8 @@ class Interpreter{
             return processArithmeticNode(treeAST)
         case .assign:
             processAssignNode(treeAST)
-        case .loop:
-            processLoopNode(treeAST)
+        case .root:
+            processRootNode(treeAST)
         case .ifBlock:
             processIfBlockNode(treeAST)
         default:
@@ -338,15 +503,39 @@ class Interpreter{
         return ""
     }
     private func processIfBlockNode(_ node: TreeNode){
-
+        var tempDictionary: [String: String] = [:]
+        if node.value != "0", node.value != ""{
+            for child in node.children{
+                let _ = traverseTree(child)
+                for (key, value) in child.dictionary{
+                    if node.dictionary[key] != "", node.dictionary[key] != Optional("")  {
+                        node.dictionary[key] = value
+                    } else{
+                        tempDictionary.merge([key: value]){(_, new) in new}
+                    }
+                } 
+                
+            }
+        }
+        
+        // print(String(describing: tempDictionary))
     }
 
 
 
-    private func processLoopNode(_ node: TreeNode){
+    private func processRootNode(_ node: TreeNode){
         for child in node.children{
+            
             let _ = traverseTree(child)
-            node.dictionary.merge(child.dictionary){(_, new) in new}
+            for (key, value) in child.dictionary{
+                    if value != "" && value != Optional("")  {
+                        node.dictionary[key] = value
+                    } else{
+                        node.dictionary[key] = nil
+                    }
+                } 
+            // node.dictionary.merge(child.dictionary){(_, new) in new}
+            
         }
         print(node.dictionary)
     }
@@ -356,6 +545,7 @@ class Interpreter{
     }
 
     private func processAssignNode(_ node: TreeNode){ 
+    
         let varName = traverseTree(node.children[0])
         let assignValue = traverseTree(node.children[1])
         node.dictionary[varName] = assignValue
@@ -368,7 +558,7 @@ class Interpreter{
     private func calculateArithmetic(_ expression: String) -> String {
         let variableForInt = Variable(
             id: 1,
-            type: TypeVariable.int,
+            type: VariableType.int,
             value: expression
         )
 
@@ -379,30 +569,41 @@ class Interpreter{
 }
 
 
-let treeMain = TreeNode("", AllTypes.loop)
+let treeMain = TreeNode("", AllTypes.root)
 let firstAssignSubtree = TreeNode("", AllTypes.assign)
 let firstVarLeft = TreeNode("b", AllTypes.variable)
 let firstVarRight = TreeNode("10", AllTypes.arithmetic)
 
 let secondAssignSubtree = TreeNode("", AllTypes.assign)
-let secondVarLeft = TreeNode("b", AllTypes.variable)
-let secondVarLeft = TreeNode("7 + b + 2", AllTypes.arithmetic)
+let secondVarLeft = TreeNode("a", AllTypes.variable)
+let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic)
 
-let firstIfBlockSubtree = 
+let firstIfBlockSubtree = TreeNode("6 + 7", AllTypes.ifBlock)
+let firstIfAssignSubtree = TreeNode("", AllTypes.assign)
+let firstIfBlockVarLeft = TreeNode("c", AllTypes.variable)
+let firstIfBlockVarRight = TreeNode("b", AllTypes.arithmetic)
 // MAIN LOOP
 
 firstAssignSubtree.addChild(firstVarLeft)
 firstAssignSubtree.addChild(firstVarRight)
 
 secondAssignSubtree.addChild(secondVarLeft)
-secondAssignSubtree.addChild(secondVarLeft)
+secondAssignSubtree.addChild(secondVarRight)
+
+firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
+firstIfAssignSubtree.addChild(firstIfBlockVarRight)
+firstIfBlockSubtree.addChild(firstIfAssignSubtree)
 
 treeMain.addChild(firstAssignSubtree)
 treeMain.addChild(secondAssignSubtree)
+treeMain.addChild(firstIfBlockSubtree)
 
-let interpreter = Interpreter(treeMain)
-let _ = interpreter.traverseTree(treeMain)
+// let interpreter = Interpreter(treeMain)
+// let _ = interpreter.traverseTree(treeMain)
 
 
 
-
+let condition1 = "a == 5"
+let parser1 = ConditionParser(condition1)
+let result1 = parser1.parse()
+print(result1)

@@ -11,8 +11,13 @@ enum TokenType {
     case leftBrace
     case rightBrace
     case modulo
+    case equal
+    case notEqual
+    case greaterThan
+    case lessThan
+    case greaterEqual
+    case lessEqual 
 }
-
 
 class Token {
     private(set) var type: TokenType

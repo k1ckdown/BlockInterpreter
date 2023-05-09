@@ -1,87 +1,115 @@
 import Foundation
  
+enum TokenType {
+    case integer
+    case plus
+    case minus
+    case multiply
+    case divide
+    case eof
+    case leftBrace
+    case rightBrace
+    case modulo
+    case equal
+    case notEqual
+    case greater
+    case less
+    case greaterEqual
+    case lessEqual 
+}
 
-class CalculateAST {
-    private(set) var text: String
-    private(set) var position: Int
-    private(set) var currentToken: Token?
+class Token {
+    private(set) var type: TokenType
+    private(set) var value: String?
+ 
+    init(_ type: TokenType, _ value: String?) {
+        self.type = type
+        self.value = value
+    }
+ 
+    func setType(type: TokenType) {
+        self.type = type
+    }
+ 
+    func setValue(value: String?) {
+        self.value = value
+    }
+}
+
+
+class Calculate {
+    private var text: String
+    private var position: Int
+    private var currentToken: Token?
  
     init(_ text: String) {
         self.text = text
         self.position = 0
+        self.currentToken = nil
     }
  
-    func setText(text: String) {
+    public func getText() -> String {
+        return self.text
+    }
+ 
+    public func setText(text: String) {
         self.text = text
     }
+    // public func compare() -> Bool{
+
+    // }
+    public func compute() -> Int {
+        self.currentToken = self.getNextToken() 
+        var result = self.term()
  
-    func setPosition(position: Int) {
-        self.position = position
-    }
- 
-    func setCurrentToken(currentToken: Token?) {
-        self.currentToken = currentToken
-    }
- 
-    func compute() -> Int {
-        currentToken = getNextToken()
-        var result = term()
- 
-        while let token = currentToken, token.type == .plus || token.type == .minus {
+        while let token = self.currentToken, [TokenType.minus, TokenType.plus].contains(token.type) {
             if token.type == .plus {
-                moveToken(.plus)
-                result += term()
+                self.moveToken(.plus)
+                result += self.term()
             } else if token.type == .minus {
-                moveToken(.minus)
-                result -= term()
+                self.moveToken(.minus)
+                result -= self.term()
             }
         }
         return result
     }
- 
-    private func isNumber(_ char: Character) -> Bool {
-        return char >= "0" && char <= "9"
-    }
- 
-    private func isSpace(_ char: Character) -> Bool {
-        return char == " "
-    }
- 
-    private func getNextToken() -> Token? {
-        guard position < text.count else {
+
+
+    private func getNextToken() -> Token? { // возвращает следующую подстроку, которая не является пробелом
+        guard self.position < self.text.count else {
             return Token(.eof, nil)
         }
  
-        let currentChar = text[text.index(text.startIndex, offsetBy: position)]
+        let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
  
-        if isSpace(currentChar) {
-            position += 1
-            return getNextToken()
+        if self.isSpace(currentChar) {
+            self.position += 1
+            return self.getNextToken()
         }
  
-        if isNumber(currentChar) {
+        if self.isNumber(currentChar) {
             var integerString = String(currentChar)
-            position += 1
+            self.position += 1
  
-            while position < text.count {
+            while self.position < self.text.count {
                 let nextChar =
-                text[text.index(text.startIndex, offsetBy: position)]
-                if isNumber(nextChar) {
+                self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
+                if self.isNumber(nextChar) {
                     integerString += String(nextChar)
-                    position += 1
+                    self.position += 1
                 } else {
                     break
                 }
             }
- 
+
             return Token(.integer, integerString)
         }
- 
-        position += 1
+
+        self.position += 1
  
         switch currentChar {
             case "+":
-                return Token(.plus, "+")
+                return Token(.plus, "+")            
             case "-":
                 return Token(.minus, "-")
             case "*":
@@ -94,63 +122,87 @@ class CalculateAST {
                 return Token(.leftBrace, "(")
             case ")":
                 return Token(.rightBrace, ")")
+            case "<":
+                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
+                    self.position += 1
+                    return Token(.lessEqual, "<=")
+                } else {
+                    return Token(.less, "<")
+                }
+            case ">":
+                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
+                    self.position += 1
+                    return Token(.greaterEqual, ">=")
+                } else {
+                    return Token(.greater, ">")
+                }
             default:
                 fatalError("Invalid character")
         }
     }
- 
 
- 
-    private func moveToken(_ type: TokenType) {
-        if let token = currentToken, token.type == type {
-            if !(token.type == .leftBrace) {
-                currentToken = getNextToken()
+    private func term() -> Int {
+        var result = self.factor()
+        let possibleTokens = [
+            TokenType.modulo,
+            TokenType.multiply,
+            TokenType.divide,
+            TokenType.equal,
+            TokenType.less, 
+            TokenType.greater,
+            TokenType.notEqual,
+            TokenType.lessEqual,
+            TokenType.greaterEqual
+            ]
+        
+        while let token = self.currentToken, token.type == .modulo || token.type == .multiply || token.type == .divide {
+            if  token.type == .modulo {
+                self.moveToken(.modulo)
+                result %= self.factor()
             }
-        } else {
-            fatalError("Invalid syntax")
+            else if token.type == .multiply {
+                self.moveToken(.multiply)
+                result *= self.factor()
+            } 
+            else if token.type == .divide {
+                self.moveToken(.divide)
+                result /= self.factor()
+            }
         }
+        return result
     }
- 
-
 
     private func factor() -> Int {
-        let token = currentToken!
+        let token = self.currentToken!
  
         if token.type == .integer {
-            moveToken(.integer)
-            guard let value = token.value, let intValue = Int(value)
-            else {
-                fatalError("Error parsing input")
+            self.moveToken(.integer)
+            guard let value = token.value, let intValue =
+                    Int(value) else { fatalError("Error parsing input")
             }
             return intValue
         } else if token.type == .leftBrace {
-            moveToken(.leftBrace)
+            self.moveToken(.leftBrace)
             let result = compute()
-            moveToken(.rightBrace)
+            self.moveToken(.rightBrace)
             return result
         }
         return 0
     }
  
-
-
-    private func term() -> Int {
-        var result = factor()
- 
-        while let token = currentToken, token.type == .modulo || token.type == .multiply
-                || token.type == .divide {
-            if token.type == .modulo {
-                moveToken(.modulo)
-                result %= factor()
-            }
-            else if token.type == .multiply {
-                moveToken(.multiply)
-                result *= factor()
-            } else if token.type == .divide {
-                moveToken(.divide)
-                result /= factor()
-            }
+    private func moveToken(_ type: TokenType) {
+        if let token = self.currentToken, token.type == type, !(token.type == .leftBrace) {
+            self.currentToken = getNextToken()
+        } else {
+            fatalError("Invalid syntax")
         }
-        return result
+    }
+
+    private func isNumber(_ char: Character) -> Bool {
+        return char >= "0" && char <= "9"
+    }
+
+    private func isSpace(_ char: Character) -> Bool {
+        return char == " "
     }
 }
