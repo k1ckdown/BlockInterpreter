@@ -8,7 +8,7 @@ class CalculateAST {
  
     init(_ text: String) {
         self.text = text
-        self.position = 0
+        position = 0
     }
  
     func setText(text: String) {

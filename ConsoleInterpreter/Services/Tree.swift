@@ -23,13 +23,23 @@ class Tree {
                 var array: [Any] = []
                 var additionIndex: Int = index + 1
                 array.append(blocks[index])
+                var countBegin: Int = 0
                 while (additionIndex < blocks.count) {
                     if let blockEnd = blocks[additionIndex] as? BlockDelimiter {
                         if (blockEnd.type == DelimiterType.end) {
-                            break
+                            countBegin -= 1
+                        }
+                        else if (blockEnd.type == DelimiterType.begin) {
+                            countBegin += 1
                         }
                     }
+
                     array.append(blocks[additionIndex])
+
+                    if (countBegin == 0) {
+                        break
+                    }
+
                     additionIndex += 1
                 }
                 
@@ -41,12 +51,15 @@ class Tree {
                     }
                     indAdd += 1
                 }
-                index = additionIndex
-                index += (countIf - 1)
+                // index = additionIndex
+                index += (additionIndex - 1)
                 let conditionNode = buildConditionNode(array)
                 if let conditionNode = conditionNode {
                     rootNode.addChild(conditionNode)
                 }
+                index += 1
+            }
+            else if ((blocks[index] as? BlockDelimiter) != nil) {
                 index += 1
             }
         }
@@ -66,23 +79,18 @@ class Tree {
         let node = Node(value: printing.value, type: AllTypes.print)
         return node
     }
-    
+
     private func buildConditionNode<T>(_ conditionBlock: [T]) -> Node? {
         guard let condition = conditionBlock.first as? Condition else {
             return nil
         }
         let node = Node(value: condition.value, type: AllTypes.ifBlock)
         var index = 1
-        
+
         while index < conditionBlock.count {
             if let block = conditionBlock[index] as? BlockDelimiter {
-                if block.type == DelimiterType.end {
-                    break
-                }
-            } else if let nestedConditionBlock = conditionBlock[index] as? [T] {
-                if let nestedNode = buildConditionNode(nestedConditionBlock) {
-                    node.addChild(nestedNode)
-                }
+                index += 1
+                continue
             } else if let variableBlock = conditionBlock[index] as? Variable {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 node.addChild(variableNode)
@@ -93,10 +101,17 @@ class Tree {
                 var nestedBlocks: [Any] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedConditionBlock)
+                var countBegin: Int = 0
                 while additionIndex < conditionBlock.count {
                     if let blockEnd = conditionBlock[additionIndex] as? BlockDelimiter {
                         if blockEnd.type == DelimiterType.end {
-                            break
+                            countBegin -= 1
+                            if countBegin == 0 {
+                                break
+                            }
+                        }
+                        else if blockEnd.type == DelimiterType.begin {
+                            countBegin += 1
                         }
                     }
                     nestedBlocks.append(conditionBlock[additionIndex])
@@ -106,11 +121,10 @@ class Tree {
                     node.addChild(nestedNode)
                 }
                 index = additionIndex
-                continue
             }
             index += 1
         }
+
         return node
     }
-    
 }
