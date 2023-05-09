@@ -1,9 +1,33 @@
 import Foundation
- 
 
-let root = TreeNode(value: "", type: AllTypes.assign)
-let node1 = TreeNode(value: "a", type: AllTypes.variable)
-let node2 = TreeNode(value: "12 + 15 - 2", type: AllTypes.arithmetic)
 
-root.addChild(node1)
-root.addChild(node2)
+let tree = Tree()
+
+var array: [Any] = []
+
+array.append(Variable(id: 1, type: VariableType.int, name: "a", value: "1"))
+array.append(Variable(id: 2, type: VariableType.int, name: "b", value: "222"))
+array.append(Printing(value: "a"))
+
+array.append(Condition(type: ConditionType.ifBlock, value: "a > b"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Printing(value: "b"))
+
+array.append(BlockDelimiter(type: DelimiterType.end))
+
+array.append(Printing(value: "I'm OK!"))
+
+tree.buildTree(blocks: array)
+
+for i in tree.rootNode.children {
+    print(i)
+    if (i.type == AllTypes.ifBlock) {
+        print("hello")
+        print(i.children[0].type)
+        print("hello")
+    }
+}
+
+print("finish")
+
+
