@@ -44,8 +44,7 @@ class Calculate {
  
     init(_ text: String) {
         self.text = text
-        self.position = 0
-        self.currentToken = nil
+        position = 0
     }
  
     public func getText() -> String {
