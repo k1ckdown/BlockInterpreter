@@ -4,6 +4,8 @@
 //
 
 import UIKit
+import Combine
+import CombineCocoa
 
 final class CodeBlocksViewController: UIViewController {
     
@@ -15,11 +17,13 @@ final class CodeBlocksViewController: UIViewController {
     
     private let blocksTableView = UITableView()
     private let optionsMenuToolbar = UIToolbar()
+    private let addBlocksTapGesture = UITapGestureRecognizer()
     
     private lazy var plusImageView: UIImageView = {
-        let image = UIImage(systemName: "plus.circle.fill")
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView()
+        
         imageView.tintColor = .orange
+        imageView.image = UIImage(systemName: "plus.circle.fill")
         
         return imageView
     }()
@@ -41,11 +45,13 @@ final class CodeBlocksViewController: UIViewController {
 
         stackView.spacing = 10
         stackView.axis = .horizontal
+        stackView.addGestureRecognizer(addBlocksTapGesture)
         
         return stackView
     }()
     
-    private var viewModel: CodeBlocksViewModelType
+    private let viewModel: CodeBlocksViewModelType
+    private var subscriptions = Set<AnyCancellable>()
     
     init(with viewModel: CodeBlocksViewModelType) {
         self.viewModel = viewModel
@@ -59,16 +65,16 @@ final class CodeBlocksViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setup()
-        bindViewModel()
-        viewModel.viewDidLoad()
+        setupUI()
+        setupBindings()
+        viewModel.viewDidLoad.send()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
-    private func setup() {
+    private func setupUI() {
         setupSuperView()
         setupBlocksTableView()
         setupOptionsMenuToolbar()
@@ -95,7 +101,6 @@ final class CodeBlocksViewController: UIViewController {
             make.bottom.equalToSuperview()
         }
     }
-    
     
     private func setupOptionsMenuToolbar() {
         view.addSubview(optionsMenuToolbar)
@@ -190,7 +195,7 @@ extension CodeBlocksViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? BlockCell else { return }
-        viewModel.toggleSelectedIndexPath(indexPath)
+        viewModel.toggleSelectedIndexPath.send(indexPath)
         cell.select()
     }
 }
@@ -201,7 +206,6 @@ extension CodeBlocksViewController: UITableViewDelegate {
 extension CodeBlocksViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -211,18 +215,20 @@ extension CodeBlocksViewController: UITextFieldDelegate {
     
 }
 
-// MARK: - Building ViewModel
+// MARK: - Reactive Behavior
 
 private extension CodeBlocksViewController {
-    func bindViewModel() {
-        viewModel.showOptionsMenu = { [weak self] in
-            self?.optionsMenuToolbar.isHidden = false
-            self?.tabBarController?.tabBar.isHidden = true
-        }
+    func setupBindings() {
+        addBlocksTapGesture.tapPublisher
+            .sink(receiveValue: { [weak self] _ in self?.viewModel.moveToWorkspace.send() })
+            .store(in: &subscriptions)
         
-        viewModel.hideOptionsMenu = { [weak self] in
-            self?.optionsMenuToolbar.isHidden = true
-            self?.tabBarController?.tabBar.isHidden = false
-        }
+        viewModel.isOptionsMenuVisible
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isVisible in
+                self?.optionsMenuToolbar.isHidden = !isVisible
+                self?.tabBarController?.tabBar.isHidden = isVisible
+            }
+            .store(in: &subscriptions)
     }
 }

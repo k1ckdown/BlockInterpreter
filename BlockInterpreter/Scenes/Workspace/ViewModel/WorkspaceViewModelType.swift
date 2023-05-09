@@ -4,7 +4,8 @@
 //
 
 import Foundation
+import Combine
 
 protocol WorkspaceViewModelType {
-    func showConsole()
+    var showConsole: PassthroughSubject<Void, Never> { get }
 }

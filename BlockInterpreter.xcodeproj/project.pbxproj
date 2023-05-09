@@ -47,8 +47,6 @@
 		49D8A2E529FED87C00DF5B8E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2E429FED87C00DF5B8E /* SettingsViewController.swift */; };
 		49D8A2E729FED8CB00DF5B8E /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2E629FED8CB00DF5B8E /* SettingsViewModel.swift */; };
 		49D8A2EA29FED8DB00DF5B8E /* SettingsViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2E929FED8DB00DF5B8E /* SettingsViewModelType.swift */; };
-		49D8A2EC29FED9F600DF5B8E /* MainTabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EB29FED9F600DF5B8E /* MainTabBarViewModel.swift */; };
-		49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */; };
 		49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2A2A03A78700BB869A /* BlocksSection.swift */; };
 		49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */; };
 		EBBC16255CF6FADB6C3D678F /* Pods_BlockInterpreter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */; };
@@ -98,8 +96,6 @@
 		49D8A2E429FED87C00DF5B8E /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		49D8A2E629FED8CB00DF5B8E /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		49D8A2E929FED8DB00DF5B8E /* SettingsViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelType.swift; sourceTree = "<group>"; };
-		49D8A2EB29FED9F600DF5B8E /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
-		49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModelType.swift; sourceTree = "<group>"; };
 		49E30E2A2A03A78700BB869A /* BlocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksSection.swift; sourceTree = "<group>"; };
 		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
 		C7DE8AEE618197EB591F20EE /* Pods-BlockInterpreter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlockInterpreter.release.xcconfig"; path = "Target Support Files/Pods-BlockInterpreter/Pods-BlockInterpreter.release.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +120,13 @@
 				D5F39A6199C26D1859ABE8CE /* Pods_BlockInterpreter.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		493C8D482A0A9AA100753F20 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		4951477F2A08CF4800FD13AB /* Blocks */ = {
@@ -299,7 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				49D8A2ED29FED9FA00DF5B8E /* View */,
-				49D8A2EE29FED9FF00DF5B8E /* ViewModel */,
+				493C8D482A0A9AA100753F20 /* ViewModel */,
 				49D8A2BE29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift */,
 			);
 			path = TabBar;
@@ -421,15 +424,6 @@
 				49D8A2BC29FEBD1000DF5B8E /* MainTabBarViewController.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		49D8A2EE29FED9FF00DF5B8E /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				49D8A2EB29FED9F600DF5B8E /* MainTabBarViewModel.swift */,
-				49D8A2EF29FEDA4E00DF5B8E /* MainTabBarViewModelType.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		49D8A2F129FEDD3400DF5B8E /* Models */ = {
@@ -603,7 +597,6 @@
 				49D8A2CA29FEC09100DF5B8E /* ConsoleViewController.swift in Sources */,
 				49D8A2EA29FED8DB00DF5B8E /* SettingsViewModelType.swift in Sources */,
 				495B416C29FCEFD300DEF375 /* AppDelegate.swift in Sources */,
-				49D8A2EC29FED9F600DF5B8E /* MainTabBarViewModel.swift in Sources */,
 				49D8A2D029FEC5D100DF5B8E /* CodeBlocksViewModelType.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
@@ -614,7 +607,6 @@
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */,
 				49D8A2BD29FEBD1000DF5B8E /* MainTabBarViewController.swift in Sources */,
-				49D8A2F029FEDA4E00DF5B8E /* MainTabBarViewModelType.swift in Sources */,
 				49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */,
 				49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */,
 				49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */,

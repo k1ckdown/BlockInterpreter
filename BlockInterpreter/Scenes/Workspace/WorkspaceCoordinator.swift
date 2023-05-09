@@ -4,8 +4,11 @@
 //
 
 import UIKit
+import Combine
 
 final class WorkspaceCoordinator: BaseCoordinator {
+    
+    private var subscriptions = Set<AnyCancellable>()
     
     override init(navigationController: UINavigationController) {
         super.init(navigationController: navigationController)
@@ -15,14 +18,16 @@ final class WorkspaceCoordinator: BaseCoordinator {
         let workspaceViewModel = WorkspaceViewModel()
         let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
         
-        workspaceViewModel.didGoToConsole = { [weak self] in
-            self?.showConsoleScene()
-        }
+        workspaceViewModel.didGoToConsole
+            .sink { [weak self] in self?.showConsoleScene() }
+            .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(workspaceViewController, animated: true)
     }
 }
+
+// MARK: - Navigation
 
 private extension WorkspaceCoordinator {
     func showConsoleScene() {

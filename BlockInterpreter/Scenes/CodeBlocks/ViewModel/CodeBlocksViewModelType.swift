@@ -4,18 +4,20 @@
 //
 
 import Foundation
+import Combine
 
 protocol CodeBlocksViewModelType {
+    
+    var isOptionsMenuVisible: CurrentValueSubject<Bool, Never> { get }
+    
     var cellViewModels: [[BlockCellViewModel]] { get }
-    
-    var showOptionsMenu: (() -> Void)? { get set }
-    var hideOptionsMenu: (() -> Void)? { get set }
-    
-    func viewDidLoad()
-    func toggleSelectedIndexPath(_ indexPath: IndexPath)
+    var viewDidLoad: PassthroughSubject<Void, Never> { get }
+    var moveToWorkspace: PassthroughSubject<Void, Never> { get }
+    var toggleSelectedIndexPath: PassthroughSubject<IndexPath, Never> { get }
+
     func getNumberOfSections() -> Int
-    func getHeightForRowAt(_ indexPath: IndexPath) -> CGFloat
-    func getSection(at indexPath: IndexPath) -> BlocksSection
     func getNumberOfItemsInSection(_ section: Int) -> Int
+    func getSection(at indexPath: IndexPath) -> BlocksSection
+    func getHeightForRowAt(_ indexPath: IndexPath) -> CGFloat
     func getTitleForHeaderInSection(_ section: Int) -> String
 }
