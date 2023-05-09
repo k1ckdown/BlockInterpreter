@@ -9,6 +9,7 @@ import Combine
 protocol CodeBlocksViewModelType {
     
     var isOptionsMenuVisible: CurrentValueSubject<Bool, Never> { get }
+    var didUpdateTable: PassthroughSubject<Void, Never> { get }
     
     var cellViewModels: [[BlockCellViewModel]] { get }
     var viewDidLoad: PassthroughSubject<Void, Never> { get }

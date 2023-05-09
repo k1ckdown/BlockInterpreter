@@ -220,7 +220,15 @@ extension CodeBlocksViewController: UITextFieldDelegate {
 private extension CodeBlocksViewController {
     func setupBindings() {
         addBlocksTapGesture.tapPublisher
-            .sink(receiveValue: { [weak self] _ in self?.viewModel.moveToWorkspace.send() })
+            .sink(receiveValue: { [weak self] _ in
+                self?.viewModel.moveToWorkspace.send()
+            })
+            .store(in: &subscriptions)
+        
+        viewModel.didUpdateTable
+            .sink(receiveValue: { [weak self] in
+                self?.blocksTableView.reloadData()
+            })
             .store(in: &subscriptions)
         
         viewModel.isOptionsMenuVisible

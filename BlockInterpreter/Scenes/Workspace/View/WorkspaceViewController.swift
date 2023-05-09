@@ -18,8 +18,17 @@ final class WorkspaceViewController: UIViewController {
             }
     }
     
-    private let codeTableView = UITableView()
+    private let codeTableView = DraggableTableView()
     private let runButton = UIButton(type: .system)
+    
+    private lazy var backdrop: UIView = {
+      let backdrop = UIView()
+        
+      backdrop.backgroundColor = .gray.withAlphaComponent(0.7)
+      backdrop.isHidden = true
+        
+      return backdrop
+    }()
     
     private let viewModel: WorkspaceViewModel
     private var subscriptions = Set<AnyCancellable>()
@@ -40,6 +49,14 @@ final class WorkspaceViewController: UIViewController {
         setupBindings()
     }
     
+    private func move(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+      codeTableView.performBatchUpdates({
+        codeTableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
+      }) { [weak self] _ in
+          self?.viewModel.moveBlock(from: sourceIndexPath, to: destinationIndexPath)
+      }
+    }
+    
     private func setupUI() {
         setupSuperView()
         setupCodeTableView()
@@ -55,11 +72,18 @@ final class WorkspaceViewController: UIViewController {
         
         codeTableView.delegate = self
         codeTableView.dataSource = self
+        codeTableView.dragDelegate = self
+        codeTableView.dropDelegate = self
+        codeTableView.separatorStyle = .none
         codeTableView.backgroundColor = .systemBlue
         codeTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
+        codeTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
         codeTableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.width.equalToSuperview().multipliedBy(0.85)
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
     
@@ -83,19 +107,37 @@ final class WorkspaceViewController: UIViewController {
 // MARK: - UITableViewDataSource
 
 extension WorkspaceViewController: UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return viewModel.cellViewModels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.backgroundColor = .darkGray
-        cell.textLabel?.text = "Cell in row\(indexPath.row)"
+        let cellViewModel = viewModel.cellViewModels[indexPath.row]
         
-        codeTableView.insertSubview(.init(), at: 3)
-        
-        return cell
+        switch cellViewModel.type {
+        case .variable:
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: VariableBlockCell.identifier, for: indexPath) as? VariableBlockCell,
+                let cellViewModel = cellViewModel as? VariableBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .condition:
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: ConditionBlockCell.identifier, for: indexPath) as? ConditionBlockCell,
+                let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .loop:
+            return UITableViewCell()
+        case .output:
+            return UITableViewCell()
+        }
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -114,6 +156,10 @@ extension WorkspaceViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Selected work cell")
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
 }
 
 
@@ -125,4 +171,92 @@ private extension WorkspaceViewController {
             .sink(receiveValue: { [weak self] in self?.viewModel.showConsole.send()})
             .store(in: &subscriptions)
     }
+}
+
+// MARK: - UITableViewDragDelegate
+
+extension WorkspaceViewController: UITableViewDragDelegate {
+    
+  func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+      backdrop.isHidden = false
+
+      let item = UIDragItem(itemProvider: NSItemProvider())
+      item.localObject = indexPath
+      return [item]
+  }
+
+  func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+      guard let cell = tableView.cellForRow(at: indexPath) else { return nil }
+      
+      let preview = UIDragPreviewParameters()
+      preview.backgroundColor = .clear
+      preview.visiblePath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 5, dy: 0), cornerRadius: 12)
+      
+      return preview
+  }
+
+}
+
+// MARK: - UITableViewDropDelegate
+
+extension WorkspaceViewController: UITableViewDropDelegate {
+
+  func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+    guard
+      let item = session.items.first,
+      let fromIndexPath = item.localObject as? IndexPath,
+      let toIndexPath = destinationIndexPath
+    else {
+      backdrop.frame = .zero
+      return UITableViewDropProposal(operation: .forbidden)
+    }
+      
+    if let firstCell = tableView.cellForRow(at: toIndexPath) {
+      let headerFrame = tableView.rectForHeader(inSection: toIndexPath.section)
+      let newFrame = CGRect(
+        x: headerFrame.minX,
+        y: headerFrame.maxY + (CGFloat(toIndexPath.row) * firstCell.frame.height),
+        width: firstCell.frame.width,
+        height: firstCell.frame.height
+      )
+
+      if backdrop.frame == .zero {
+        backdrop.frame = newFrame
+      } else {
+        UIView.animate(withDuration: 0.15) { [backdrop] in
+          backdrop.frame = newFrame
+        }
+      }
+    } else {
+      backdrop.frame = .zero
+    }
+
+    if fromIndexPath.section == toIndexPath.section {
+      return .init(operation: .move, intent: .automatic)
+    }
+      
+    return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+  }
+
+  func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+    guard
+      let item = coordinator.session.items.first,
+      let sourceIndexPath = item.localObject as? IndexPath,
+      let destinationIndexPath = coordinator.destinationIndexPath
+    else { return }
+
+    switch coordinator.proposal.intent {
+      case .insertAtDestinationIndexPath:
+        move(from: sourceIndexPath, to: destinationIndexPath)
+        coordinator.drop(item, toRowAt: destinationIndexPath)
+
+      case .insertIntoDestinationIndexPath:
+//        interact(from: sourceIndexPath, to: destinationIndexPath)
+        coordinator.drop(item, toRowAt: sourceIndexPath)
+      default: break
+    }
+      
+    backdrop.isHidden = true
+    backdrop.frame = .zero
+  }
 }

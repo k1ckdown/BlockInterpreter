@@ -12,10 +12,11 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     private(set) var variableNamePlaceHolder: String
     private(set) var variableValuePlaceholder: String
     
-    init(variableType: String?) {
+    init(variableType: String?, style: BlockCellStyle) {
         variableValuePlaceholder = "17"
         variableNamePlaceHolder = "name"
         self.variableType = variableType?.capitalized ?? ""
         shouldShowVariableType = variableType == nil ? false : true
+        super.init(type: .variable, style: style)
     }
 }

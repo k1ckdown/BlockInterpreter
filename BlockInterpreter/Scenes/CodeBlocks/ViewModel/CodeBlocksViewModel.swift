@@ -13,6 +13,7 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
     var toggleSelectedIndexPath = PassthroughSubject<IndexPath, Never>()
     
     var isOptionsMenuVisible = CurrentValueSubject<Bool, Never>(false)
+    var didUpdateTable = PassthroughSubject<Void, Never>()
     
     private var subscriptions = Set<AnyCancellable>()
     private var selectedIndexPaths = CurrentValueSubject<[IndexPath], Never>([])
@@ -50,50 +51,62 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
 
 extension CodeBlocksViewModel {
     
-    private func selectIndexPath(_ indexPath: IndexPath) {
+    private func selectBlock(_ indexPath: IndexPath) {
         selectedIndexPaths.value.append(indexPath)
         cellViewModels[indexPath.section][indexPath.row].select()
     }
     
-    private func deselectIndexPath(_ indexPath: IndexPath) {
+    private func deselectBlock(_ indexPath: IndexPath) {
         guard let index = selectedIndexPaths.value.firstIndex(of: indexPath) else { return }
         
         selectedIndexPaths.value.remove(at: index)
         cellViewModels[indexPath.section][indexPath.row].deselect()
     }
     
+    private func deselectAllBlocks() {
+        selectedIndexPaths.value.removeAll()
+        cellViewModels.flatMap { $0 }.forEach { $0.deselect() }
+    }
+    
     private func updateCellViewModels() {
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {
-            VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue)
+            VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue, style: .presentation)
         }
         
         cellViewModels[BlocksSection.conditions.rawValue] = ConditionBlockType.allCases.map {
-            ConditionBlockCellViewModel(conditionBlockType: $0)
+            ConditionBlockCellViewModel(conditionBlockType: $0, style: .presentation)
         }
     }
     
     private func bind() {
+        viewDidLoad
+            .sink(receiveValue: { [weak self] in
+                self?.updateCellViewModels()
+            })
+            .store(in: &subscriptions)
+        
         selectedIndexPaths
             .sink(receiveValue: { [weak self] in
                 self?.isOptionsMenuVisible.value = $0.count != 0
             })
             .store(in: &subscriptions)
         
-        viewDidLoad
-            .sink(receiveValue: { [weak self] in self?.updateCellViewModels()})
+        toggleSelectedIndexPath
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.selectedIndexPaths.value.contains($0) == true ? self.deselectBlock($0) : self.selectBlock($0)
+            }
             .store(in: &subscriptions)
         
         moveToWorkspace
             .sink(receiveValue: { [weak self] _ in
-                self?.isOptionsMenuVisible.send(false)
-                self?.didGoToWorkspaceScreen.send()
+                guard let self = self else { return }
+                
+                self.isOptionsMenuVisible.send(false)
+                self.didGoToWorkspaceScreen.send()
+                self.deselectAllBlocks()
+                self.didUpdateTable.send()
             })
-            .store(in: &subscriptions)
-        
-        toggleSelectedIndexPath
-            .sink { [weak self] in
-                self?.selectedIndexPaths.value.contains($0) == true ? self?.deselectIndexPath($0) : self?.selectIndexPath($0)
-            }
             .store(in: &subscriptions)
     }
     
