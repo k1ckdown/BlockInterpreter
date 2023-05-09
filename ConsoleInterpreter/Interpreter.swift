@@ -1,4 +1,3 @@
-import Foundation
 
 enum TokenType {
     case integer
@@ -20,6 +19,19 @@ enum TypeVariable {
     case bool
     case another
 }
+
+
+enum AllTypes {
+    case assign
+    case ifBlock
+    case begin
+    case end
+    case loop
+    case function
+    case variable
+    case arithmetic
+}
+
 
 
 class Token {
@@ -49,17 +61,16 @@ class Token {
 }
 
 
+
 class Variable {
     private let id: Int
     private let type: TypeVariable
-    private let name: String
     private var value: String
  
-    init(id: Int, type: TypeVariable, value: String, name: String) {
+    init(id: Int, type: TypeVariable, value: String) {
         self.id = id
         self.type = type
         self.value = value
-        self.name = name
     }
  
     func getId() -> Int {
@@ -70,63 +81,12 @@ class Variable {
         return self.type
     }
 
-    func getName() -> String {
-        return self.name
-    }
-
-     func getValue() -> String {
+    func getValue() -> String {
         return self.value
     }
 
-    func setValue(value: String) {
+    func setValue(_ value: String) {
         self.value = value
-    }
- 
-
-}
-
-
-class AssignmentVariable {
-    private var variableIntMap: [String: String] = [:]
-    private var calculate: Calculate
- 
-    init(_ variableInt: [String: String]) {
-        self.calculate = Calculate("")
-        self.variableIntMap.merge(variableInt){(_, new) in new}
-    }
- 
-    public func setMapOfVariableInt(_ mapOfVariableInt: [String: String]) {
-        self.variableIntMap.merge(mapOfVariableInt){(_, new) in new}
-    }
- 
-    public func assign(variable: Variable) -> (String, String) {
-        if variable.getType() == TypeVariable.int{
-            return assignInt(variable)
-        }
-
-        return (variable.getName(), variable.getValue())
-        
-    }
-
-    private func assignInt(_ variable: Variable) -> (String, String) {
-        variable.setValue(value: String(Calculate(normalize(variable.getValue())).compute()))
-        return (variable.getName(), variable.getValue())
-    }
- 
-    private func normalize(_ name: String) -> String {
-        var result = "" 
-        let components = name.split(whereSeparator: { $0 == " " })
-
-        for component in components {
-            if let intValue = Int(component) {
-                result += "\(intValue)"
-            } else if let value = self.variableIntMap[String(component)] {
-                result += "\(value)"
-            } else {
-                result += "\(component)"
-            }
-        }
-        return result
     }
 }
 
@@ -149,7 +109,7 @@ class Calculate {
     public func setText(text: String) {
         self.text = text
     }
- 
+
     public func compute() -> Int {
         self.currentToken = self.getNextToken()
         var result = self.term()
@@ -165,6 +125,7 @@ class Calculate {
         }
         return result
     }
+
 
     private func getNextToken() -> Token? {
         guard self.position < self.text.count else {
@@ -192,10 +153,10 @@ class Calculate {
                     break
                 }
             }
- 
+
             return Token(.integer, integerString)
         }
- 
+
         self.position += 1
  
         switch currentChar {
@@ -264,46 +225,184 @@ class Calculate {
             fatalError("Invalid syntax")
         }
     }
- 
+
     private func isNumber(_ char: Character) -> Bool {
         return char >= "0" && char <= "9"
     }
- 
+
     private func isSpace(_ char: Character) -> Bool {
         return char == " "
     }
- 
 }
 
 
-var variableIntMap: [String: String] = [:]
+class AssignmentVariable {
+    private var variableIntMap: [String: String] = [:]
+
+    init(_ variableIntMap: [String: String]) {
+        self.variableIntMap.merge(variableIntMap){(_, new) in new}
+    }
  
+    public func setMapOfVariableInt(_ mapOfVariableInt: [String: String]) {
+        self.variableIntMap.merge(mapOfVariableInt){(_, new) in new}
+    }
  
-var variableForInt = Variable(
-    id: 1,
-    type: TypeVariable.int,
-    value: "12 + 15",
-    name: "a"
-    )
+    public func assign(_ variable: Variable) -> String {
+        if variable.getType() == TypeVariable.int{
+
+            return assignInt(variable.getValue())
+        }
+        return variable.getValue()    
+    }
+
+    private func assignInt(_ variable: String) -> String {
+        let normalizedString = normalize(variable)
+        let computedString = String(Calculate(normalizedString).compute())
+        return computedString
+    }
+ 
+    private func normalize(_ name: String) -> String {
+        var result = "" 
+        let components = name.split(whereSeparator: { $0 == " " })
+
+        for component in components {
+            if let intValue = Int(component) {
+                result += "\(intValue)"
+            } else if let value = self.variableIntMap[String(component)] {
+                result += "\(value)"
+            } else {
+                result += "\(component)"
+            }
+        }
+        return result
+    }
+}
+
+
+
+class TreeNode{
+    private(set) var value: String
+    private(set) var type: AllTypes
+    private(set) var parent: TreeNode?
+    private(set) var children: [TreeNode]
+    private(set) var countWasHere: Int
+
+    internal  var dictionary: [String: String]
+
+
+    init( _ value: String, _ type: AllTypes) {
+        self.value = value
+        self.type = type
+        self.countWasHere = 0
+        self.children = []
+        self.dictionary = [:]
+    }
+
+
+    func addChild(_ child: TreeNode) {
+        children.append(child)
+        child.parent = self
+        
+        if child.type == .variable{
+            dictionary[child.value] = ""
+        }
     
-var assignVariableInt = AssignmentVariable(variableIntMap)
-var mapElement = assignVariableInt.assign(
-    variable: variableForInt
-    )
-variableIntMap[mapElement.0] = mapElement.1
-print(variableIntMap)
- 
- 
-variableForInt = Variable(
-    id: 2,
-    type: TypeVariable.int,
-    value: "a / 3 + 7",
-    name: "b"
-    )
-assignVariableInt = AssignmentVariable(variableIntMap)
-mapElement = assignVariableInt.assign(
-    variable: variableForInt
-    )
-variableIntMap[mapElement.0] = mapElement.1
-print(variableIntMap)
+        dictionary.merge(child.dictionary){(_, new) in new}
+    }
+}
+
+
+
+class Interpreter{
+    private(set) var treeAST: TreeNode
+
+    init(_ treeAST: TreeNode){
+        self.treeAST = treeAST
+    }
+
+    func traverseTree(_ treeAST: TreeNode) -> String{ 
+        switch treeAST.type{
+        case .variable:
+            return processVariableNode(treeAST)
+        case .arithmetic:
+            return processArithmeticNode(treeAST)
+        case .assign:
+            processAssignNode(treeAST)
+        case .loop:
+            processLoopNode(treeAST)
+        case .ifBlock:
+            processIfBlockNode(treeAST)
+        default:
+            return "" // в этом случае нужно возвращать ID блока
+        }
+        return ""
+    }
+    private func processIfBlockNode(_ node: TreeNode){
+
+    }
+
+
+
+    private func processLoopNode(_ node: TreeNode){
+        for child in node.children{
+            let _ = traverseTree(child)
+            node.dictionary.merge(child.dictionary){(_, new) in new}
+        }
+        print(node.dictionary)
+    }
+
+    private func processVariableNode(_ node: TreeNode) -> String{
+        return node.value
+    }
+
+    private func processAssignNode(_ node: TreeNode){ 
+        let varName = traverseTree(node.children[0])
+        let assignValue = traverseTree(node.children[1])
+        node.dictionary[varName] = assignValue
+    }
+
+    private func processArithmeticNode(_ node: TreeNode) -> String {
+        return calculateArithmetic(node.value)
+    }
+
+    private func calculateArithmetic(_ expression: String) -> String {
+        let variableForInt = Variable(
+            id: 1,
+            type: TypeVariable.int,
+            value: expression
+        )
+
+        let mapElement = AssignmentVariable(self.treeAST.dictionary).assign(variableForInt)
+
+        return mapElement
+    }
+}
+
+
+let treeMain = TreeNode("", AllTypes.loop)
+let firstAssignSubtree = TreeNode("", AllTypes.assign)
+let firstVarLeft = TreeNode("b", AllTypes.variable)
+let firstVarRight = TreeNode("10", AllTypes.arithmetic)
+
+let secondAssignSubtree = TreeNode("", AllTypes.assign)
+let secondVarLeft = TreeNode("b", AllTypes.variable)
+let secondVarLeft = TreeNode("7 + b + 2", AllTypes.arithmetic)
+
+let firstIfBlockSubtree = 
+// MAIN LOOP
+
+firstAssignSubtree.addChild(firstVarLeft)
+firstAssignSubtree.addChild(firstVarRight)
+
+secondAssignSubtree.addChild(secondVarLeft)
+secondAssignSubtree.addChild(secondVarLeft)
+
+treeMain.addChild(firstAssignSubtree)
+treeMain.addChild(secondAssignSubtree)
+
+let interpreter = Interpreter(treeMain)
+let _ = interpreter.traverseTree(treeMain)
+
+
+
 

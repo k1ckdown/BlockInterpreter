@@ -99,6 +99,8 @@ class CalculateAST {
         }
     }
  
+
+ 
     private func moveToken(_ type: TokenType) {
         if let token = currentToken, token.type == type {
             if !(token.type == .leftBrace) {
@@ -109,6 +111,8 @@ class CalculateAST {
         }
     }
  
+
+
     private func factor() -> Int {
         let token = currentToken!
  
@@ -128,6 +132,8 @@ class CalculateAST {
         return 0
     }
  
+
+
     private func term() -> Int {
         var result = factor()
  
