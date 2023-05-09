@@ -53,10 +53,9 @@ class Calculate {
  
     public func setText(text: String) {
         self.text = text
+        self.position = 0
     }
-    // public func compare() -> Bool{
 
-    // }
     public func compute() -> Int {
         self.currentToken = self.getNextToken() 
         var result = self.term()
@@ -69,7 +68,7 @@ class Calculate {
                 self.moveToken(.minus)
                 result -= self.term()
             }
-        }
+            }
         return result
     }
 
@@ -80,7 +79,6 @@ class Calculate {
         }
  
         let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
- 
         if self.isSpace(currentChar) {
             self.position += 1
             return self.getNextToken()
@@ -105,7 +103,6 @@ class Calculate {
         }
 
         self.position += 1
- 
         switch currentChar {
             case "+":
                 return Token(.plus, "+")            
@@ -142,7 +139,7 @@ class Calculate {
 
     private func term() -> Int {
         var result = self.factor()
-        let possibleTokens = [
+        let possibleTokens: [TokenType] = [
             TokenType.modulo,
             TokenType.multiply,
             TokenType.divide,
@@ -152,9 +149,9 @@ class Calculate {
             TokenType.notEqual,
             TokenType.lessEqual,
             TokenType.greaterEqual
-            ]
+        ]
         
-        while let token = self.currentToken, token.type == .modulo || token.type == .multiply || token.type == .divide {
+        while let token = self.currentToken, possibleTokens.contains(token.type) {
             if  token.type == .modulo {
                 self.moveToken(.modulo)
                 result %= self.factor()
@@ -169,6 +166,7 @@ class Calculate {
             }
         }
         return result
+        
     }
 
     private func factor() -> Int {
@@ -190,7 +188,7 @@ class Calculate {
     }
  
     private func moveToken(_ type: TokenType) {
-        if let token = self.currentToken, token.type == type, !(token.type == .leftBrace) {
+        if let token = self.currentToken, token.type == type {
             self.currentToken = getNextToken()
         } else {
             fatalError("Invalid syntax")
@@ -205,3 +203,7 @@ class Calculate {
         return char == " "
     }
 }
+
+
+let calculator = Calculate("8 == 17")
+print(calculator.compute()) // Output: 1
