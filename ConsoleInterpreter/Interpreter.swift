@@ -11,10 +11,12 @@ enum TokenType {
     case modulo
     case equal
     case notEqual
-    case greaterThan
-    case lessThan
+    case greater
+    case less
     case greaterEqual
-    case lessEqual 
+    case lessEqual
+    case logicalAnd
+    case logicalOr
 }
 
 
@@ -100,6 +102,8 @@ class Variable {
 }
 
 
+
+
 class Calculate {
     private var text: String
     private var position: Int
@@ -116,32 +120,127 @@ class Calculate {
  
     public func setText(text: String) {
         self.text = text
+        self.position = 0
     }
 
-    public func compute() -> Int {
+    public func compare() -> Int {
         self.currentToken = self.getNextToken() 
         var result = self.term()
- 
-        while let token = self.currentToken, [TokenType.minus, TokenType.plus].contains(token.type) {
-            if token.type == .plus {
-                self.moveToken(.plus)
-                result += self.term()
-            } else if token.type == .minus {
-                self.moveToken(.minus)
-                result -= self.term()
+        let possibleTokens: [TokenType] = [
+            TokenType.plus,
+            TokenType.minus,
+            TokenType.equal,
+            TokenType.less, 
+            TokenType.greater,
+            TokenType.notEqual,
+            TokenType.lessEqual,
+            TokenType.greaterEqual,
+            TokenType.logicalAnd,
+            TokenType.logicalOr
+        ]
+        if self.currentToken == nil {
+            return result
+        }
+        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+            
+            if token.getType() == .plus {
+                moveToken(.plus)
+                result += term()
+            } else if token.getType() == .minus {
+                moveToken(.minus)
+                result -= term()
+            } else if possibleTokens.contains(token.getType()){
+                self.moveToken(token.getType())
+                let factorValue = self.factor()
+
+                switch token.getType() {
+                case .equal:
+                    result = result == factorValue ? 1 : 0
+                case .notEqual:
+                    result = result != factorValue ? 1 : 0
+                case .greater:
+                    result = result > factorValue ? 1 : 0
+                case .less:
+                    result = result < factorValue ? 1 : 0
+                case .greaterEqual:
+                    result = result >= factorValue ? 1 : 0
+                case .lessEqual:
+                    result = result <= factorValue ? 1 : 0
+                case .logicalAnd:
+                    result = result != 0  && factorValue != 0  ? 1 : 0
+                case .logicalOr:
+                    result = result != 0 || factorValue != 0  ? 1 : 0
+                default:
+                    fatalError("Invalid token type")
+                }
             }
         }
         return result
     }
 
+   
+    
+    private func term() -> Int {
+        var result = self.factor()
+        let possibleTokens: [TokenType] = [
+            TokenType.modulo,
+            TokenType.multiply,
+            TokenType.divide,
+        ]
+        if self.currentToken == nil {
+            return result
+        }
+        while let token = self.currentToken, possibleTokens.contains(token.getType()){
+            switch token.getType() {
+            case .modulo:
+                self.moveToken(.modulo)
+                result %= self.factor()
+            case .multiply:
+                self.moveToken(.multiply)
+                result *= self.factor()
 
-    private func getNextToken() -> Token? { // возвращает следующую подстроку, которая не является пробелом
+            case .divide:
+                self.moveToken(.divide)
+                result /= self.factor()
+            
+            default:
+                fatalError("Invalid token type")
+            }
+        }
+        return result
+    }
+
+    private func factor() -> Int {
+        let token = self.currentToken!
+
+        switch token.getType() {
+            case .integer:
+                self.moveToken(.integer)
+                guard let value = token.getValue(), let intValue =
+                        Int(value) else { fatalError("Error parsing input")
+                }
+                return intValue
+            case .leftBrace:
+                self.moveToken(.leftBrace)
+                let result = self.compare()
+                self.moveToken(.rightBrace)
+                return result
+            case .eof:
+                return 0
+            default:
+                print(token.getType())
+                fatalError("Invalid syntax")
+        }
+
+    }
+ 
+
+    private func getNextToken() -> Token? {
         guard self.position < self.text.count else {
             return Token(.eof, nil)
         }
  
         let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
- 
         if self.isSpace(currentChar) {
             self.position += 1
             return self.getNextToken()
@@ -166,7 +265,11 @@ class Calculate {
         }
 
         self.position += 1
- 
+        return getToken(currentChar)
+        
+    }
+
+    private func getToken(_ currentChar: Character) -> Token{
         switch currentChar {
             case "+":
                 return Token(.plus, "+")            
@@ -182,101 +285,57 @@ class Calculate {
                 return Token(.leftBrace, "(")
             case ")":
                 return Token(.rightBrace, ")")
-            case "<":
+            case "=", "<", ">", "!", "&", "|":
                 if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
                     self.position += 1
-                    return Token(.lessEqual, "<=")
+                    switch currentChar {
+                        case "=":
+                            return Token(.equal, "==")
+                        case "!":
+                            return Token(.notEqual, "!=")
+                        case "<":
+                            return Token(.lessEqual, "<=")
+                        case ">":
+                            return Token(.greaterEqual, ">=")
+                        default:
+                            fatalError("Invalid character")
+                    }
                 } else {
-                    return Token(.less, "<")
-                }
-            case ">":
-                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
-                    self.position += 1
-                    return Token(.greaterEqual, ">=")
-                } else {
-                    return Token(.greater, ">")
+                    switch currentChar {
+                        case "=":
+                            return Token(.equal, "=")
+                        case "<":
+                            return Token(.less, "<")
+                        case ">":
+                            return Token(.greater, ">")
+                        case "&":
+                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "&" {
+                                self.position += 1
+                                return Token(.logicalAnd, "&&")
+                            } else {
+                                fatalError("Invalid character")
+                            }
+                            
+                        case "|":
+                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
+                                self.position += 1
+                                return Token(.logicalOr, "||")
+                            } else {
+                                fatalError("Invalid character")
+                            }
+                        default:
+                            fatalError("Invalid character")
+                    }
                 }
             default:
                 fatalError("Invalid character")
         }
     }
-
-    private func term() -> Int {
-        var result = self.factor()
-        let possibleTokens: [TokenType] = [
-            TokenType.modulo,
-            TokenType.multiply,
-            TokenType.divide,
-            TokenType.equal,
-            TokenType.less, 
-            TokenType.greater,
-            TokenType.notEqual,
-            TokenType.lessEqual,
-            TokenType.greaterEqual
-        ]
-        
-        while let token = self.currentToken, possibleTokens.contains(token.type){
-            switch token.type {
-            case .modulo:
-                self.moveToken(.modulo)
-                result %= self.factor()
-
-            case .multiply:
-                self.moveToken(.multiply)
-                result *= self.factor()
-
-            case .divide:
-                self.moveToken(.divide)
-                result /= self.factor()
-            case .equal, .notEqual, .greater, .less, .greaterEqual, .lessEqual:
-                self.moveToken(token.type)
-                let factorValue = self.factor()
-                
-                switch token.type {
-                case .equal:
-                    result = result == factorValue ? 1 : 0
-                case .notEqual:
-                    result = result != factorValue ? 1 : 0
-                case .greater:
-                    result = result > factorValue ? 1 : 0
-                case .less:
-                    result = result < factorValue ? 1 : 0
-                case .greaterEqual:
-                    result = result >= factorValue ? 1 : 0
-                case .lessEqual:
-                    result = result <= factorValue ? 1 : 0
-                default:
-                    fatalError("Invalid token type")
-                }
-            default:
-                return result
-            }
-        }
-        return result
-        
-    }
-
-    private func factor() -> Int {
-        let token = self.currentToken!
- 
-        if token.type == .integer {
-            self.moveToken(.integer)
-            guard let value = token.value, let intValue =
-                    Int(value) else { fatalError("Error parsing input")
-            }
-            return intValue
-        } else if token.type == .leftBrace {
-            self.moveToken(.leftBrace)
-            let result = compute()
-            self.moveToken(.rightBrace)
-            return result
-        }
-        return 0
-    }
- 
     private func moveToken(_ type: TokenType) {
-        if let token = self.currentToken, token.type == type, !(token.type == .leftBrace) {
-            self.currentToken = getNextToken()
+        if let token = currentToken, token.getType() == type{
+            if !(token.getType() == .leftBrace) {
+                currentToken = getNextToken()
+            }
         } else {
             fatalError("Invalid syntax")
         }
@@ -290,6 +349,8 @@ class Calculate {
         return char == " "
     }
 }
+
+
 
 
 
@@ -314,7 +375,7 @@ class AssignmentVariable {
 
     private func assignInt(_ variable: String) -> String {
         let normalizedString = normalize(variable)
-        let computedString = String(Calculate(normalizedString).compute())
+        let computedString = String(Calculate(normalizedString).compare())
         return computedString
     }
  
@@ -359,12 +420,12 @@ class TreeNode{
     func addChild(_ child: TreeNode) {
         children.append(child)
         child.parent = self
-        
         if child.type == .variable{
             dictionary[child.value] = ""
         }
     
         dictionary.merge(child.dictionary){(_, new) in new}
+
     }
 }
 
@@ -394,41 +455,50 @@ class Interpreter{
         }
         return ""
     }
+    
     private func processIfBlockNode(_ node: TreeNode){
         var tempDictionary: [String: String] = [:]
-        if node.value != "0", node.value != ""{
+        let calculator = Calculate(node.value)
+        let value = calculator.compare()
+        if value != 0{
             for child in node.children{
                 let _ = traverseTree(child)
                 for (key, value) in child.dictionary{
-                    if node.dictionary[key] != "", node.dictionary[key] != Optional("")  {
+                    // print(node.dictionary)
+                    // print(key, value, node.dictionary[key] != nil, node.dictionary[key] != "", node.dictionary[key] != Optional(""))
+                    if node.dictionary[key] == "" || node.dictionary[key] == Optional("") {
                         node.dictionary[key] = value
+                        tempDictionary.merge([key: value]){(_, new) in new}
                     } else{
+                        node.dictionary[key] = nil
                         tempDictionary.merge([key: value]){(_, new) in new}
                     }
                 } 
                 
             }
         }
-        
-        // print(String(describing: tempDictionary))
+        // print(node.dictionary, "node")
+        // print(tempDictionary, "temp")
     }
 
 
 
     private func processRootNode(_ node: TreeNode){
+        // print(node.dictionary)
         for child in node.children{
-            
             let _ = traverseTree(child)
-            for (key, value) in child.dictionary{
-                    if value != "" && value != Optional("")  {
-                        node.dictionary[key] = value
-                    } else{
-                        node.dictionary[key] = nil
-                    }
-                } 
-            // node.dictionary.merge(child.dictionary){(_, new) in new}
             
-        }
+            node.dictionary.merge(child.dictionary){(_, new) in new}
+            // for (key, value) in child.dictionary{
+            //         // print(key, value)
+            //         if value != "" && value != Optional("") && value != nil  {
+            //             node.dictionary[key] = value
+            //         } else{
+            //             node.dictionary[key] = nil
+            //         }
+            //     } 
+            
+        } 
         print(node.dictionary)
     }
 
@@ -464,38 +534,38 @@ class Interpreter{
 let treeMain = TreeNode("", AllTypes.root)
 let firstAssignSubtree = TreeNode("", AllTypes.assign)
 let firstVarLeft = TreeNode("b", AllTypes.variable)
-let firstVarRight = TreeNode("10", AllTypes.arithmetic)
+let firstVarRight = TreeNode("10", AllTypes.arithmetic) // присваиваем значение 10 переменной b
 
 let secondAssignSubtree = TreeNode("", AllTypes.assign)
 let secondVarLeft = TreeNode("a", AllTypes.variable)
-let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic)
+let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic) // присваиваем значение 7 + b + 2 переменной a
 
-let firstIfBlockSubtree = TreeNode("6 + 7", AllTypes.ifBlock)
-let firstIfAssignSubtree = TreeNode("", AllTypes.assign)
-let firstIfBlockVarLeft = TreeNode("c", AllTypes.variable)
-let firstIfBlockVarRight = TreeNode("b", AllTypes.arithmetic)
+let firstIfBlockSubtree = TreeNode("(6 + 2) % 8 == 0", AllTypes.ifBlock) // условие для if
+
+let firstIfAssignSubtree = TreeNode("", AllTypes.assign) 
+let firstIfBlockVarLeft = TreeNode("c", AllTypes.variable) // присваиваем значение 110 переменной b
+let firstIfBlockVarRight = TreeNode("b + 100", AllTypes.arithmetic)
+
+
 // MAIN LOOP
 
 firstAssignSubtree.addChild(firstVarLeft)
 firstAssignSubtree.addChild(firstVarRight)
 
 secondAssignSubtree.addChild(secondVarLeft)
-secondAssignSubtree.addChild(secondVarRight)
+secondAssignSubtree.addChild(secondVarRight) 
 
 firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
 firstIfAssignSubtree.addChild(firstIfBlockVarRight)
 firstIfBlockSubtree.addChild(firstIfAssignSubtree)
 
+
 treeMain.addChild(firstAssignSubtree)
 treeMain.addChild(secondAssignSubtree)
 treeMain.addChild(firstIfBlockSubtree)
+// treeMain.addChild(secondIfBlockSubtree)
 
-// let interpreter = Interpreter(treeMain)
-// let _ = interpreter.traverseTree(treeMain)
+let interpreter = Interpreter(treeMain)
+let _ = interpreter.traverseTree(treeMain)
 
 
-
-let condition1 = "a == 5"
-let parser1 = ConditionParser(condition1)
-let result1 = parser1.parse()
-print(result1)
