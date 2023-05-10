@@ -5,10 +5,10 @@ var array: [IBlock] = []
 
 
 array.append(Printing(id: 1, value: "a"))
-array.append(Loop(id: 2, type: LoopType.forLoop, value: "i in 0...10"))
+array.append(Condition(id: 2, type: ConditionType.ifBlock, value: "i > 5"))
 array.append(BlockDelimiter(type: DelimiterType.begin))
 array.append(Printing(id: 3, value: "b"))
-array.append(Loop(id: 4, type: LoopType.forLoop, value: "i in 0...10"))
+array.append(Condition(id: 4, type: ConditionType.ifBlock, value: "i > 5"))
 array.append(BlockDelimiter(type: DelimiterType.begin))
 
 array.append(Loop(id: 5, type: LoopType.forLoop, value: "i in 0...10"))

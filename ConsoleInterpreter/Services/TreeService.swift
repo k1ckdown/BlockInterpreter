@@ -75,8 +75,8 @@ class Tree {
     }
 
 
-    private func getBlockAndMoveIndex() -> [Any] {
-        var wholeBlock: [Any] = []
+    private func getBlockAndMoveIndex() -> [IBlock] {
+        var wholeBlock: [IBlock] = []
         guard let endIndex = getMatchingDelimiterIndex() else {
             return wholeBlock
         }
@@ -101,7 +101,7 @@ class Tree {
         return node
     }
 
-    private func buildNode<T>(_ block: [T], type: AllTypes) -> Node? {
+    private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
             return nil
         }
@@ -133,19 +133,15 @@ class Tree {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
-                var nestedBlocks: [Any] = []
+                var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedConditionBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
                     if let blockEnd = block[additionIndex] as? BlockDelimiter {
-                        if blockEnd.type == DelimiterType.end {
-                            countBegin -= 1
-                            if countBegin == 0 {
-                                break
-                            }
-                        } else if blockEnd.type == DelimiterType.begin {
-                            countBegin += 1
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
                         }
                     }
                     nestedBlocks.append(block[additionIndex])
@@ -156,19 +152,15 @@ class Tree {
                 }
                 index = additionIndex
             } else if let nestedLoopBlock = block[index] as? Loop {
-                var nestedBlocks: [Any] = []
+                var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedLoopBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
                     if let blockEnd = block[additionIndex] as? BlockDelimiter {
-                        if blockEnd.type == DelimiterType.end {
-                            countBegin -= 1
-                            if countBegin == 0 {
-                                break
-                            }
-                        } else if blockEnd.type == DelimiterType.begin {
-                            countBegin += 1
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
                         }
                     }
                     nestedBlocks.append(block[additionIndex])
@@ -183,6 +175,4 @@ class Tree {
         }
         return node
     }
-
-
 }
