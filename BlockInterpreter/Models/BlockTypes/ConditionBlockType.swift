@@ -6,12 +6,14 @@
 import Foundation
 
 enum ConditionBlockType: String, CaseIterable {
-    case ifStatement, elseStatement
+    case ifStatement, elseIfStatement, elseStatement
     
     var name: String {
         switch self {
         case .ifStatement:
             return "if"
+        case .elseIfStatement:
+            return "elif"
         case .elseStatement:
             return "else"
         }

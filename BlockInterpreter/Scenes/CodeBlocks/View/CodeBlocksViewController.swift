@@ -152,28 +152,46 @@ extension CodeBlocksViewController: UITableViewDataSource {
         switch section {
         case .variables:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: VariableBlockCell.identifier, for: indexPath) as? VariableBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: VariableBlockCell.identifier,
+                    for: indexPath
+                ) as? VariableBlockCell,
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
             else { return .init() }
             
-            cell.variableNameTextField.delegate = self
-            cell.variableValueTextField.delegate = self
+            cell.variableNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.variableName = $0
+                }
+                .store(in: &cell.subscriptions)
             
-            cell.variableNameTextField.tag = TextFieldType.variableName.tag
-            cell.variableValueTextField.tag = TextFieldType.variableValue.tag
+            cell.variableValueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.variableValue = $0
+                }
+                .store(in: &cell.subscriptions)
             
             cell.configure(with: cellViewModel)
             return cell
             
         case .conditions:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: ConditionBlockCell.identifier, for: indexPath) as? ConditionBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ConditionBlockCell.identifier,
+                    for: indexPath
+                ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
             else { return .init() }
             
-            cell.conditionTextField.delegate = self
-            cell.conditionTextField.tag = TextFieldType.condition.tag
-            
+            cell.conditionTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.conditionText = $0
+                }
+                .store(in: &cell.subscriptions)
+
             cell.configure(with: cellViewModel)
             return cell
             
@@ -201,21 +219,6 @@ extension CodeBlocksViewController: UITableViewDelegate {
         viewModel.toggleSelectedIndexPath.send(indexPath)
         cell.select()
     }
-}
-
-// MARK: - UITextFieldDelegate
-
-
-extension CodeBlocksViewController: UITextFieldDelegate {
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
 }
 
 // MARK: - Reactive Behavior

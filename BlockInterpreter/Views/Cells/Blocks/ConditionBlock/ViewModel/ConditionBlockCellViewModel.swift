@@ -7,6 +7,8 @@ import Foundation
 
 final class ConditionBlockCellViewModel: BlockCellViewModel {
     
+    var conditionText: String?
+    
     private(set) var conditionStatement: String
     private(set) var conditionTextPlaceholder: String
     private(set) var shouldShowConditionField: Bool
@@ -21,7 +23,10 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     }
     
     override func copyToWork() -> BlockCellViewModel {
-        return ConditionBlockCellViewModel(conditionBlockType: conditionBlockType, style: .work)
+        let copyConditionBlock = ConditionBlockCellViewModel(conditionBlockType: conditionBlockType, style: .work)
+        copyConditionBlock.conditionText = conditionText
+        
+        return copyConditionBlock
     }
     
 }

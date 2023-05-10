@@ -5,10 +5,13 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 final class VariableBlockCell: BlockCell {
     
     static let identifier = "VariableBlockCell"
+    
+    var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {
             
@@ -60,14 +63,21 @@ final class VariableBlockCell: BlockCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        subscriptions.removeAll()
         variableTypeLabel.isHidden = false
         assignmentStackView.snp.removeConstraints()
+        
+        variableNameTextField.text = nil
+        variableValueTextField.text = nil
     }
     
     func configure(with viewModel: VariableBlockCellViewModel) {
         super.configure(with: viewModel)
         
-        variableTypeLabel.text = viewModel.variableType
+        variableNameTextField.text = viewModel.variableName
+        variableValueTextField.text = viewModel.variableValue
+        variableTypeLabel.text = viewModel.variableType?.rawValue.capitalized
+
         variableNameTextField.placeholder = viewModel.variableNamePlaceHolder
         variableValueTextField.placeholder = viewModel.variableValuePlaceholder
         

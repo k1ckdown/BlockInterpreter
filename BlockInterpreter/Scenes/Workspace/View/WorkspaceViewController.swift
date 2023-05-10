@@ -10,6 +10,11 @@ import Combine
 final class WorkspaceViewController: UIViewController {
     
     private enum Constants {
+        enum WorkBlocksTableView {
+            static let insetTop: CGFloat = 10
+            static let insetLeadingTrailing: CGFloat = 20
+        }
+        
             enum RunButton {
                 static let size: CGFloat = 60
                 static let cornerRadius: CGFloat = size / 2
@@ -59,7 +64,7 @@ final class WorkspaceViewController: UIViewController {
     
     private func setupUI() {
         setupSuperView()
-        setupCodeTableView()
+        setupWorkBlocksTableView()
         setupRunButton()
     }
     
@@ -67,7 +72,7 @@ final class WorkspaceViewController: UIViewController {
         view.backgroundColor = .systemBlue
     }
     
-    private func setupCodeTableView() {
+    private func setupWorkBlocksTableView() {
         view.addSubview(workBlocksTableView)
         
         workBlocksTableView.delegate = self
@@ -82,8 +87,8 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
         workBlocksTableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(Constants.WorkBlocksTableView.insetTop)
+            make.leading.trailing.equalToSuperview().inset(Constants.WorkBlocksTableView.insetLeadingTrailing)
             make.bottom.equalToSuperview()
         }
     }
@@ -118,7 +123,10 @@ extension WorkspaceViewController: UITableViewDataSource {
         switch cellViewModel.type {
         case .variable:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: VariableBlockCell.identifier, for: indexPath) as? VariableBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: VariableBlockCell.identifier,
+                    for: indexPath
+                ) as? VariableBlockCell,
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
             else { return .init() }
             
@@ -127,7 +135,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             
         case .condition:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: ConditionBlockCell.identifier, for: indexPath) as? ConditionBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ConditionBlockCell.identifier,
+                    for: indexPath
+                ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
             else { return .init() }
             

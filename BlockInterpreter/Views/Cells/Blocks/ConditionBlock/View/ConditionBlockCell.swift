@@ -4,10 +4,13 @@
 //
 
 import UIKit
+import Combine
 
 final class ConditionBlockCell: BlockCell {
     
     static let identifier = "ConditionBlockCell"
+    
+    var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {
         
@@ -41,6 +44,13 @@ final class ConditionBlockCell: BlockCell {
         setup()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        subscriptions.removeAll()
+        conditionTextField.text = nil
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -48,6 +58,7 @@ final class ConditionBlockCell: BlockCell {
     func configure(with viewModel: ConditionBlockCellViewModel) {
         super.configure(with: viewModel)
         
+        conditionTextField.text = viewModel.conditionText
         conditionStatementLabel.text = viewModel.conditionStatement
         conditionTextField.placeholder = viewModel.conditionTextPlaceholder
         conditionFieldView.isHidden = !viewModel.shouldShowConditionField

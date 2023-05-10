@@ -42,7 +42,6 @@ extension WorkspaceViewModel  {
         addBlocks
             .map { $0.map { $0.copyToWork() } }
             .sink { [weak self] in
-                print($0)
                 self?.cellViewModels.value.append(contentsOf: $0 )
             }
             .store(in: &subscriptions)

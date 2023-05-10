@@ -68,7 +68,7 @@ extension CodeBlocksViewModel {
     
     private func updateCellViewModels() {
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {
-            VariableBlockCellViewModel(variableType: $0.defaultType?.rawValue, style: .presentation)
+            VariableBlockCellViewModel(variableType: $0.defaultType, style: .presentation)
         }
         
         cellViewModels[BlocksSection.conditions.rawValue] = ConditionBlockType.allCases.map {
@@ -94,7 +94,7 @@ extension CodeBlocksViewModel {
                 guard let self = self else { return }
                 
                 isOptionsMenuVisible.send(false)
-                didGoToWorkspaceScreen.send(cellViewModels.flatMap { $0 }.filter { $0.isSelect })
+                didGoToWorkspaceScreen.send(selectedBlocks.value)
                 deselectAllBlocks()
                 didUpdateTable.send()
             }
