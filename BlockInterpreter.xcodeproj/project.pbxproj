@@ -128,6 +128,72 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		492150212A0B22AF00DD171F /* Block */ = {
+			isa = PBXGroup;
+			children = (
+				492150222A0B22CA00DD171F /* View */,
+				492150232A0B22CE00DD171F /* ViewModel */,
+			);
+			path = Block;
+			sourceTree = "<group>";
+		};
+		492150222A0B22CA00DD171F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				492150252A0B22E100DD171F /* Configurations */,
+				495147802A08CF8B00FD13AB /* BlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		492150232A0B22CE00DD171F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				495147822A09386000FD13AB /* BlockCellViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		492150252A0B22E100DD171F /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				492BA4182A0AB83F0019EFBE /* BlockCellStyle.swift */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		492150262A0B233100DD171F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		492150272A0B233400DD171F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		492150282A0B234300DD171F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		492150292A0B234600DD171F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		492BA41A2A0AD72F0019EFBE /* TableViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,11 +212,9 @@
 		4951477F2A08CF4800FD13AB /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				492150212A0B22AF00DD171F /* Block */,
 				49C661BD2A02D9AC00439E2A /* VariableBlock */,
 				49A346592A058F69003BC2B9 /* ConditionBlock */,
-				495147802A08CF8B00FD13AB /* BlockCell.swift */,
-				495147822A09386000FD13AB /* BlockCellViewModel.swift */,
-				492BA4182A0AB83F0019EFBE /* BlockCellStyle.swift */,
 			);
 			path = Blocks;
 			sourceTree = "<group>";
@@ -210,8 +274,8 @@
 		49A346592A058F69003BC2B9 /* ConditionBlock */ = {
 			isa = PBXGroup;
 			children = (
-				49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */,
-				49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */,
+				492150282A0B234300DD171F /* View */,
+				492150292A0B234600DD171F /* ViewModel */,
 			);
 			path = ConditionBlock;
 			sourceTree = "<group>";
@@ -260,8 +324,8 @@
 		49C661BD2A02D9AC00439E2A /* VariableBlock */ = {
 			isa = PBXGroup;
 			children = (
-				49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */,
-				49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */,
+				492150262A0B233100DD171F /* View */,
+				492150272A0B233400DD171F /* ViewModel */,
 			);
 			path = VariableBlock;
 			sourceTree = "<group>";

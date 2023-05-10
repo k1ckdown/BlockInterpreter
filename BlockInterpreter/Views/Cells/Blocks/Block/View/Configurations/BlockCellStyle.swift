@@ -2,8 +2,6 @@
 //  BlockCellStyle.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 10.05.2023.
-//
 
 import Foundation
 

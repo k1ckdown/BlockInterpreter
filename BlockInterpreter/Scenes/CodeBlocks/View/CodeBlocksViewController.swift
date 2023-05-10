@@ -226,6 +226,7 @@ private extension CodeBlocksViewController {
             .store(in: &subscriptions)
         
         viewModel.didUpdateTable
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] in
                 self?.blocksTableView.reloadData()
             })

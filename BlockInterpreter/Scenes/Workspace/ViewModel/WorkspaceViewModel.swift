@@ -6,14 +6,15 @@
 import Foundation
 import Combine
 
-final class WorkspaceViewModel {
+final class WorkspaceViewModel: WorkspaceViewModelType {
     
     var showConsole = PassthroughSubject<Void, Never>()
-
+    var moveBlock = PassthroughSubject<(IndexPath, IndexPath), Never>()
+    
+    var cellViewModels: [BlockCellViewModel]
+    
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<Void, Never>()
-    
-    private(set) var cellViewModels: [BlockCellViewModel]
     
     init() {
         cellViewModels = [
@@ -25,9 +26,9 @@ final class WorkspaceViewModel {
         bind()
     }
     
-    func moveBlock(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let cellViewModel = cellViewModels.remove(at: sourceIndexPath.row)
-        cellViewModels.insert(cellViewModel, at: destinationIndexPath.row)
+    private func didMoveBlock(from sourceIndex: Int, to destinationIndex: Int) {
+        let cellViewModel = cellViewModels.remove(at: sourceIndex)
+        cellViewModels.insert(cellViewModel, at: destinationIndex)
     }
 }
 
@@ -37,6 +38,12 @@ extension WorkspaceViewModel  {
             .sink(receiveValue: { [weak self] in
                 self?.didGoToConsole.send()
             })
+            .store(in: &subscriptions)
+        
+        moveBlock
+            .sink { [weak self] in
+                self?.didMoveBlock(from: $0.0.row, to: $0.1.row)
+            }
             .store(in: &subscriptions)
     }
 }

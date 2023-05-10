@@ -30,10 +30,10 @@ final class WorkspaceViewController: UIViewController {
       return backdrop
     }()
     
-    private let viewModel: WorkspaceViewModel
+    private let viewModel: WorkspaceViewModelType
     private var subscriptions = Set<AnyCancellable>()
     
-    init(with viewModel: WorkspaceViewModel) {
+    init(with viewModel: WorkspaceViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -53,7 +53,7 @@ final class WorkspaceViewController: UIViewController {
       codeTableView.performBatchUpdates({
         codeTableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
       }) { [weak self] _ in
-          self?.viewModel.moveBlock(from: sourceIndexPath, to: destinationIndexPath)
+          self?.viewModel.moveBlock.send((sourceIndexPath, destinationIndexPath))
       }
     }
     
@@ -162,17 +162,6 @@ extension WorkspaceViewController: UITableViewDelegate {
     }
 }
 
-
-// MARK: - Reactive Behavior
-
-private extension WorkspaceViewController {
-    func setupBindings() {
-        runButton.tapPublisher
-            .sink(receiveValue: { [weak self] in self?.viewModel.showConsole.send()})
-            .store(in: &subscriptions)
-    }
-}
-
 // MARK: - UITableViewDragDelegate
 
 extension WorkspaceViewController: UITableViewDragDelegate {
@@ -259,4 +248,14 @@ extension WorkspaceViewController: UITableViewDropDelegate {
     backdrop.isHidden = true
     backdrop.frame = .zero
   }
+}
+
+// MARK: - Reactive Behavior
+
+private extension WorkspaceViewController {
+    func setupBindings() {
+        runButton.tapPublisher
+            .sink(receiveValue: { [weak self] in self?.viewModel.showConsole.send()})
+            .store(in: &subscriptions)
+    }
 }

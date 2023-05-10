@@ -15,12 +15,13 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
     var isOptionsMenuVisible = CurrentValueSubject<Bool, Never>(false)
     var didUpdateTable = PassthroughSubject<Void, Never>()
     
+    var cellViewModels: [[BlockCellViewModel]]
+    
     private var subscriptions = Set<AnyCancellable>()
     private var selectedIndexPaths = CurrentValueSubject<[IndexPath], Never>([])
     private(set) var didGoToWorkspaceScreen = PassthroughSubject<Void, Never>()
     
     private let blocksSections = BlocksSection.allCases
-    private(set) var cellViewModels: [[BlockCellViewModel]]
     
     init() {
         cellViewModels = .init(repeating: .init(), count: blocksSections.count)
