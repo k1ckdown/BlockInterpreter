@@ -22,11 +22,13 @@ class Tree {
                 rootNode.addChild(printingNode)
                 index += 1
             case is Loop:
-                if let loopNode = buildLoopNode(getBlockAndMoveIndex()) {
+                if let loopNode = buildNode(getBlockAndMoveIndex(),
+                        type: AllTypes.loop) {
                     rootNode.addChild(loopNode)
                 }
             case is Condition:
-                if let conditionNode = buildConditionNode(getBlockAndMoveIndex()) {
+                if let conditionNode = buildNode(getBlockAndMoveIndex(),
+                        type: AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
             case is BlockDelimiter:
@@ -95,147 +97,88 @@ class Tree {
         return node
     }
 
-    private func buildConditionNode<T>(_ conditionBlock: [T]) -> Node? {
-        guard let condition = conditionBlock.first as? Condition else {
+    private func buildNode<T>(_ block: [T], type: AllTypes) -> Node? {
+        guard let firstBlock = block.first else {
             return nil
         }
-        let node = Node(value: condition.value, type: AllTypes.ifBlock)
+
+        var node: Node?
+
+        if type == AllTypes.ifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: type)
+        } else if type == AllTypes.loop {
+            guard let loop = firstBlock as? Loop else {
+                return nil
+            }
+            node = Node(value: loop.value, type: type)
+        }
+
         var index = 1
 
-        while index < conditionBlock.count {
-            if let block = conditionBlock[index] as? BlockDelimiter {
+        while index < block.count {
+            if let blockDelimiter = block[index] as? BlockDelimiter {
                 index += 1
                 continue
-            } else if let variableBlock = conditionBlock[index] as? Variable {
+            } else if let variableBlock = block[index] as? Variable {
                 let variableNode = buildVariableNode(variable: variableBlock)
-                node.addChild(variableNode)
-            } else if let printBlock = conditionBlock[index] as? Printing {
+                node?.addChild(variableNode)
+            } else if let printBlock = block[index] as? Printing {
                 let printingNode = buildPrintingNode(printing: printBlock)
-                node.addChild(printingNode)
-            } else if let nestedConditionBlock = conditionBlock[index] as? Condition {
+                node?.addChild(printingNode)
+            } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [Any] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedConditionBlock)
                 var countBegin: Int = 0
-                while additionIndex < conditionBlock.count {
-                    if let blockEnd = conditionBlock[additionIndex] as? BlockDelimiter {
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
                         if blockEnd.type == DelimiterType.end {
                             countBegin -= 1
                             if countBegin == 0 {
                                 break
                             }
-                        }
-                        else if blockEnd.type == DelimiterType.begin {
+                        } else if blockEnd.type == DelimiterType.begin {
                             countBegin += 1
                         }
                     }
-                    nestedBlocks.append(conditionBlock[additionIndex])
+                    nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildConditionNode(nestedBlocks) {
-                    node.addChild(nestedNode)
+                if let nestedNode = buildNode(nestedBlocks, type: .ifBlock) {
+                    node?.addChild(nestedNode)
                 }
                 index = additionIndex
-            } else if let loopBlock = conditionBlock[index] as? Loop {
-                var loopBlocks: [Any] = []
-                var additionIndex = index + 1
-                loopBlocks.append(loopBlock)
-                var countBegin: Int = 0
-                while additionIndex < conditionBlock.count {
-                    if let blockEnd = conditionBlock[additionIndex] as? BlockDelimiter {
-                        if blockEnd.type == DelimiterType.end {
-                            countBegin -= 1
-                            if countBegin == 0 {
-                                break
-                            }
-                        }
-                        else if blockEnd.type == DelimiterType.begin {
-                            countBegin += 1
-                        }
-                    }
-                    loopBlocks.append(conditionBlock[additionIndex])
-                    additionIndex += 1
-                }
-                if let loopNode = buildLoopNode(loopBlocks) {
-                    node.addChild(loopNode)
-                }
-                index = additionIndex
-            }
-            index += 1
-        }
-        return node
-    }
-
-    private func buildLoopNode<T>(_ loopBlock: [T]) -> Node? {
-        guard let loop = loopBlock.first as? Loop else {
-            return nil
-        }
-        let node = Node(value: loop.value, type: AllTypes.loop)
-        var index = 1
-
-        while index < loopBlock.count {
-            if let block = loopBlock[index] as? BlockDelimiter {
-                index += 1
-                continue
-            } else if let variableBlock = loopBlock[index] as? Variable {
-                let variableNode = buildVariableNode(variable: variableBlock)
-                node.addChild(variableNode)
-            } else if let printBlock = loopBlock[index] as? Printing {
-                let printingNode = buildPrintingNode(printing: printBlock)
-                node.addChild(printingNode)
-            } else if let nestedConditionBlock = loopBlock[index] as? Condition {
-                var nestedBlocks: [Any] = []
-                var additionIndex = index + 1
-                nestedBlocks.append(nestedConditionBlock)
-                var countBegin: Int = 0
-                while additionIndex < loopBlock.count {
-                    if let blockEnd = loopBlock[additionIndex] as? BlockDelimiter {
-                        if blockEnd.type == DelimiterType.end {
-                            countBegin -= 1
-                            if countBegin == 0 {
-                                break
-                            }
-                        }
-                        else if blockEnd.type == DelimiterType.begin {
-                            countBegin += 1
-                        }
-                    }
-                    nestedBlocks.append(loopBlock[additionIndex])
-                    additionIndex += 1
-                }
-                if let nestedNode = buildConditionNode(nestedBlocks) {
-                    node.addChild(nestedNode)
-                }
-                index = additionIndex
-            }
-            else if let nestedLoopBlock = loopBlock[index] as? Loop {
+            } else if let nestedLoopBlock = block[index] as? Loop {
                 var nestedBlocks: [Any] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedLoopBlock)
                 var countBegin: Int = 0
-                while additionIndex < loopBlock.count {
-                    if let blockEnd = loopBlock[additionIndex] as? BlockDelimiter {
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
                         if blockEnd.type == DelimiterType.end {
                             countBegin -= 1
                             if countBegin == 0 {
                                 break
                             }
-                        }
-                        else if blockEnd.type == DelimiterType.begin {
+                        } else if blockEnd.type == DelimiterType.begin {
                             countBegin += 1
                         }
                     }
-                    nestedBlocks.append(loopBlock[additionIndex])
+                    nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildLoopNode(nestedBlocks) {
-                    node.addChild(nestedNode)
+                if let nestedNode = buildNode(nestedBlocks, type: .loop) {
+                    node?.addChild(nestedNode)
                 }
                 index = additionIndex
             }
             index += 1
         }
-
         return node
     }
+
+
 }
