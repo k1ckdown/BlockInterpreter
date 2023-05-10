@@ -1,7 +1,7 @@
 import Foundation
 
 
-var array: [Any] = []
+var array: [IBlock] = []
 
 
 array.append(Printing(id: 1, value: "a"))

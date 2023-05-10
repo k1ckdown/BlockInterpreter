@@ -4,8 +4,12 @@ import Foundation
 class Tree {
     var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
     var index: Int = 0
-    var blocks: [Any]
-    init(_ blocks: [Any]) {
+    var blocks: [IBlock]
+    init(_ blocks: [IBlock]) {
+        self.blocks = blocks
+    }
+
+    func setBlocks(_ blocks: [IBlock]) {
         self.blocks = blocks
     }
 
@@ -119,7 +123,7 @@ class Tree {
         var index = 1
 
         while index < block.count {
-            if let blockDelimiter = block[index] as? BlockDelimiter {
+            if block[index] is BlockDelimiter {
                 index += 1
                 continue
             } else if let variableBlock = block[index] as? Variable {

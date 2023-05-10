@@ -8,7 +8,7 @@ enum ConditionType {
 }
 
 
-struct Condition {
+struct Condition: IBlock {
     let id: Int
     let type: ConditionType
     let value: String
