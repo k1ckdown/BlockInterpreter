@@ -10,7 +10,7 @@ enum VariableType {
     case array
 }
 
-// ObjectiveIdentifier
+
 struct Variable {
     let id: Int
     let type: VariableType

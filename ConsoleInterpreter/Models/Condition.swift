@@ -9,6 +9,7 @@ enum ConditionType {
 
 
 struct Condition {
+    let id: Int
     let type: ConditionType
     let value: String
 }
