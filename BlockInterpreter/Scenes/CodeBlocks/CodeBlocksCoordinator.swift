@@ -24,7 +24,7 @@ final class CodeBlocksCoordinator: BaseCoordinator {
         let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
         
         codeBlocksViewModel.didGoToWorkspaceScreen
-            .sink(receiveValue: { [weak self] in self?.delegate?.goToWorkspace() })
+            .sink { [weak self] in self?.delegate?.goToWorkspace() }
             .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true

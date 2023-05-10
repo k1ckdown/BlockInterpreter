@@ -26,23 +26,20 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
         bind()
     }
     
-    private func didMoveBlock(from sourceIndex: Int, to destinationIndex: Int) {
-        let cellViewModel = cellViewModels.remove(at: sourceIndex)
-        cellViewModels.insert(cellViewModel, at: destinationIndex)
-    }
 }
 
 extension WorkspaceViewModel  {
     private func bind() {
         showConsole
-            .sink(receiveValue: { [weak self] in
+            .sink { [weak self] in
                 self?.didGoToConsole.send()
-            })
+            }
             .store(in: &subscriptions)
         
         moveBlock
             .sink { [weak self] in
-                self?.didMoveBlock(from: $0.0.row, to: $0.1.row)
+                guard let self = self else { return }
+                cellViewModels.insert(cellViewModels.remove(at: $0.0.row), at: $0.1.row)
             }
             .store(in: &subscriptions)
     }

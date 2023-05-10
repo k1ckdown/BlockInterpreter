@@ -75,7 +75,7 @@ final class ConditionBlockCell: BlockCell {
         
         conditionStatementLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(Constants.ConditionStatementLabel.insetLeading)
-            make.height.equalToSuperview()
+            make.top.bottom.equalToSuperview()
         }
     }
     
@@ -84,7 +84,7 @@ final class ConditionBlockCell: BlockCell {
         
         conditionFieldView.snp.makeConstraints { make in
             make.leading.equalTo(conditionStatementLabel.snp.trailing).offset(Constants.ConditionFieldView.insetLeading)
-            make.trailing.height.equalToSuperview()
+            make.trailing.top.bottom.equalToSuperview()
         }
     }
     
@@ -109,8 +109,8 @@ final class ConditionBlockCell: BlockCell {
         thenLabel.adjustsFontSizeToFitWidth = true
         
         thenLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
             make.leading.equalTo(conditionTextField.snp.trailing).offset(Constants.ThenLabel.insetLeading)
-            make.height.equalToSuperview()
         }
     }
 }

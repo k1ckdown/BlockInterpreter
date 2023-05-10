@@ -44,7 +44,6 @@ final class VariableBlockCell: BlockCell {
     private let equalSignImageView = UIImageView()
     
     private let assignmentStackView = UIStackView()
-    private var assignmentSVCenterXConstraint: Constraint?
     
     private(set) var variableNameTextField = BlockTextField()
     private(set) var variableValueTextField = BlockTextField()
@@ -62,7 +61,7 @@ final class VariableBlockCell: BlockCell {
         super.prepareForReuse()
         
         variableTypeLabel.isHidden = false
-        assignmentSVCenterXConstraint?.update(priority: .low)
+        assignmentStackView.snp.removeConstraints()
     }
     
     func configure(with viewModel: VariableBlockCellViewModel) {
@@ -72,9 +71,23 @@ final class VariableBlockCell: BlockCell {
         variableNameTextField.placeholder = viewModel.variableNamePlaceHolder
         variableValueTextField.placeholder = viewModel.variableValuePlaceholder
         
-        guard viewModel.shouldShowVariableType == false else { return }
-        variableTypeLabel.isHidden = true
-        assignmentSVCenterXConstraint?.update(priority: .high)
+        assignmentStackView.snp.makeConstraints { make in
+            make.height.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(Constants.AssignmentStackView.muiltiplierWidth)
+        }
+        
+        if viewModel.shouldShowVariableType == true {
+            assignmentStackView.snp.makeConstraints { make in
+                make.top.bottom.equalToSuperview()
+                make.leading.equalTo(variableTypeLabel.snp.trailing).offset(Constants.AssignmentStackView.insetLeading)
+            }
+        } else {
+            variableTypeLabel.isHidden = true
+            assignmentStackView.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview()
+            }
+        }
     }
     
     private func setup() {
@@ -100,8 +113,8 @@ final class VariableBlockCell: BlockCell {
         variableTypeLabel.backgroundColor = .clear
         
         variableTypeLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
             make.leading.equalToSuperview().offset(Constants.VariableTypeLabel.insetLeading)
-            make.height.equalToSuperview()
         }
     }
     
@@ -113,13 +126,6 @@ final class VariableBlockCell: BlockCell {
         assignmentStackView.axis = .horizontal
         assignmentStackView.distribution = .equalSpacing
         assignmentStackView.backgroundColor = .clear
-        
-        assignmentStackView.snp.makeConstraints { make in
-            make.height.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(Constants.AssignmentStackView.muiltiplierWidth)
-            make.leading.equalTo(variableTypeLabel.snp.trailing).offset(Constants.AssignmentStackView.insetLeading)
-            assignmentSVCenterXConstraint = make.centerX.equalToSuperview().priority(.low).constraint
-        }
     }
     
     private func setupVariableNameTextField() {
@@ -128,7 +134,6 @@ final class VariableBlockCell: BlockCell {
         variableNameTextField.snp.makeConstraints { make in
             make.height.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierHeight)
             make.width.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierWidth)
-            make.centerY.equalToSuperview()
         }
     }
     
@@ -140,7 +145,6 @@ final class VariableBlockCell: BlockCell {
         equalSignImageView.image = UIImage(systemName: "equal")
         
         equalSignImageView.snp.makeConstraints { make in
-            make.leading.equalTo(variableNameTextField.snp.trailing).offset(Constants.EqualSignLabel.insetLeading)
             make.height.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierHeight)
             make.width.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierWidth)
         }
@@ -152,7 +156,6 @@ final class VariableBlockCell: BlockCell {
         variableValueTextField.snp.makeConstraints { make in
             make.width.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierWidth)
             make.height.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierHeight)
-            make.centerY.equalToSuperview()
         }
     }
 

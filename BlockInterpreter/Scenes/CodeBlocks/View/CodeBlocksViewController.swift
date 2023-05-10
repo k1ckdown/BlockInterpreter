@@ -13,6 +13,12 @@ final class CodeBlocksViewController: UIViewController {
             enum BlocksTableView {
                 static let inset: CGFloat = 30
             }
+        
+            enum OptionsMenuToolbar {
+                static let height: Double = 50
+                static let cornerRadius: CGFloat = 10
+                static let multiplierWidth: Double = 0.6
+            }
     }
     
     private let blocksTableView = UITableView()
@@ -34,9 +40,7 @@ final class CodeBlocksViewController: UIViewController {
         label.text = "To workspace"
         label.textColor = .appWhite
         label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        label.textAlignment = .center
-        label.adjustsFontSizeToFitWidth = true
-
+        
         return label
     }()
 
@@ -104,22 +108,21 @@ final class CodeBlocksViewController: UIViewController {
     
     private func setupOptionsMenuToolbar() {
         view.addSubview(optionsMenuToolbar)
-
+        
         optionsMenuToolbar.isHidden = true
         optionsMenuToolbar.barStyle = .black
-        optionsMenuToolbar.layer.cornerRadius = 10
         optionsMenuToolbar.layer.masksToBounds = true
+        optionsMenuToolbar.layer.cornerRadius = Constants.OptionsMenuToolbar.cornerRadius
+        
+        let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
+        optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
+                                          y: view.bounds.height * 0.85,
+                                          width: width,
+                                          height: Constants.OptionsMenuToolbar.height)
 
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let addBarButton = UIBarButtonItem(customView: addBlockStackView)
-        optionsMenuToolbar.setItems([flexibleSpace, addBarButton, flexibleSpace], animated: true)
-
-        optionsMenuToolbar.snp.makeConstraints { make in
-            make.width.equalToSuperview().multipliedBy(0.6)
-            make.height.equalTo(50)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(60)
-        }
+        optionsMenuToolbar.items = [flexibleSpace, addBarButton, flexibleSpace]
     }
 }
 
@@ -220,23 +223,23 @@ extension CodeBlocksViewController: UITextFieldDelegate {
 private extension CodeBlocksViewController {
     func setupBindings() {
         addBlocksTapGesture.tapPublisher
-            .sink(receiveValue: { [weak self] _ in
+            .sink { [weak self] _ in
                 self?.viewModel.moveToWorkspace.send()
-            })
+            }
             .store(in: &subscriptions)
         
         viewModel.didUpdateTable
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] in
+            .sink { [weak self] in
                 self?.blocksTableView.reloadData()
-            })
+            }
             .store(in: &subscriptions)
         
         viewModel.isOptionsMenuVisible
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isVisible in
-                self?.optionsMenuToolbar.isHidden = !isVisible
-                self?.tabBarController?.tabBar.isHidden = isVisible
+            .sink { [weak self] in
+                self?.optionsMenuToolbar.isHidden = !$0
+                self?.tabBarController?.tabBar.isHidden = $0
             }
             .store(in: &subscriptions)
     }

@@ -81,33 +81,33 @@ extension CodeBlocksViewModel {
     
     private func bind() {
         viewDidLoad
-            .sink(receiveValue: { [weak self] in
+            .sink { [weak self] in
                 self?.updateCellViewModels()
-            })
+            }
             .store(in: &subscriptions)
         
         selectedIndexPaths
-            .sink(receiveValue: { [weak self] in
+            .sink { [weak self] in
                 self?.isOptionsMenuVisible.value = $0.count != 0
-            })
+            }
             .store(in: &subscriptions)
         
         toggleSelectedIndexPath
             .sink { [weak self] in
                 guard let self = self else { return }
-                self.selectedIndexPaths.value.contains($0) == true ? self.deselectBlock($0) : self.selectBlock($0)
+                selectedIndexPaths.value.contains($0) == true ? deselectBlock($0) : selectBlock($0)
             }
             .store(in: &subscriptions)
         
         moveToWorkspace
-            .sink(receiveValue: { [weak self] _ in
+            .sink { [weak self] _ in
                 guard let self = self else { return }
                 
-                self.isOptionsMenuVisible.send(false)
-                self.didGoToWorkspaceScreen.send()
-                self.deselectAllBlocks()
-                self.didUpdateTable.send()
-            })
+                isOptionsMenuVisible.send(false)
+                didGoToWorkspaceScreen.send()
+                deselectAllBlocks()
+                didUpdateTable.send()
+            }
             .store(in: &subscriptions)
     }
     

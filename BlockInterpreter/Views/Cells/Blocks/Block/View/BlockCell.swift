@@ -22,25 +22,16 @@ class BlockCell: UITableViewCell {
     
     private(set) var containerView = UIView()
     
-    private var containerViewHeightConstraint: Constraint?
-    private var containerViewWidthConstraint: Constraint?
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        setup()
         selectionStyle = .none
-        setupSuperView()
-        setupContainerView()
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         containerView.layer.borderColor = .none
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        updateAppearance()
     }
     
     required init?(coder: NSCoder) {
@@ -59,10 +50,16 @@ class BlockCell: UITableViewCell {
         isSelectedState = viewModel.isSelect
         containerView.layer.cornerRadius = viewModel.style.cornerRadius
         
-        containerViewHeightConstraint?
-            .update(offset: contentView.frame.height * viewModel.style.multiplierHeight())
-        containerViewWidthConstraint?
-            .update(offset: contentView.frame.width * viewModel.style.multiplierWidth(for: viewModel.type))
+        containerView.snp.makeConstraints { make in
+            make.height.equalToSuperview().multipliedBy(viewModel.style.multiplierHeight())
+            make.width.equalToSuperview().multipliedBy(viewModel.style.multiplierWidth(for: viewModel.type))
+            make.leading.equalToSuperview().offset(viewModel.style.insetLeading)
+        }
+    }
+    
+    private func setup() {
+        setupSuperView()
+        setupContainerView()
     }
     
     private func setupSuperView() {
@@ -77,10 +74,7 @@ class BlockCell: UITableViewCell {
         containerView.layer.borderWidth = Constants.ContainerView.borderWidth
         
         containerView.snp.makeConstraints { make in
-            containerViewHeightConstraint = make.height.equalTo(frame.height).constraint
             make.centerY.equalToSuperview()
-            containerViewWidthConstraint = make.width.equalTo(frame.width).constraint
-            make.leading.equalToSuperview()
         }
     }
 }

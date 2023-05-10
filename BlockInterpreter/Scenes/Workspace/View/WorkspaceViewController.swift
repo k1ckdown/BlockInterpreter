@@ -18,7 +18,7 @@ final class WorkspaceViewController: UIViewController {
             }
     }
     
-    private let codeTableView = DraggableTableView()
+    private let codeTableView = UITableView()
     private let runButton = UIButton(type: .system)
     
     private lazy var backdrop: UIView = {
@@ -171,15 +171,17 @@ extension WorkspaceViewController: UITableViewDragDelegate {
 
       let item = UIDragItem(itemProvider: NSItemProvider())
       item.localObject = indexPath
+      
       return [item]
   }
 
   func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
-      guard let cell = tableView.cellForRow(at: indexPath) else { return nil }
-      
       let preview = UIDragPreviewParameters()
+      
       preview.backgroundColor = .clear
-      preview.visiblePath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 5, dy: 0), cornerRadius: 12)
+      if #available(iOS 14.0, *) {
+          preview.shadowPath = UIBezierPath(rect: .zero)
+      }
       
       return preview
   }
@@ -248,6 +250,18 @@ extension WorkspaceViewController: UITableViewDropDelegate {
     backdrop.isHidden = true
     backdrop.frame = .zero
   }
+    
+    func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let preview = UIDragPreviewParameters()
+        
+        preview.backgroundColor = .clear
+        if #available(iOS 14.0, *) {
+            preview.shadowPath = UIBezierPath(rect: .zero)
+        }
+        
+        return preview
+    }
+    
 }
 
 // MARK: - Reactive Behavior
@@ -255,7 +269,7 @@ extension WorkspaceViewController: UITableViewDropDelegate {
 private extension WorkspaceViewController {
     func setupBindings() {
         runButton.tapPublisher
-            .sink(receiveValue: { [weak self] in self?.viewModel.showConsole.send()})
+            .sink { [weak self] in self?.viewModel.showConsole.send() }
             .store(in: &subscriptions)
     }
 }

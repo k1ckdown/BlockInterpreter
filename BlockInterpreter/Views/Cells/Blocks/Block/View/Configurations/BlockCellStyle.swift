@@ -17,6 +17,15 @@ enum BlockCellStyle {
         }
     }
     
+    var insetLeading: CGFloat {
+        switch self {
+        case .work:
+            return 7
+        case .presentation:
+            return 0
+        }
+    }
+    
     func multiplierHeight() -> CGFloat {
         switch self {
         case .work:
