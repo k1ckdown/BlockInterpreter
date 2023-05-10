@@ -3,105 +3,81 @@ import Foundation
 
 class Tree {
     var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
-    
-    init() {
+    var index: Int = 0
+    var blocks: [Any]
+    init(_ blocks: [Any]) {
+        self.blocks = blocks
     }
-    
-    func buildTree<T>(blocks: [T]) {
-        var index: Int = 0;
-        
-        while (index < blocks.count) {
-            if let variableBlock = blocks[index] as? Variable {
+
+    func buildTree() {
+        while index < blocks.count {
+            let block = blocks[index]
+            switch block {
+            case let variableBlock as Variable:
                 let variableNode = buildVariableNode(variable: variableBlock)
                 rootNode.addChild(variableNode)
                 index += 1
-            } else if let printBlock = blocks[index] as? Printing {
+            case let printBlock as Printing:
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
-            } else if let loopBlock = blocks[index] as? Loop {
-                var array: [Any] = []
-                var additionIndex: Int = index + 1
-                array.append(blocks[index])
-                var countBegin: Int = 0
-                while (additionIndex < blocks.count) {
-                    if let blockEnd = blocks[additionIndex] as? BlockDelimiter {
-                        if (blockEnd.type == DelimiterType.end) {
-                            countBegin -= 1
-                        }
-                        else if (blockEnd.type == DelimiterType.begin) {
-                            countBegin += 1
-                        }
-                    }
-
-                    array.append(blocks[additionIndex])
-
-                    if (countBegin == 0) {
-                        break
-                    }
-
-                    additionIndex += 1
-                }
-
-                var indAdd: Int = 0
-                var countIf: Int = 0
-                while (indAdd < array.count) {
-                    if let conditionBlockOpt = array[indAdd] as? Condition {
-                        countIf += 1
-                    }
-                    indAdd += 1
-                }
-                // index = additionIndex
-                index += (additionIndex - 1)
-                let loopNode = buildLoopNode(array)
-                if let loopNode = loopNode {
+            case is Loop:
+                if let loopNode = buildLoopNode(getBlockAndMoveIndex()) {
                     rootNode.addChild(loopNode)
                 }
-                index += 1
-            } else if let conditionBlock = blocks[index] as? Condition {
-                var array: [Any] = []
-                var additionIndex: Int = index + 1
-                array.append(blocks[index])
-                var countBegin: Int = 0
-                while (additionIndex < blocks.count) {
-                    if let blockEnd = blocks[additionIndex] as? BlockDelimiter {
-                        if (blockEnd.type == DelimiterType.end) {
-                            countBegin -= 1
-                        }
-                        else if (blockEnd.type == DelimiterType.begin) {
-                            countBegin += 1
-                        }
-                    }
-
-                    array.append(blocks[additionIndex])
-
-                    if (countBegin == 0) {
-                        break
-                    }
-
-                    additionIndex += 1
-                }
-                
-                var indAdd: Int = 0
-                var countIf: Int = 0
-                while (indAdd < array.count) {
-                    if let conditionBlockOpt = array[indAdd] as? Condition {
-                        countIf += 1
-                    }
-                    indAdd += 1
-                }
-                // index = additionIndex
-                index += (additionIndex - 1)
-                let conditionNode = buildConditionNode(array)
-                if let conditionNode = conditionNode {
+            case is Condition:
+                if let conditionNode = buildConditionNode(getBlockAndMoveIndex()) {
                     rootNode.addChild(conditionNode)
                 }
+            case is BlockDelimiter:
                 index += 1
-            }
-            else if ((blocks[index] as? BlockDelimiter) != nil) {
+            default:
                 index += 1
             }
         }
+    }
+
+    private func getMatchingDelimiterIndex() -> Int? {
+        var countBegin = 0
+        for i in (index + 1)..<blocks.count {
+            guard let block = blocks[i] as? BlockDelimiter else {
+                continue
+            }
+            countBegin += countForMatchingDelimiter(block)
+            if countBegin == 0 {
+                return i
+            }
+        }
+        return nil
+    }
+
+    private func countForMatchingDelimiter(_ block: BlockDelimiter) -> Int {
+        if isEndDelimiter(block) {
+            return -1
+        } else if isBeginDelimiter(block) {
+            return 1
+        }
+        return 0
+    }
+
+    private func isBeginDelimiter(_ block: BlockDelimiter) -> Bool {
+        block.type == DelimiterType.begin
+    }
+
+    private func isEndDelimiter(_ block: BlockDelimiter) -> Bool {
+        block.type == DelimiterType.end
+    }
+
+
+    private func getBlockAndMoveIndex() -> [Any] {
+        var wholeBlock: [Any] = []
+        guard let endIndex = getMatchingDelimiterIndex() else {
+            return wholeBlock
+        }
+        wholeBlock.append(blocks[index])
+        wholeBlock += Array(blocks[(index + 1)...endIndex])
+        index = endIndex + 1
+        return wholeBlock
     }
     
     private func buildVariableNode(variable: Variable) -> Node {
