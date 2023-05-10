@@ -7,9 +7,11 @@ import UIKit
 
 final class MainTabBarCoordinator: BaseCoordinator {
     
+    private let workspaceViewModel: WorkspaceViewModel
     private let mainTabBarController: UITabBarController
     
     override init(navigationController: UINavigationController) {
+        workspaceViewModel = WorkspaceViewModel()
         mainTabBarController = MainTabBarViewController()
         super.init(navigationController: navigationController)
     }
@@ -38,7 +40,8 @@ final class MainTabBarCoordinator: BaseCoordinator {
             }
             
         case .workspace:
-            coordinator = WorkspaceCoordinator(navigationController: navController)
+            coordinator = WorkspaceCoordinator(navigationController: navController,
+                                               workspaceViewModel: workspaceViewModel)
             
         case .settings:
             coordinator = SettingsCoordinator(navigationController: navController)
@@ -59,7 +62,8 @@ final class MainTabBarCoordinator: BaseCoordinator {
 // MARK: - Navigation
 
 private extension MainTabBarCoordinator {
-    func showWorkspace() {
+    func showWorkspace(blocks: [BlockCellViewModel]) {
+        workspaceViewModel.addBlocks.send(blocks)
         mainTabBarController.tabBar(mainTabBarController.tabBar,
                                     didSelect: mainTabBarController.viewControllers?[TabType.workspace.orderNumber].tabBarItem ?? .init())
         selectTab(with: .workspace)
@@ -69,7 +73,7 @@ private extension MainTabBarCoordinator {
 // MARK: - CodeBlocksCoordinatorDelegate
 
 extension MainTabBarCoordinator: CodeBlocksCoordinatorDelegate {
-    func goToWorkspace() {
-        showWorkspace()
+    func goToWorkspace(blocks: [BlockCellViewModel]) {
+        showWorkspace(blocks: blocks)
     }
 }

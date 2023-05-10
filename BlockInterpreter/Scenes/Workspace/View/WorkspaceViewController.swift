@@ -18,7 +18,7 @@ final class WorkspaceViewController: UIViewController {
             }
     }
     
-    private let codeTableView = UITableView()
+    private let workBlocksTableView = UITableView()
     private let runButton = UIButton(type: .system)
     
     private lazy var backdrop: UIView = {
@@ -50,8 +50,8 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private func move(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-      codeTableView.performBatchUpdates({
-        codeTableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
+      workBlocksTableView.performBatchUpdates({
+        workBlocksTableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
       }) { [weak self] _ in
           self?.viewModel.moveBlock.send((sourceIndexPath, destinationIndexPath))
       }
@@ -68,21 +68,22 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private func setupCodeTableView() {
-        view.addSubview(codeTableView)
+        view.addSubview(workBlocksTableView)
         
-        codeTableView.delegate = self
-        codeTableView.dataSource = self
-        codeTableView.dragDelegate = self
-        codeTableView.dropDelegate = self
-        codeTableView.separatorStyle = .none
-        codeTableView.backgroundColor = .systemBlue
-        codeTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
-        codeTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
+        workBlocksTableView.delegate = self
+        workBlocksTableView.dataSource = self
+        workBlocksTableView.dragDelegate = self
+        workBlocksTableView.dropDelegate = self
+        workBlocksTableView.separatorStyle = .none
+        workBlocksTableView.backgroundColor = .systemBlue
+        workBlocksTableView.showsVerticalScrollIndicator = false
+        workBlocksTableView.showsHorizontalScrollIndicator = false
+        workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
+        workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
-        codeTableView.snp.makeConstraints { make in
+        workBlocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            make.width.equalToSuperview().multipliedBy(0.85)
-            make.centerX.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview()
         }
     }
@@ -108,11 +109,11 @@ final class WorkspaceViewController: UIViewController {
 
 extension WorkspaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellViewModels.count
+        return viewModel.cellViewModels.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellViewModel = viewModel.cellViewModels[indexPath.row]
+        let cellViewModel = viewModel.cellViewModels.value[indexPath.row]
         
         switch cellViewModel.type {
         case .variable:
@@ -270,6 +271,11 @@ private extension WorkspaceViewController {
     func setupBindings() {
         runButton.tapPublisher
             .sink { [weak self] in self?.viewModel.showConsole.send() }
+            .store(in: &subscriptions)
+        
+        viewModel.didUpdateBlocksTable
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.workBlocksTableView.reloadData() }
             .store(in: &subscriptions)
     }
 }

@@ -24,4 +24,13 @@ class BlockCellViewModel {
     func deselect() {
         isSelect = false
     }
+    
+    func updateStyle(style: BlockCellStyle) {
+        self.style = style
+    }
+    
+    func copyToWork() -> BlockCellViewModel {
+        return BlockCellViewModel(type: type, style: .work)
+    }
+    
 }

@@ -18,8 +18,8 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
     var cellViewModels: [[BlockCellViewModel]]
     
     private var subscriptions = Set<AnyCancellable>()
-    private var selectedIndexPaths = CurrentValueSubject<[IndexPath], Never>([])
-    private(set) var didGoToWorkspaceScreen = PassthroughSubject<Void, Never>()
+    private var selectedBlocks = CurrentValueSubject<[BlockCellViewModel], Never>([])
+    private(set) var didGoToWorkspaceScreen = PassthroughSubject<[BlockCellViewModel], Never>()
     
     private let blocksSections = BlocksSection.allCases
     
@@ -51,21 +51,18 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
 }
 
 extension CodeBlocksViewModel {
-    
-    private func selectBlock(_ indexPath: IndexPath) {
-        selectedIndexPaths.value.append(indexPath)
-        cellViewModels[indexPath.section][indexPath.row].select()
+    private func selectBlock(_ block: BlockCellViewModel) {
+        block.select()
+        selectedBlocks.value.append(block)
     }
     
-    private func deselectBlock(_ indexPath: IndexPath) {
-        guard let index = selectedIndexPaths.value.firstIndex(of: indexPath) else { return }
-        
-        selectedIndexPaths.value.remove(at: index)
-        cellViewModels[indexPath.section][indexPath.row].deselect()
+    private func deselectBlock(_ block: BlockCellViewModel) {
+        block.deselect()
+        selectedBlocks.value.removeAll(where: { $0 === block })
     }
     
     private func deselectAllBlocks() {
-        selectedIndexPaths.value.removeAll()
+        selectedBlocks.value.removeAll()
         cellViewModels.flatMap { $0 }.forEach { $0.deselect() }
     }
     
@@ -86,16 +83,9 @@ extension CodeBlocksViewModel {
             }
             .store(in: &subscriptions)
         
-        selectedIndexPaths
+        selectedBlocks
             .sink { [weak self] in
                 self?.isOptionsMenuVisible.value = $0.count != 0
-            }
-            .store(in: &subscriptions)
-        
-        toggleSelectedIndexPath
-            .sink { [weak self] in
-                guard let self = self else { return }
-                selectedIndexPaths.value.contains($0) == true ? deselectBlock($0) : selectBlock($0)
             }
             .store(in: &subscriptions)
         
@@ -104,9 +94,19 @@ extension CodeBlocksViewModel {
                 guard let self = self else { return }
                 
                 isOptionsMenuVisible.send(false)
-                didGoToWorkspaceScreen.send()
+                didGoToWorkspaceScreen.send(cellViewModels.flatMap { $0 }.filter { $0.isSelect })
                 deselectAllBlocks()
                 didUpdateTable.send()
+            }
+            .store(in: &subscriptions)
+        
+        toggleSelectedIndexPath
+            .compactMap() { [weak self] in
+                self?.cellViewModels[$0.section][$0.row]
+            }
+            .sink { [weak self] block in
+                guard let self = self else { return }
+                selectedBlocks.value.contains(where: { $0 === block }) == true ? deselectBlock(block) : selectBlock(block)
             }
             .store(in: &subscriptions)
     }

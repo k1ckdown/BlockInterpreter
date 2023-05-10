@@ -19,4 +19,8 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
         shouldShowVariableType = variableType == nil ? false : true
         super.init(type: .variable, style: style)
     }
+    
+    override func copyToWork() -> BlockCellViewModel {
+        return VariableBlockCellViewModel(variableType: variableType, style: .work)
+    }
 }

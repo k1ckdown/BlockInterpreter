@@ -8,14 +8,15 @@ import Combine
 
 final class WorkspaceCoordinator: BaseCoordinator {
     
+    let workspaceViewModel: WorkspaceViewModel
     private var subscriptions = Set<AnyCancellable>()
     
-    override init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, workspaceViewModel: WorkspaceViewModel) {
+        self.workspaceViewModel = workspaceViewModel
         super.init(navigationController: navigationController)
     }
     
     override func start() {
-        let workspaceViewModel = WorkspaceViewModel()
         let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
         
         workspaceViewModel.didGoToConsole

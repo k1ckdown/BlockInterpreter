@@ -7,11 +7,11 @@ import Foundation
 import Combine
 
 protocol CodeBlocksViewModelType {
+    var cellViewModels: [[BlockCellViewModel]] { get }
     
     var isOptionsMenuVisible: CurrentValueSubject<Bool, Never> { get }
     var didUpdateTable: PassthroughSubject<Void, Never> { get }
-    
-    var cellViewModels: [[BlockCellViewModel]] { get }
+
     var viewDidLoad: PassthroughSubject<Void, Never> { get }
     var moveToWorkspace: PassthroughSubject<Void, Never> { get }
     var toggleSelectedIndexPath: PassthroughSubject<IndexPath, Never> { get }

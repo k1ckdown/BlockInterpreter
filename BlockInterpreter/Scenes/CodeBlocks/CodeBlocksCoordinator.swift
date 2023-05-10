@@ -7,7 +7,7 @@ import UIKit
 import Combine
 
 protocol CodeBlocksCoordinatorDelegate: AnyObject {
-    func goToWorkspace()
+    func goToWorkspace(blocks: [BlockCellViewModel])
 }
 
 final class CodeBlocksCoordinator: BaseCoordinator {
@@ -24,7 +24,7 @@ final class CodeBlocksCoordinator: BaseCoordinator {
         let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
         
         codeBlocksViewModel.didGoToWorkspaceScreen
-            .sink { [weak self] in self?.delegate?.goToWorkspace() }
+            .sink { [weak self] in self?.delegate?.goToWorkspace(blocks: $0) }
             .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true
