@@ -10,10 +10,10 @@ import Combine
 final class WorkspaceViewController: UIViewController {
     
     private enum Constants {
-        enum WorkBlocksTableView {
-            static let insetTop: CGFloat = 10
-            static let insetLeadingTrailing: CGFloat = 20
-        }
+            enum WorkBlocksTableView {
+                static let insetTop: CGFloat = 10
+                static let insetLeadingTrailing: CGFloat = 20
+            }
         
             enum RunButton {
                 static let size: CGFloat = 60
@@ -25,15 +25,6 @@ final class WorkspaceViewController: UIViewController {
     
     private let workBlocksTableView = UITableView()
     private let runButton = UIButton(type: .system)
-    
-    private lazy var backdrop: UIView = {
-      let backdrop = UIView()
-        
-      backdrop.backgroundColor = .gray.withAlphaComponent(0.7)
-      backdrop.isHidden = true
-        
-      return backdrop
-    }()
     
     private let viewModel: WorkspaceViewModelType
     private var subscriptions = Set<AnyCancellable>()
@@ -179,8 +170,6 @@ extension WorkspaceViewController: UITableViewDelegate {
 extension WorkspaceViewController: UITableViewDragDelegate {
     
   func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-      backdrop.isHidden = false
-
       let item = UIDragItem(itemProvider: NSItemProvider())
       item.localObject = indexPath
       
@@ -204,36 +193,18 @@ extension WorkspaceViewController: UITableViewDragDelegate {
 
 extension WorkspaceViewController: UITableViewDropDelegate {
 
-  func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-    guard
-      let item = session.items.first,
-      let fromIndexPath = item.localObject as? IndexPath,
-      let toIndexPath = destinationIndexPath
-    else {
-      backdrop.frame = .zero
-      return UITableViewDropProposal(operation: .forbidden)
-    }
+  func tableView(
+    _ tableView: UITableView,
+    dropSessionDidUpdate session: UIDropSession,
+    withDestinationIndexPath destinationIndexPath: IndexPath?
+  ) -> UITableViewDropProposal {
       
-    if let firstCell = tableView.cellForRow(at: toIndexPath) {
-      let headerFrame = tableView.rectForHeader(inSection: toIndexPath.section)
-      let newFrame = CGRect(
-        x: headerFrame.minX,
-        y: headerFrame.maxY + (CGFloat(toIndexPath.row) * firstCell.frame.height),
-        width: firstCell.frame.width,
-        height: firstCell.frame.height
-      )
-
-      if backdrop.frame == .zero {
-        backdrop.frame = newFrame
-      } else {
-        UIView.animate(withDuration: 0.15) { [backdrop] in
-          backdrop.frame = newFrame
-        }
-      }
-    } else {
-      backdrop.frame = .zero
-    }
-
+    guard
+        let item = session.items.first,
+        let fromIndexPath = item.localObject as? IndexPath,
+        let toIndexPath = destinationIndexPath
+    else { return UITableViewDropProposal(operation: .forbidden) }
+      
     if fromIndexPath.section == toIndexPath.section {
       return .init(operation: .move, intent: .automatic)
     }
@@ -254,13 +225,9 @@ extension WorkspaceViewController: UITableViewDropDelegate {
         coordinator.drop(item, toRowAt: destinationIndexPath)
 
       case .insertIntoDestinationIndexPath:
-//        interact(from: sourceIndexPath, to: destinationIndexPath)
         coordinator.drop(item, toRowAt: sourceIndexPath)
       default: break
     }
-      
-    backdrop.isHidden = true
-    backdrop.frame = .zero
   }
     
     func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
