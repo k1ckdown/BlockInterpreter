@@ -7,7 +7,7 @@ enum DelimiterType {
 }
 
 
-struct BlockDelimiter {
+struct BlockDelimiter: IBlock {
     let type: DelimiterType
 }
 

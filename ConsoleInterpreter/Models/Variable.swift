@@ -10,8 +10,8 @@ enum VariableType {
     case array
 }
 
-// ObjectiveIdentifier
-struct Variable {
+
+struct Variable: IBlock {
     let id: Int
     let type: VariableType
     let name: String
