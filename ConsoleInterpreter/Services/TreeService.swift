@@ -2,7 +2,7 @@ import Foundation
 
 
 class Tree {
-    var rootNode: Node = Node(value: "", type: AllTypes.root)
+    var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
     var blocks: [IBlock]
     init(_ blocks: [IBlock]) {
@@ -87,9 +87,11 @@ class Tree {
     }
     
     private func buildVariableNode(variable: Variable) -> Node {
-        let node = Node(value: "", type: AllTypes.assign)
-        let nameVariable = Node(value: variable.name, type: AllTypes.variable)
-        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic)
+        let node = Node(value: variable.type.rawValue, type: AllTypes.assign, id: variable.id)
+        let nameVariable = Node(value: variable.name, type: AllTypes.variable,
+                id: variable.id)
+        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
+                id: variable.id)
         node.addChild(nameVariable)
         node.addChild(valueVariable)
         return node
@@ -97,7 +99,8 @@ class Tree {
     
     
     private func buildPrintingNode(printing: Printing) -> Node {
-        let node = Node(value: printing.value, type: AllTypes.print)
+        let node = Node(value: printing.value, type: AllTypes.print,
+                id: printing.id)
         return node
     }
 
@@ -112,12 +115,12 @@ class Tree {
             guard let condition = firstBlock as? Condition else {
                 return nil
             }
-            node = Node(value: condition.value, type: type)
+            node = Node(value: condition.value, type: type, id: condition.id)
         } else if type == AllTypes.loop {
             guard let loop = firstBlock as? Loop else {
                 return nil
             }
-            node = Node(value: loop.value, type: type)
+            node = Node(value: loop.value, type: type, id: loop.id)
         }
 
         var index = 1

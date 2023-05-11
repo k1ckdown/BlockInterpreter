@@ -50,7 +50,9 @@
 		5860313221A5CDD0534CFC0E /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
 		5860313E164A77C8DA2CF868 /* BlockProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860332FDA63AB55FFB71FEB /* BlockProtocol.swift */; };
 		586036856102E48994B6B885 /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
+		58603A00101B29C5048C8B11 /* InterpreterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603E84B504F0A694FD922B /* InterpreterService.swift */; };
 		58603AE84B7EA93A9EC9CA03 /* BlockProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860332FDA63AB55FFB71FEB /* BlockProtocol.swift */; };
+		58603BB8AB780D314443F798 /* InterpreterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603E84B504F0A694FD922B /* InterpreterService.swift */; };
 		84751A5F2A061A62003096DA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A5E2A061A62003096DA /* main.swift */; };
 		84751A672A0639C6003096DA /* TokenAST.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A662A0639C6003096DA /* TokenAST.swift */; };
 		84751A692A063A02003096DA /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84751A682A063A02003096DA /* Variable.swift */; };
@@ -122,6 +124,7 @@
 		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
 		5860332FDA63AB55FFB71FEB /* BlockProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockProtocol.swift; sourceTree = "<group>"; };
 		5860385DC8E3125440F9BC09 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
+		58603E84B504F0A694FD922B /* InterpreterService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterService.swift; sourceTree = "<group>"; };
 		84751A5C2A061A62003096DA /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		84751A5E2A061A62003096DA /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		84751A662A0639C6003096DA /* TokenAST.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAST.swift; sourceTree = "<group>"; };
@@ -520,6 +523,7 @@
 				84751A702A063AE6003096DA /* CalculateAstService.swift */,
 				84751A7B2A090229003096DA /* TreeService.swift */,
 				84751A722A07E0BB003096DA /* NodeSevice.swift */,
+				58603E84B504F0A694FD922B /* InterpreterService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -699,6 +703,7 @@
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
 				5860313221A5CDD0534CFC0E /* Loop.swift in Sources */,
 				5860313E164A77C8DA2CF868 /* BlockProtocol.swift in Sources */,
+				58603BB8AB780D314443F798 /* InterpreterService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -718,6 +723,7 @@
 				84751A802A090FB2003096DA /* BlockDelimiter.swift in Sources */,
 				586036856102E48994B6B885 /* Loop.swift in Sources */,
 				58603AE84B7EA93A9EC9CA03 /* BlockProtocol.swift in Sources */,
+				58603A00101B29C5048C8B11 /* InterpreterService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

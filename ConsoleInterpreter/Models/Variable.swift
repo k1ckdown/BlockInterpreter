@@ -1,7 +1,7 @@
 import Foundation
 
 
-enum VariableType {
+enum VariableType: String {
     case int
     case double
     case String

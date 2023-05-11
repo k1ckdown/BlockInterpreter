@@ -14,6 +14,8 @@ array.append(BlockDelimiter(type: .begin))
 array.append(Variable(id: 6, type: .int, name: "b", value: "b + 100"))
 array.append(BlockDelimiter(type: .end))
 array.append(BlockDelimiter(type: .end))
+array.append(Variable(id: 7, type: .int, name: "b", value: "b + 100"))
+
 
 
 
