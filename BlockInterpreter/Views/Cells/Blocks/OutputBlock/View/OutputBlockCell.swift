@@ -14,6 +14,18 @@ final class OutputBlockCell: BlockCell {
     
     var subscriptions = Set<AnyCancellable>()
     
+    private enum Constants {
+            enum OutputLabel {
+                static let insetLeading: CGFloat = 30
+            }
+        
+            enum OutputTextField {
+                static let insetTrailing: CGFloat = 30
+                static let insetTopBottom: CGFloat = 12
+                static let multiplierWidth: CGFloat = 0.6
+            }
+    }
+    
     private let outputLabel = UILabel()
     private(set) var outputTextField = BlockTextField()
     
@@ -54,9 +66,9 @@ final class OutputBlockCell: BlockCell {
         outputTextField.tintColor = .outputBlock
         
         outputTextField.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(12)
-            make.width.equalToSuperview().multipliedBy(0.6)
-            make.trailing.equalToSuperview().inset(30)
+            make.top.bottom.equalToSuperview().inset(Constants.OutputTextField.insetTopBottom)
+            make.width.equalToSuperview().multipliedBy(Constants.OutputTextField.multiplierWidth)
+            make.trailing.equalToSuperview().inset(Constants.OutputTextField.insetTrailing)
         }
     }
     
@@ -70,8 +82,8 @@ final class OutputBlockCell: BlockCell {
         outputLabel.adjustsFontSizeToFitWidth = true
         
         outputLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(30)
             make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview().offset(Constants.OutputLabel.insetLeading)
         }
     }
     

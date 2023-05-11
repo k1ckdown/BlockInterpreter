@@ -16,6 +16,7 @@ final class BlockHeaderView: UIView {
     private enum Constants {
             enum SuperView {
                 static let cornerRadius: CGFloat = 8
+                static let borderWidth: CGFloat = 0.3
             }
         
             enum HeaderTitleLabel {
@@ -42,6 +43,8 @@ final class BlockHeaderView: UIView {
     
     private func setupSuperView() {
         backgroundColor = .blockBorder
+        layer.borderColor = UIColor.appWhite?.cgColor
+        layer.borderWidth = Constants.SuperView.borderWidth
         layer.cornerRadius = Constants.SuperView.cornerRadius
     }
     

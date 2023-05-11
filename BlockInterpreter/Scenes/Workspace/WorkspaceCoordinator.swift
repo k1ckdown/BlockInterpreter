@@ -20,7 +20,7 @@ final class WorkspaceCoordinator: BaseCoordinator {
         let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
         
         workspaceViewModel.didGoToConsole
-            .sink { [weak self] in self?.showConsoleScene() }
+            .sink { [weak self] in self?.showConsoleScene(outputText: $0) }
             .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true
@@ -31,8 +31,8 @@ final class WorkspaceCoordinator: BaseCoordinator {
 // MARK: - Navigation
 
 private extension WorkspaceCoordinator {
-    func showConsoleScene() {
-        let consoleViewModel = ConsoleViewModel()
+    func showConsoleScene(outputText: String) {
+        let consoleViewModel = ConsoleViewModel(outputText: outputText)
         let consoleViewController = ConsoleViewController(with: consoleViewModel)
         
         consoleViewController.navigationItem.title = "Console"
@@ -46,7 +46,6 @@ private extension WorkspaceCoordinator {
             }
         }
         
-        navigationController.present(consoleNavController,
-                                     animated: true)
+        navigationController.present(consoleNavController, animated: true)
     }
 }

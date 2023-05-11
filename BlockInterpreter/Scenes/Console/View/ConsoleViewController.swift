@@ -4,12 +4,14 @@
 //
 
 import UIKit
+import Combine
 
 final class ConsoleViewController: UIViewController {
     
     private let outputLabel = UILabel()
     
     private let viewModel: ConsoleViewModelType
+    private var subscriptions = Set<AnyCancellable>()
     
     init(with viewModel: ConsoleViewModelType) {
         self.viewModel = viewModel
@@ -23,10 +25,12 @@ final class ConsoleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setup()
+        setupUI()
+        setupBindings()
+        viewModel.viewDidLoad.send()
     }
 
-    private func setup() {
+    private func setupUI() {
         setupOutputLabel()
         setupSuperView()
         setupNavigationBar()
@@ -40,7 +44,6 @@ final class ConsoleViewController: UIViewController {
     private func setupOutputLabel() {
         view.addSubview(outputLabel)
         
-        outputLabel.text = "rfrfnfnfnfnfnfnfnnfnfnfnnfnfnf"
         outputLabel.textColor = .appWhite
         
         outputLabel.snp.makeConstraints { make in
@@ -61,4 +64,16 @@ final class ConsoleViewController: UIViewController {
         navigationItem.rightBarButtonItem = stopBarButton
     }
 
+}
+
+private extension ConsoleViewController {
+    func setupBindings() {
+        viewModel.didUpdateConsoleContent
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.outputLabel.text = $0
+            }
+            .store(in: &subscriptions)
+        
+    }
 }

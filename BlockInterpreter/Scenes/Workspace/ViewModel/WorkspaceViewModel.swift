@@ -16,7 +16,7 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     var cellViewModels = CurrentValueSubject<[BlockCellViewModel], Never>([])
     
     private var subscriptions = Set<AnyCancellable>()
-    private(set) var didGoToConsole = PassthroughSubject<Void, Never>()
+    private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     
     init() {
         bind()
@@ -28,7 +28,7 @@ extension WorkspaceViewModel  {
     private func bind() {
         showConsole
             .sink { [weak self] in
-                self?.didGoToConsole.send()
+                self?.didGoToConsole.send("Hello World!")
             }
             .store(in: &subscriptions)
         
