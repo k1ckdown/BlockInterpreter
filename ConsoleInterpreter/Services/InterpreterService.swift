@@ -10,8 +10,13 @@ class Interpreter{
     init(_ treeAST: Node){
         self.treeAST = treeAST
         self.mapOfVariableStack = []
+        let _ = traverseTree(treeAST)
     }
 
+    func getPrintResult() -> String {
+        return printResult
+    }
+    
     func traverseTree(_ treeAST: Node) -> String{ 
         switch treeAST.type{
         case .variable:
@@ -35,15 +40,15 @@ class Interpreter{
         return ""
     }
     private func processLoopNode(_ node: Node){
-        print("processLoopNode")
-        print(node.value)
+        // print("processLoopNode")
+        // print(node.value)
     }
 
  
     private func processPrintNode(_ node: Node){
         let calculatedValue = calculateArithmetic(node.value)
-        print(calculatedValue)
-        print("processPrintNode")
+        // print(calculatedValue)
+        // print("processPrintNode")
         if let value = Int(calculatedValue) {
             printResult += "\(value)\n"
         } else {
@@ -92,8 +97,8 @@ class Interpreter{
         for child in node.children{
             let _ = traverseTree(child)
         } 
-        print(mapOfVariableStack)
-        print(printResult)
+        // print(mapOfVariableStack)
+        // print(printResult)
     }
 
     private func processVariableNode(_ node: Node) -> String{
@@ -136,7 +141,5 @@ class Interpreter{
         } else {
             return mapElement
         }
-
-        
     }
 }
