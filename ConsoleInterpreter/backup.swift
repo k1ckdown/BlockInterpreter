@@ -49,6 +49,8 @@ class Token {
 }
 
 
+
+
 class Variable {
     private let id: Int
     private let type: TypeVariable
