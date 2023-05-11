@@ -2,7 +2,7 @@ import Foundation
 
 
 class Tree {
-    var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
+    var rootNode: Node = Node(value: "", type: AllTypes.root)
     var index: Int = 0
     var blocks: [IBlock]
     init(_ blocks: [IBlock]) {
