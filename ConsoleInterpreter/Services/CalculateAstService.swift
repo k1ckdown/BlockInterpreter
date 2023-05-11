@@ -38,19 +38,19 @@ class Calculate {
         if self.currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.type) {
+        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
             
-            if token.type == .plus {
+            if token.getType() == .plus {
                 moveToken(.plus)
                 result += term()
-            } else if token.type == .minus {
+            } else if token.getType() == .minus {
                 moveToken(.minus)
                 result -= term()
-            } else if possibleTokens.contains(token.type){
-                self.moveToken(token.type)
+            } else if possibleTokens.contains(token.getType()){
+                self.moveToken(token.getType())
                 let factorValue = self.factor()
 
-                switch token.type {
+                switch token.getType() {
                 case .equal:
                     result = result == factorValue ? 1 : 0
                 case .notEqual:
@@ -87,8 +87,8 @@ class Calculate {
         if self.currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.type){
-            switch token.type {
+        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+            switch token.getType() {
             case .modulo:
                 self.moveToken(.modulo)
                 result %= self.factor()
@@ -110,10 +110,10 @@ class Calculate {
     private func factor() -> Int {
         let token = self.currentToken!
 
-        switch token.type {
+        switch token.getType() {
             case .integer:
                 self.moveToken(.integer)
-                guard let value = token.value, let intValue =
+                guard let value = token.getValue(), let intValue =
                         Int(value) else { fatalError("Error parsing input")
                 }
                 return intValue
@@ -125,7 +125,7 @@ class Calculate {
             case .eof:
                 return 0
             default:
-                print(token.type)
+                print(token.getType())
                 fatalError("Invalid syntax")
         }
 
@@ -229,8 +229,8 @@ class Calculate {
         }
     }
     private func moveToken(_ type: TokenType) {
-        if let token = currentToken, token.type == type{
-            if !(token.type == .leftBrace) {
+        if let token = currentToken, token.getType() == type{
+            if !(token.getType() == .leftBrace) {
                 currentToken = getNextToken()
             }
         } else {
