@@ -1,11 +1,25 @@
 import Foundation
 
+enum TokenType {
+    case integer
+    case plus
+    case minus
+    case multiply
+    case divide
+    case eof
+    case leftBrace
+    case rightBrace
+    case modulo
+}
 
-//* -----------------ENITITY ---------------------
 
-//!----------------------
-//!  Token.swift
-
+enum TypeVariable {
+    case int
+    case double
+    case String
+    case bool
+    case another
+}
 
 
 class Token {
@@ -17,26 +31,23 @@ class Token {
         self.value = value
     }
  
-    public func getType() -> TokenType {
+    func getType() -> TokenType {
         return self.type
     }
  
-    public func setType(type: TokenType) {
+    func setType(type: TokenType) {
         self.type = type
     }
  
-    public func setValue(value: String?) {
+    func setValue(value: String?) {
         self.value = value
     }
  
-    public func getValue() -> String? {
+    func getValue() -> String? {
         return value
     }
 }
 
-
-//!----------------------
-//!  Variable.swift
 
 class Variable {
     private let id: Int
@@ -51,93 +62,65 @@ class Variable {
         self.name = name
     }
  
-    public func getId() -> Int {
+    func getId() -> Int {
         return self.id
     }
- 
-    public func getName() -> String {
-        return self.name
-    }
- 
-    public func getType() -> TypeVariable {
+
+    func getType() -> TypeVariable {
         return self.type
     }
- 
-    public func setValue(value: String) {
+
+    func getName() -> String {
+        return self.name
+    }
+
+     func getValue() -> String {
+        return self.value
+    }
+
+    func setValue(value: String) {
         self.value = value
     }
  
-    public func getValue() -> String {
-        return self.value
-    }
+
 }
 
 
-
-//* -----------------ENUMS ---------------------
-
-//!----------------------
-//!  TokenType.swift
-
-enum TokenType {
-    case integer
-    case plus
-    case minus
-    case multiply
-    case divide
-    case eof
-    case leftBrace
-    case rightBrace
-    case modulo
-}
-
-
-//!----------------------
-//!  TypeVariable.swift
-
-
-enum TypeVariable {
-    case int
-    case double
-    case String
-    case bool
-    case another
-}
-
-
-//* ----------------- SERVICE ---------------------
-
-//!----------------------
-//!  AssignVariableInt.swift
-
-
-
- 
-class AssignmentVariableInt {
-    private var mapOfVariablesInt: [String: String] = [:]
+class AssignmentVariable {
+    private var variableIntMap: [String: String] = [:]
     private var calculate: Calculate
  
     init(_ variableInt: [String: String]) {
         self.calculate = Calculate("")
-        self.mapOfVariablesInt.merge(variableInt){(_, new) in new}
+        self.variableIntMap.merge(variableInt){(_, new) in new}
     }
  
-    public func setmapOfVariableInt(_ mapOfVariableInt: [String: String]) {
-        self.mapOfVariablesInt.merge(mapOfVariableInt){(_, new) in new}
+    public func setMapOfVariableInt(_ mapOfVariableInt: [String: String]) {
+        self.variableIntMap.merge(mapOfVariableInt){(_, new) in new}
     }
  
-    public func assignInt(variable: Variable) -> (String, String) {
+    public func assign(variable: Variable) -> (String, String) {
+        if variable.getType() == TypeVariable.int{
+            return assignInt(variable)
+        }
+
+        return (variable.getName(), variable.getValue())
+        
+    }
+
+    private func assignInt(_ variable: Variable) -> (String, String) {
         variable.setValue(value: String(Calculate(normalize(variable.getValue())).compute()))
         return (variable.getName(), variable.getValue())
     }
  
     private func normalize(_ name: String) -> String {
-        var result = ""
+        var result = "" 
         let components = name.split(whereSeparator: { $0 == " " })
+
         for component in components {
             if let intValue = Int(component) {
                 result += "\(intValue)"
-            } else if let value = self.mapOfVariablesInt[String(component)] {
+            } else if let value = self.variableIntMap[String(component)] {
                 result += "\(value)"
             } else {
                 result += "\(component)"
@@ -147,16 +130,6 @@ class AssignmentVariableInt {
     }
 }
 
-
-
-
-
-
-
-
-
-//!----------------------
-//!  Calculate.swift
 
 class Calculate {
     private var text: String
@@ -192,15 +165,7 @@ class Calculate {
         }
         return result
     }
- 
-    private func isNumber(_ char: Character) -> Bool {
-        return char >= "0" && char <= "9"
-    }
- 
-    private func isSpace(_ char: Character) -> Bool {
-        return char == " "
-    }
- 
+
     private func getNextToken() -> Token? {
         guard self.position < self.text.count else {
             return Token(.eof, nil)
@@ -252,17 +217,28 @@ class Calculate {
                 fatalError("Invalid character")
         }
     }
+
+    private func term() -> Int {
+        var result = self.factor()
  
-    private func moveToken(_ type: TokenType) {
-        if let token = self.currentToken, token.getType() == type {
-            if !(token.getType() == .leftBrace) {
-                self.currentToken = getNextToken()
+        while let token = self.currentToken, token.getType() == .modulo || token.getType() == .multiply || token.getType() == .divide {
+            let tokenType = token.getType()
+            if  tokenType == .modulo {
+                self.moveToken(.modulo)
+                result %= self.factor()
             }
-        } else {
-            fatalError("Invalid syntax")
+            else if tokenType == .multiply {
+                self.moveToken(.multiply)
+                result *= self.factor()
+            } 
+            else if tokenType == .divide {
+                self.moveToken(.divide)
+                result /= self.factor()
+            }
         }
+        return result
     }
- 
+
     private func factor() -> Int {
         let token = self.currentToken!
  
@@ -281,51 +257,53 @@ class Calculate {
         return 0
     }
  
-    private func term() -> Int {
-        var result = self.factor()
- 
-        while let token = self.currentToken, token.getType() == .modulo || token.getType() == .multiply || token.getType() == .divide {
-            if token.getType() == .modulo {
-                self.moveToken(.modulo)
-                result %= self.factor()
-            }
-            else if token.getType() == .multiply {
-                self.moveToken(.multiply)
-                result *= self.factor()
-            } else if token.getType() == .divide {
-                self.moveToken(.divide)
-                result /= self.factor()
-            }
+    private func moveToken(_ type: TokenType) {
+        if let token = self.currentToken, token.getType() == type, !(token.getType() == .leftBrace) {
+            self.currentToken = getNextToken()
+        } else {
+            fatalError("Invalid syntax")
         }
-        return result
     }
+ 
+    private func isNumber(_ char: Character) -> Bool {
+        return char >= "0" && char <= "9"
+    }
+ 
+    private func isSpace(_ char: Character) -> Bool {
+        return char == " "
+    }
+ 
 }
 
 
-
-
-
-
-//* --------------------------------------------
-//* ----------------- MAIN ---------------------
-//* --------------------------------------------
-
-var mapOfVariablesInt: [String: String] = [:]
+var variableIntMap: [String: String] = [:]
  
  
-var variableForInt = Variable(id: 1, type: TypeVariable.int,
-                              value: "12 + 15", name: "a")
-var assignVariableInt = AssignmentVariableInt(mapOfVariablesInt)
-var nameAndValueOfVariable = assignVariableInt.assignInt(variable: variableForInt)
-mapOfVariablesInt[nameAndValueOfVariable.0] = nameAndValueOfVariable.1
-print(mapOfVariablesInt)
+var variableForInt = Variable(
+    id: 1,
+    type: TypeVariable.int,
+    value: "12 + 15",
+    name: "a"
+    )
+    
+var assignVariableInt = AssignmentVariable(variableIntMap)
+var mapElement = assignVariableInt.assign(
+    variable: variableForInt
+    )
+variableIntMap[mapElement.0] = mapElement.1
+print(variableIntMap)
  
  
-variableForInt = Variable(id: 2, type: TypeVariable.int,
-                          value: "a / 3", name: "b")
-assignVariableInt = AssignmentVariableInt(mapOfVariablesInt)
-nameAndValueOfVariable = assignVariableInt.assignInt(variable: variableForInt)
-mapOfVariablesInt[nameAndValueOfVariable.0] = nameAndValueOfVariable.1
-print(mapOfVariablesInt)
+variableForInt = Variable(
+    id: 2,
+    type: TypeVariable.int,
+    value: "a / 3 + 7",
+    name: "b"
+    )
+assignVariableInt = AssignmentVariable(variableIntMap)
+mapElement = assignVariableInt.assign(
+    variable: variableForInt
+    )
+variableIntMap[mapElement.0] = mapElement.1
+print(variableIntMap)
 
- 

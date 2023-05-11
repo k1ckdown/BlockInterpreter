@@ -109,3 +109,5 @@ backup
 *.exe
 *.exp
 *.lib
+.idea/ 
+ConsoleInterpreter/tempCodeRunnerFile.swift
