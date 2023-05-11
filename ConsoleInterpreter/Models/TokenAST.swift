@@ -13,19 +13,26 @@ enum TokenType {
     case modulo
     case equal
     case notEqual
-    case greaterThan
-    case lessThan
+    case greater
+    case less
     case greaterEqual
-    case lessEqual 
+    case lessEqual
+    case logicalAnd
+    case logicalOr
 }
 
+
 class Token {
-    private(set) var type: TokenType
-    private(set) var value: String?
+    private var type: TokenType
+    private var value: String?
  
     init(_ type: TokenType, _ value: String?) {
         self.type = type
         self.value = value
+    }
+ 
+    func getType() -> TokenType {
+        return self.type
     }
  
     func setType(type: TokenType) {
@@ -34,5 +41,9 @@ class Token {
  
     func setValue(value: String?) {
         self.value = value
+    }
+ 
+    func getValue() -> String? {
+        return value
     }
 }
