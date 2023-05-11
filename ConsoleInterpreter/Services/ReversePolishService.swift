@@ -68,3 +68,4 @@ class ReversePolishNotation {
         return operators.contains(token)
     }
 }
+
