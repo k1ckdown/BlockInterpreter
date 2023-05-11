@@ -109,3 +109,4 @@ backup
 *.exe
 *.exp
 *.lib
+.idea/ 

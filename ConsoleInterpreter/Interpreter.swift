@@ -43,6 +43,52 @@ enum AllTypes {
 }
 
 
+enum DelimiterType {
+    case begin
+    case end
+}
+
+
+struct BlockDelimiter: IBlock {
+    let type: DelimiterType
+}
+
+
+protocol IBlock {
+
+}
+
+enum ConditionType {
+    case ifBlock
+    case elifBlock
+    case elseBlock
+}
+
+
+struct Condition: IBlock {
+    let id: Int
+    let type: ConditionType
+    let value: String
+}
+
+
+enum LoopType {
+    case forLoop
+    case whileLoop
+}
+
+
+struct Loop: IBlock {
+    let id: Int
+    let type: LoopType
+    let value: String
+}
+
+struct Printing: IBlock {
+    let id: Int
+    let value: String
+}
+
 
 
 class Token {
@@ -273,7 +319,6 @@ class Calculate {
     }
 
     private func getToken(_ currentChar: Character) -> Token{
-        print(currentChar)
         switch currentChar {
             case "+":
                 return Token(.plus, "+")            
@@ -430,26 +475,18 @@ class Node{
     private(set) var children: [Node]
     private(set) var countWasHere: Int
 
-    internal  var dictionary: [String: String]
 
-
-    init(value: String,type: AllTypes) {
+    init(value: String, type: AllTypes) {
         self.value = value
         self.type = type
         self.countWasHere = 0
         self.children = []
-        self.dictionary = [:]
     }
 
 
     func addChild(_ child: Node) {
         children.append(child)
         child.parent = self
-        if child.type == .variable{
-            dictionary[child.value] = ""
-        }
-    
-        dictionary.merge(child.dictionary){(_, new) in new}
     }
 }
 
@@ -572,52 +609,6 @@ class Interpreter{
 
 //! Tree for test 1
 
-enum DelimiterType {
-    case begin
-    case end
-}
-
-
-struct BlockDelimiter: IBlock {
-    let type: DelimiterType
-}
-
-
-protocol IBlock {
-
-}
-
-enum ConditionType {
-    case ifBlock
-    case elifBlock
-    case elseBlock
-}
-
-
-struct Condition: IBlock {
-    let id: Int
-    let type: ConditionType
-    let value: String
-}
-
-
-enum LoopType {
-    case forLoop
-    case whileLoop
-}
-
-
-struct Loop: IBlock {
-    let id: Int
-    let type: LoopType
-    let value: String
-}
-
-struct Printing: IBlock {
-    let id: Int
-    let value: String
-}
-
 
 class Tree {
     var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
@@ -661,7 +652,7 @@ class Tree {
         }
     }
 
-    private func getMatchingDelim   iterIndex() -> Int? {
+    private func getMatchingDelimiterIndex() -> Int? {
         var countBegin = 0
         for i in (index + 1)..<blocks.count {
             guard let block = blocks[i] as? BlockDelimiter else {
@@ -721,7 +712,7 @@ class Tree {
 
     private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
-            re turn nil
+            return nil
         }
 
         var node: Node?
@@ -798,111 +789,55 @@ class Tree {
 
 
 
-var array: [IBlock] = []
 
 
-array.append(Printing(id: 1, value: "a"))
-array.append(Condition(id: 2, type: AllTypes.ifBlock, value: "i > 5"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-array.append(Printing(id: 3, value: "b"))
-array.append(Condition(id: 4, type: AllTypes.ifBlock, value: "i > 5"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
+let treeMain = Node(value: "",type: AllTypes.root)
+let firstAssignSubtree = Node(value: "", type: AllTypes.assign)
+let firstVarLeft = Node(value: "b", type: AllTypes.variable)
+let firstVarRight = Node(value: "10", type: AllTypes.arithmetic) 
 
-array.append(Loop(id: 5, type: AllTypes.forLoop, value: "i in 0...10"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-array.append(Printing(id: 6, value: "c"))
+let secondAssignSubtree = Node(value: "", type: AllTypes.assign)
+let secondVarLeft = Node(value: "a", type: AllTypes.variable)
+let secondVarRight = Node(value: "7 + b + 2", type: AllTypes.arithmetic) 
 
-array.append(BlockDelimiter(type: DelimiterType.end))
-array.append(Printing(id: 7, value: "d"))
+let firstIfBlockSubtree = Node(value: "(6 + 2) % 8 == 0", type: AllTypes.ifBlock) 
 
-array.append(BlockDelimiter(type: DelimiterType.end))
-
-array.append(Printing(id: 8, value: "e"))
-array.append(BlockDelimiter(type: DelimiterType.end))
-array.append(Printing(id: 9, value: "f"))
-array.append(Printing(id: 10, value: "ok"))
+let firstIfAssignSubtree = Node(value: "", type: AllTypes.assign) 
+let firstIfBlockVarLeft = Node(value: "b", type: AllTypes.variable) 
+let firstIfBlockVarRight = Node(value: "b + 100", type: AllTypes.arithmetic)
 
 
-let tree = Tree(array)
-tree.buildTree()
-print("hi")
-let interpreter = Interpreter(tree.rootNode)
-let _ = interpreter.traverseTree(tree.rootNode)
+let secondIfBlockSubtree = Node(value: "a != b", type: AllTypes.ifBlock) 
+
+let secondIfAssignSubtree = Node(value: "", type: AllTypes.assign) 
+let secondIfBlockVarLeft = Node(value: "c", type: AllTypes.variable) 
+let secondIfBlockVarRight = Node(value: "a + 100", type: AllTypes.arithmetic)
+
+firstAssignSubtree.addChild(firstVarLeft)
+firstAssignSubtree.addChild(firstVarRight)
+
+secondAssignSubtree.addChild(secondVarLeft)
+secondAssignSubtree.addChild(secondVarRight) 
+
+firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
+firstIfAssignSubtree.addChild(firstIfBlockVarRight)
+firstIfBlockSubtree.addChild(firstIfAssignSubtree)
+
+secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
+secondIfAssignSubtree.addChild(secondIfBlockVarRight)
+secondIfBlockSubtree.addChild(secondIfAssignSubtree)
+
+firstIfBlockSubtree.addChild(secondIfBlockSubtree)
 
 
+treeMain.addChild(firstAssignSubtree)
+treeMain.addChild(secondAssignSubtree)
+treeMain.addChild(firstIfBlockSubtree)
+treeMain.addChild(secondIfBlockSubtree)
 
 
-
-
-// let treeMain = Node("", AllTypes.root)
-// let firstAssignSubtree = Node("", AllTypes.assign)
-// let firstVarLeft = Node("b", AllTypes.variable)
-// let firstVarRight = Node("10", AllTypes.arithmetic) 
-
-// let secondAssignSubtree = Node("", AllTypes.assign)
-// let secondVarLeft = Node("a", AllTypes.variable)
-// let secondVarRight = Node("7 + b + 2", AllTypes.arithmetic) 
-
-// let firstIfBlockSubtree = Node("(6 + 2) % 8 == 0", AllTypes.ifBlock) 
-
-// let firstIfAssignSubtree = Node("", AllTypes.assign) 
-// let firstIfBlockVarLeft = Node("b", AllTypes.variable) 
-// let firstIfBlockVarRight = Node("b + 100", AllTypes.arithmetic)
-
-
-// let secondIfBlockSubtree = Node("a != b", AllTypes.ifBlock) 
-
-// let secondIfAssignSubtree = Node("", AllTypes.assign) 
-// let secondIfBlockVarLeft = Node("c", AllTypes.variable) 
-// let secondIfBlockVarRight = Node("a + 100", AllTypes.arithmetic)
-
-
-array.append(Printing(id: 1, value: "a"))
-array.append(Condition(id: 2, type: AllTypes.ifBlock, value: "i > 5"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-array.append(Printing(id: 3, value: "b"))
-array.append(Condition(id: 4, type: AllTypes.ifBlock, value: "i > 5"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-
-array.append(Loop(id: 5, type: AllTypes.forLoop, value: "i in 0...10"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-array.append(Printing(id: 6, value: "c"))
-
-array.append(BlockDelimiter(type: DelimiterType.end))
-array.append(Printing(id: 7, value: "d"))
-
-array.append(BlockDelimiter(type: DelimiterType.end))
-
-array.append(Printing(id: 8, value: "e"))
-array.append(BlockDelimiter(type: DelimiterType.end))
-array.append(Printing(id: 9, value: "f"))
-array.append(Printing(id: 10, value: "ok"))
-
-// firstAssignSubtree.addChild(firstVarLeft)
-// firstAssignSubtree.addChild(firstVarRight)
-
-// secondAssignSubtree.addChild(secondVarLeft)
-// secondAssignSubtree.addChild(secondVarRight) 
-
-// firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
-// firstIfAssignSubtree.addChild(firstIfBlockVarRight)
-// firstIfBlockSubtree.addChild(firstIfAssignSubtree)
-
-// secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
-// secondIfAssignSubtree.addChild(secondIfBlockVarRight)
-// secondIfBlockSubtree.addChild(secondIfAssignSubtree)
-
-// firstIfBlockSubtree.addChild(secondIfBlockSubtree)
-
-
-// treeMain.addChild(firstAssignSubtree)
-// treeMain.addChild(secondAssignSubtree)
-// treeMain.addChild(firstIfBlockSubtree)
-// treeMain.addChild(secondIfBlockSubtree)
-
-
-// let interpreter = Interpreter(treeMain)
-// let _ = interpreter.traverseTree(treeMain)
+let interpreter = Interpreter(treeMain)
+let _ = interpreter.traverseTree(treeMain)
 
 
 
