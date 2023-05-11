@@ -4,9 +4,10 @@ import Foundation
 class Tree {
     var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
-    var blocks: [IBlock]
-    init(_ blocks: [IBlock]) {
-        self.blocks = blocks
+    var blocks = [IBlock]()
+
+    init() {
+
     }
 
     func setBlocks(_ blocks: [IBlock]) {
@@ -85,7 +86,7 @@ class Tree {
         index = endIndex + 1
         return wholeBlock
     }
-    
+
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign, id: variable.id)
         let nameVariable = Node(value: variable.name, type: AllTypes.variable,
@@ -96,8 +97,8 @@ class Tree {
         node.addChild(valueVariable)
         return node
     }
-    
-    
+
+
     private func buildPrintingNode(printing: Printing) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
                 id: printing.id)
