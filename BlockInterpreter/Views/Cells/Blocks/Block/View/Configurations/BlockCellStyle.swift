@@ -39,13 +39,13 @@ enum BlockCellStyle {
         guard self == .work else { return 1 }
         
         switch blockType {
+        case .output:
+            return 0.95
         case .variable:
             return 0.8
         case .condition:
             return 0.9
         case .loop:
-            return 1
-        case .output:
             return 1
         }
     }

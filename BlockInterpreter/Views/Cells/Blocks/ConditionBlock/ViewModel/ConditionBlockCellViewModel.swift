@@ -23,10 +23,10 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     }
     
     override func copyToWork() -> BlockCellViewModel {
-        let copyConditionBlock = ConditionBlockCellViewModel(conditionBlockType: conditionBlockType, style: .work)
-        copyConditionBlock.conditionText = conditionText
+        let copy = ConditionBlockCellViewModel(conditionBlockType: conditionBlockType, style: .work)
+        copy.conditionText = conditionText
         
-        return copyConditionBlock
+        return copy
     }
     
 }

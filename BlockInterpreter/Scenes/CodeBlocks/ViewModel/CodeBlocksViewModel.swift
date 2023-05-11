@@ -67,6 +67,8 @@ extension CodeBlocksViewModel {
     }
     
     private func updateCellViewModels() {
+        cellViewModels[BlocksSection.output.rawValue] = [OutputBlockCellViewModel(style: .presentation)]
+        
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {
             VariableBlockCellViewModel(variableType: $0.defaultType, style: .presentation)
         }

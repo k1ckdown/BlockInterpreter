@@ -96,6 +96,8 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.separatorStyle = .none
         blocksTableView.backgroundColor = .clear
         blocksTableView.showsVerticalScrollIndicator = false
+        
+        blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
@@ -150,6 +152,25 @@ extension CodeBlocksViewController: UITableViewDataSource {
         let cellViewModel = viewModel.cellViewModels[section.rawValue][indexPath.row]
         
         switch section {
+        case .output:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: OutputBlockCell.identifier,
+                    for: indexPath
+                ) as? OutputBlockCell,
+                let cellViewModel = cellViewModel as? OutputBlockCellViewModel
+            else { return .init() }
+            
+            cell.outputTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.outputText = $0
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
         case .variables:
             guard
                 let cell = tableView.dequeueReusableCell(

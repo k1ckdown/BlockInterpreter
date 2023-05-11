@@ -23,6 +23,8 @@
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
 		49969FFB2A054F8C00F86EFE /* TextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49969FFA2A054F8B00F86EFE /* TextFieldType.swift */; };
+		4997E0E92A0CA194000C35AD /* OutputBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */; };
+		4997E0EB2A0CA951000C35AD /* OutputBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */; };
 		49A175F32A042A4F003CEBB3 /* ConditionBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A175F22A042A4F003CEBB3 /* ConditionBlockType.swift */; };
 		49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */; };
 		49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */; };
@@ -74,6 +76,8 @@
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
 		49969FFA2A054F8B00F86EFE /* TextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldType.swift; sourceTree = "<group>"; };
+		4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCell.swift; sourceTree = "<group>"; };
+		4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49A175F22A042A4F003CEBB3 /* ConditionBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockType.swift; sourceTree = "<group>"; };
 		49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCell.swift; sourceTree = "<group>"; };
 		49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCellViewModel.swift; sourceTree = "<group>"; };
@@ -202,6 +206,7 @@
 		4951477F2A08CF4800FD13AB /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				4997E0E52A0CA171000C35AD /* OutputBlock */,
 				492150212A0B22AF00DD171F /* Block */,
 				49C661BD2A02D9AC00439E2A /* VariableBlock */,
 				49A346592A058F69003BC2B9 /* ConditionBlock */,
@@ -259,6 +264,31 @@
 				492BA4162A0AB0430019EFBE /* BlockType.swift */,
 			);
 			path = BlockTypes;
+			sourceTree = "<group>";
+		};
+		4997E0E52A0CA171000C35AD /* OutputBlock */ = {
+			isa = PBXGroup;
+			children = (
+				4997E0E72A0CA181000C35AD /* ViewModel */,
+				4997E0E62A0CA17D000C35AD /* View */,
+			);
+			path = OutputBlock;
+			sourceTree = "<group>";
+		};
+		4997E0E62A0CA17D000C35AD /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4997E0E72A0CA181000C35AD /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		49A346592A058F69003BC2B9 /* ConditionBlock */ = {
@@ -665,6 +695,7 @@
 				49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */,
 				49D8A2E529FED87C00DF5B8E /* SettingsViewController.swift in Sources */,
 				492BA4172A0AB0430019EFBE /* BlockType.swift in Sources */,
+				4997E0E92A0CA194000C35AD /* OutputBlockCell.swift in Sources */,
 				498971BC2A002F0700448D4F /* TabType.swift in Sources */,
 				49D8A2CA29FEC09100DF5B8E /* ConsoleViewController.swift in Sources */,
 				49D8A2EA29FED8DB00DF5B8E /* SettingsViewModelType.swift in Sources */,
@@ -675,6 +706,7 @@
 				496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */,
 				49C661BB2A02D99A00439E2A /* ExampleService.swift in Sources */,
 				495147832A09386000FD13AB /* BlockCellViewModel.swift in Sources */,
+				4997E0EB2A0CA951000C35AD /* OutputBlockCellViewModel.swift in Sources */,
 				49A946592A038C7C00BBE172 /* VariableType.swift in Sources */,
 				49D8A2BA29FEB9DB00DF5B8E /* Coordinator.swift in Sources */,
 				495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */,

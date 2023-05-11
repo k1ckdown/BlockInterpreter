@@ -44,15 +44,15 @@ final class ConditionBlockCell: BlockCell {
         setup()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
         subscriptions.removeAll()
         conditionTextField.text = nil
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func configure(with viewModel: ConditionBlockCellViewModel) {

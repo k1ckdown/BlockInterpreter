@@ -74,6 +74,8 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.backgroundColor = .systemBlue
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
+        
+        workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
@@ -112,6 +114,18 @@ extension WorkspaceViewController: UITableViewDataSource {
         let cellViewModel = viewModel.cellViewModels.value[indexPath.row]
         
         switch cellViewModel.type {
+        case .output:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: OutputBlockCell.identifier,
+                    for: indexPath
+                ) as? OutputBlockCell,
+                let cellViewModel = cellViewModel as? OutputBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
         case .variable:
             guard
                 let cell = tableView.dequeueReusableCell(
