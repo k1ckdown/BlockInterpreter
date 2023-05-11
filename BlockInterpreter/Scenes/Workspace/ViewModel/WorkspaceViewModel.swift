@@ -18,17 +18,56 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     
+    private let interpreterManager: InterpreterManager
+    
     init() {
+        interpreterManager = .init()
         bind()
     }
     
 }
 
 extension WorkspaceViewModel  {
+    private func getBlocks() -> [IBlock] {
+        var blocks = [IBlock]()
+        
+        for (index, blockViewModel) in cellViewModels.value.enumerated() {
+            
+            if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
+                blocks.append(Variable(id: index,
+                                       type: variableBlockViewModel.variableType ?? .int,
+                                       name: variableBlockViewModel.variableName ?? "",
+                                       value: variableBlockViewModel.variableValue ?? ""))
+            }
+            
+            if let conditionBlockViewModel = blockViewModel as? ConditionBlockCellViewModel {
+                blocks.append(Condition(id: index,
+                                        type: conditionBlockViewModel.conditionType,
+                                        value: conditionBlockViewModel.conditionText ?? ""))
+            }
+            
+            if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
+                blocks.append(Printing(id: index,
+                                       value: outputBlockViewModel.outputText ?? ""))
+            }
+            
+        }
+        
+        return blocks
+    }
+    
+    private func getConsoleContent() -> String {
+        let output = interpreterManager.getConsoleContent(blocks: getBlocks())
+        print("Output = \(output)")
+        
+        return output
+    }
+    
     private func bind() {
         showConsole
             .sink { [weak self] in
-                self?.didGoToConsole.send("Hello World!")
+                guard let self = self else { return }
+                didGoToConsole.send(getConsoleContent())
             }
             .store(in: &subscriptions)
         

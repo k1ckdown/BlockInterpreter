@@ -4,9 +4,10 @@ import Foundation
 class Tree {
     var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
-    var blocks: [IBlock]
-    init(_ blocks: [IBlock]) {
-        self.blocks = blocks
+    var blocks = [IBlock]()
+    
+    init() {
+        
     }
 
     func setBlocks(_ blocks: [IBlock]) {

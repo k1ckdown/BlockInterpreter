@@ -123,6 +123,13 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
             else { return .init() }
             
+            cell.outputTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.outputText = $0
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -135,6 +142,20 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
             else { return .init() }
             
+            cell.variableNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.variableName = $0
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.variableValueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.variableValue = $0
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -146,6 +167,13 @@ extension WorkspaceViewController: UITableViewDataSource {
                 ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
             else { return .init() }
+            
+            cell.conditionTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.conditionText = $0
+                }
+                .store(in: &cell.subscriptions)
             
             cell.configure(with: cellViewModel)
             return cell

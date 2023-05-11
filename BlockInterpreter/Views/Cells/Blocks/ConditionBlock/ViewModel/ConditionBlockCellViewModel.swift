@@ -12,18 +12,18 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     private(set) var conditionStatement: String
     private(set) var conditionTextPlaceholder: String
     private(set) var shouldShowConditionField: Bool
-    private let conditionBlockType: ConditionBlockType
+    private(set) var conditionType: ConditionType
     
-    init(conditionBlockType: ConditionBlockType, style: BlockCellStyle) {
+    init(conditionType: ConditionType, style: BlockCellStyle) {
         conditionTextPlaceholder = "condition"
-        conditionStatement = conditionBlockType.name.uppercased()
-        shouldShowConditionField = conditionBlockType != .elseStatement
-        self.conditionBlockType = conditionBlockType
+        conditionStatement = conditionType.name.uppercased()
+        shouldShowConditionField = conditionType != .elseBlock
+        self.conditionType = conditionType
         super.init(type: .condition, style: style)
     }
     
     override func copyToWork() -> BlockCellViewModel {
-        let copy = ConditionBlockCellViewModel(conditionBlockType: conditionBlockType, style: .work)
+        let copy = ConditionBlockCellViewModel(conditionType: conditionType, style: .work)
         copy.conditionText = conditionText
         
         return copy

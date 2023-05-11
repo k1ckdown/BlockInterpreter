@@ -73,8 +73,8 @@ extension CodeBlocksViewModel {
             VariableBlockCellViewModel(variableType: $0.defaultType, style: .presentation)
         }
         
-        cellViewModels[BlocksSection.conditions.rawValue] = ConditionBlockType.allCases.map {
-            ConditionBlockCellViewModel(conditionBlockType: $0, style: .presentation)
+        cellViewModels[BlocksSection.conditions.rawValue] = ConditionType.allCases.map {
+            ConditionBlockCellViewModel(conditionType: $0, style: .presentation)
         }
     }
     

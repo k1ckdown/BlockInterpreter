@@ -12,10 +12,10 @@ class AssignmentVariable {
     }
  
     public func assign(_ variable: Variable) -> String {
-        if variable.getType() == .int {
-            return assignInt(variable.getValue())
-        } else if variable.getType() == .String {
-            return assignString(variable.getValue())
+        if variable.type == .int {
+            return assignInt(variable.value)
+        } else if variable.type == .String {
+            return assignString(variable.value)
         } else {
             fatalError("Invalid variable type")
         }
