@@ -819,33 +819,33 @@ class Tree {
 // }
 
 
-var array: [IBlock] = []
+// var array: [IBlock] = []
 
 
-array.append(Variable(id: 1, type: .int, name: "b", value: "10"))
-array.append(Variable(id: 2, type: .int, name: "a", value: "7 + b + 2"))
-array.append(Printing(id: 3, value: "b"))
-array.append(Printing(id: 4, value: "a + b"))
-array.append(Loop(id: 5, type: LoopType.forLoop, value: "i in 0...10"))
-array.append(BlockDelimiter(type: DelimiterType.begin))
-array.append(Variable(id: 6, type: .int, name: "b", value: "b + 10"))
-array.append(Variable(id: 7, type: .int, name: "a", value: "a * 2"))
+// array.append(Variable(id: 1, type: .int, name: "b", value: "10"))
+// array.append(Variable(id: 2, type: .int, name: "a", value: "7 + b + 2"))
+// array.append(Printing(id: 3, value: "b"))
+// array.append(Printing(id: 4, value: "a + b"))
+// array.append(Loop(id: 5, type: LoopType.forLoop, value: "i in 0...10"))
+// array.append(BlockDelimiter(type: DelimiterType.begin))
+// array.append(Variable(id: 6, type: .int, name: "b", value: "b + 10"))
+// array.append(Variable(id: 7, type: .int, name: "a", value: "a * 2"))
 
-array.append(BlockDelimiter(type: DelimiterType.end))
-array.append(Condition(id: 8, type: .ifBlock, value: "(6 + 2) % 8 == 0"))
-array.append(BlockDelimiter(type: .begin))
-array.append(Variable(id: 9, type: .int, name: "b", value: "b + 100"))
-array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
-array.append(BlockDelimiter(type: .begin))
-array.append(Variable(id: 11, type: .int, name: "c", value: "b + 100"))
-array.append(BlockDelimiter(type: .end))
-array.append(BlockDelimiter(type: .end))
+// array.append(BlockDelimiter(type: DelimiterType.end))
+// array.append(Condition(id: 8, type: .ifBlock, value: "(6 + 2) % 8 == 0"))
+// array.append(BlockDelimiter(type: .begin))
+// array.append(Variable(id: 9, type: .int, name: "b", value: "b + 100"))
+// array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
+// array.append(BlockDelimiter(type: .begin))
+// array.append(Variable(id: 11, type: .int, name: "c", value: "b + 100"))
+// array.append(BlockDelimiter(type: .end))
+// array.append(BlockDelimiter(type: .end))
 
 
-let tree = Tree(array)
-tree.buildTree()
+// let tree = Tree(array)
+// tree.buildTree()
 
-let interpreter = Interpreter(tree.rootNode)
-let _ = interpreter.traverseTree(tree.rootNode)
+// let interpreter = Interpreter(tree.rootNode)
+// let _ = interpreter.traverseTree(tree.rootNode)
 
 

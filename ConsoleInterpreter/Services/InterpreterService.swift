@@ -41,7 +41,14 @@ class Interpreter{
 
  
     private func processPrintNode(_ node: Node){
-        printResult += node.value + "\n"
+        let calculatedValue = calculateArithmetic(node.value)
+        print(calculatedValue)
+        print("processPrintNode")
+        if let value = Int(calculatedValue) {
+            printResult += "\(value)\n"
+        } else {
+            printResult += "\(node.value)\n"
+        }
     }
 
     private func processIfBlockNode(_ node: Node){
