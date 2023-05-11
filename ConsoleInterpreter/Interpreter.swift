@@ -119,17 +119,17 @@ class Token {
 
 
 
-class Variable {
+class Variable: IBlock {
     private let id: Int
     private let type: VariableType
-    private var value: String
     private var name: String
+    private var value: String
  
-    init(id: Int, type: VariableType, value: String, name: String?) {
+    init(id: Int, type: VariableType, name: String, value: String? ) {
         self.id = id
         self.type = type
-        self.value = value
-        self.name = name ?? ""
+        self.name = name
+        self.value = value ?? ""
     }
  
     func getId() -> Int {
@@ -336,8 +336,8 @@ class Calculate {
                 return Token(.rightBrace, ")")
             case "=", "<", ">", "!", "&", "|":
                 
-                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
-                    self.position += 1
+                if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "=" {
+                    position += 1
                     switch currentChar {
                         case "=":
                             return Token(.equal, "==")
@@ -359,16 +359,16 @@ class Calculate {
                         case ">":
                             return Token(.greater, ">")
                         case "&":
-                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "&" {
-                                self.position += 1
+                            if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "&" {
+                                position += 1
                                 return Token(.logicalAnd, "&&")
                             } else {
                                 fatalError("Invalid character")
                             }
                             
                         case "|":
-                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
-                                self.position += 1
+                            if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "|" {
+                                position += 1
                                 return Token(.logicalOr, "||")
                             } else {
                                 fatalError("Invalid character")
@@ -441,7 +441,7 @@ class AssignmentVariable {
         var result = "" 
         let components = name.split(whereSeparator: { $0 == " " })
         for component in components {
-            if let value = self.variableIntMap[String(component)] {
+            if let value = variableIntMap[String(component)] {
                 result += "\(value)"
             } else {
                 result += "\(component)"
@@ -455,7 +455,7 @@ class AssignmentVariable {
         for component in components {
             if let intValue = Int(component) {
                 result += "\(intValue)"
-            } else if let value = self.variableIntMap[String(component)] {
+            } else if let value = variableIntMap[String(component)] {
                 result += "\(value)"
             } else {
                 result += "\(component)"
@@ -496,6 +496,7 @@ class Interpreter{
     private(set) var treeAST: Node
     internal var mapOfVariableStack: [[String: String]]
     private var assignmentVariableInstance = AssignmentVariable([:])
+    private var printResult = ""
 
     init(_ treeAST: Node){
         self.treeAST = treeAST
@@ -514,13 +515,26 @@ class Interpreter{
             processRootNode(treeAST)
         case .ifBlock:
             processIfBlockNode(treeAST)
+        case .loop:
+            processLoopNode(treeAST)
+        case .print:
+            processPrintNode(treeAST)
         default:
             return "" // в этом случае нужно возвращать ID блока
         }
         
         return ""
     }
-    
+    private func processLoopNode(_ node: Node){
+        print("processLoopNode")
+        print(node.value)
+    }
+
+ 
+    private func processPrintNode(_ node: Node){
+        printResult += node.value + "\n"
+    }
+
     private func processIfBlockNode(_ node: Node){
         let calculatedValue = calculateArithmetic(node.value)
 
@@ -563,6 +577,7 @@ class Interpreter{
             let _ = traverseTree(child)
         } 
         print(mapOfVariableStack)
+        print(printResult)
     }
 
     private func processVariableNode(_ node: Node) -> String{
@@ -593,8 +608,9 @@ class Interpreter{
         let variableForInt = Variable(
             id: 1,
             type: VariableType.int,
-            value: expression,
-            name: "temp"
+            name: "temp",
+            value: expression
+            
         )
         let mapElement = assignmentVariableInstance.assign(variableForInt)
         if mapElement == "" {
@@ -604,6 +620,8 @@ class Interpreter{
         } else {
             return mapElement
         }
+
+        
     }
 }
 
@@ -787,58 +805,49 @@ class Tree {
 }
 
 
+// {
+//    b = 10
+//    a = 7 + b + 2
+//    print(a)
+//    for(int i = 0; i < 10; i++){
+//         b = b + 10
+//         a = a * 2
+//    }
+//     if (6 + 2) % 8 == 0 {
+//         b = b + 100
+//         if a != b {
+//             b = b + 100
+//         }
+//     } 
+// }
 
 
+var array: [IBlock] = []
 
 
-let treeMain = Node(value: "",type: AllTypes.root)
-let firstAssignSubtree = Node(value: "", type: AllTypes.assign)
-let firstVarLeft = Node(value: "b", type: AllTypes.variable)
-let firstVarRight = Node(value: "10", type: AllTypes.arithmetic) 
+array.append(Variable(id: 1, type: .int, name: "b", value: "10"))
+array.append(Variable(id: 2, type: .int, name: "a", value: "7 + b + 2"))
+array.append(Printing(id: 3, value: "gfdgsdf"))
+array.append(Loop(id: 4, type: LoopType.forLoop, value: "i in 0...10"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Variable(id: 5, type: .int, name: "b", value: "b + 10"))
+array.append(Variable(id: 6, type: .int, name: "a", value: "a * 2"))
 
-let secondAssignSubtree = Node(value: "", type: AllTypes.assign)
-let secondVarLeft = Node(value: "a", type: AllTypes.variable)
-let secondVarRight = Node(value: "7 + b + 2", type: AllTypes.arithmetic) 
-
-let firstIfBlockSubtree = Node(value: "(6 + 2) % 8 == 0", type: AllTypes.ifBlock) 
-
-let firstIfAssignSubtree = Node(value: "", type: AllTypes.assign) 
-let firstIfBlockVarLeft = Node(value: "b", type: AllTypes.variable) 
-let firstIfBlockVarRight = Node(value: "b + 100", type: AllTypes.arithmetic)
-
-
-let secondIfBlockSubtree = Node(value: "a != b", type: AllTypes.ifBlock) 
-
-let secondIfAssignSubtree = Node(value: "", type: AllTypes.assign) 
-let secondIfBlockVarLeft = Node(value: "c", type: AllTypes.variable) 
-let secondIfBlockVarRight = Node(value: "a + 100", type: AllTypes.arithmetic)
-
-firstAssignSubtree.addChild(firstVarLeft)
-firstAssignSubtree.addChild(firstVarRight)
-
-secondAssignSubtree.addChild(secondVarLeft)
-secondAssignSubtree.addChild(secondVarRight) 
-
-firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
-firstIfAssignSubtree.addChild(firstIfBlockVarRight)
-firstIfBlockSubtree.addChild(firstIfAssignSubtree)
-
-secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
-secondIfAssignSubtree.addChild(secondIfBlockVarRight)
-secondIfBlockSubtree.addChild(secondIfAssignSubtree)
-
-firstIfBlockSubtree.addChild(secondIfBlockSubtree)
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Condition(id: 7, type: .ifBlock, value: "(6 + 2) % 8 == 0"))
+array.append(BlockDelimiter(type: .begin))
+array.append(Variable(id: 8, type: .int, name: "b", value: "b + 100"))
+array.append(Condition(id: 9, type: .ifBlock, value: "a != b"))
+array.append(BlockDelimiter(type: .begin))
+array.append(Variable(id: 10, type: .int, name: "c", value: "b + 100"))
+array.append(BlockDelimiter(type: .end))
+array.append(BlockDelimiter(type: .end))
 
 
-treeMain.addChild(firstAssignSubtree)
-treeMain.addChild(secondAssignSubtree)
-treeMain.addChild(firstIfBlockSubtree)
-treeMain.addChild(secondIfBlockSubtree)
+let tree = Tree(array)
+tree.buildTree()
 
-
-let interpreter = Interpreter(treeMain)
-let _ = interpreter.traverseTree(treeMain)
-
-
+let interpreter = Interpreter(tree.rootNode)
+let _ = interpreter.traverseTree(tree.rootNode)
 
 
