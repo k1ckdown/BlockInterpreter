@@ -77,11 +77,13 @@ class Variable {
     private let id: Int
     private let type: VariableType
     private var value: String
+    private var name: String
  
-    init(id: Int, type: VariableType, value: String) {
+    init(id: Int, type: VariableType, value: String, name: String?) {
         self.id = id
         self.type = type
         self.value = value
+        self.name = name ?? ""
     }
  
     func getId() -> Int {
@@ -94,6 +96,9 @@ class Variable {
 
     func getValue() -> String {
         return self.value
+    }
+    func getName() -> String {
+        return self.name
     }
 
     func setValue(_ value: String) {
@@ -268,6 +273,7 @@ class Calculate {
     }
 
     private func getToken(_ currentChar: Character) -> Token{
+        print(currentChar)
         switch currentChar {
             case "+":
                 return Token(.plus, "+")            
@@ -417,17 +423,17 @@ class AssignmentVariable {
 
 
 
-class TreeNode{
+class Node{
     private(set) var value: String
     private(set) var type: AllTypes
-    private(set) var parent: TreeNode?
-    private(set) var children: [TreeNode]
+    private(set) var parent: Node?
+    private(set) var children: [Node]
     private(set) var countWasHere: Int
 
     internal  var dictionary: [String: String]
 
 
-    init( _ value: String, _ type: AllTypes) {
+    init(value: String,type: AllTypes) {
         self.value = value
         self.type = type
         self.countWasHere = 0
@@ -436,7 +442,7 @@ class TreeNode{
     }
 
 
-    func addChild(_ child: TreeNode) {
+    func addChild(_ child: Node) {
         children.append(child)
         child.parent = self
         if child.type == .variable{
@@ -444,23 +450,22 @@ class TreeNode{
         }
     
         dictionary.merge(child.dictionary){(_, new) in new}
-
     }
 }
 
 
 
 class Interpreter{
-    private(set) var treeAST: TreeNode
+    private(set) var treeAST: Node
     internal var mapOfVariableStack: [[String: String]]
     private var assignmentVariableInstance = AssignmentVariable([:])
 
-    init(_ treeAST: TreeNode){
+    init(_ treeAST: Node){
         self.treeAST = treeAST
         self.mapOfVariableStack = []
     }
 
-    func traverseTree(_ treeAST: TreeNode) -> String{ 
+    func traverseTree(_ treeAST: Node) -> String{ 
         switch treeAST.type{
         case .variable:
             return processVariableNode(treeAST)
@@ -475,10 +480,11 @@ class Interpreter{
         default:
             return "" // в этом случае нужно возвращать ID блока
         }
+        
         return ""
     }
     
-    private func processIfBlockNode(_ node: TreeNode){
+    private func processIfBlockNode(_ node: Node){
         let calculatedValue = calculateArithmetic(node.value)
 
         guard let value = Int(calculatedValue) else {
@@ -514,7 +520,7 @@ class Interpreter{
 
 
 
-    private func processRootNode(_ node: TreeNode){
+    private func processRootNode(_ node: Node){
         mapOfVariableStack.append([:])
         for child in node.children{
             let _ = traverseTree(child)
@@ -522,11 +528,11 @@ class Interpreter{
         print(mapOfVariableStack)
     }
 
-    private func processVariableNode(_ node: TreeNode) -> String{
+    private func processVariableNode(_ node: Node) -> String{
         return node.value
     }
 
-    private func processAssignNode(_ node: TreeNode){ 
+    private func processAssignNode(_ node: Node){ 
     
         let varName = traverseTree(node.children[0])
         let assignValue = traverseTree(node.children[1])
@@ -536,7 +542,7 @@ class Interpreter{
         }
     }
 
-    private func processArithmeticNode(_ node: TreeNode) -> String {
+    private func processArithmeticNode(_ node: Node) -> String {
         return calculateArithmetic(node.value)
     }
 
@@ -550,7 +556,8 @@ class Interpreter{
         let variableForInt = Variable(
             id: 1,
             type: VariableType.int,
-            value: expression
+            value: expression,
+            name: "temp"
         )
         let mapElement = assignmentVariableInstance.assign(variableForInt)
         if mapElement == "" {
@@ -563,56 +570,340 @@ class Interpreter{
     }
 }
 
+//! Tree for test 1
 
-let treeMain = TreeNode("", AllTypes.root)
-let firstAssignSubtree = TreeNode("", AllTypes.assign)
-let firstVarLeft = TreeNode("b", AllTypes.variable)
-let firstVarRight = TreeNode("10", AllTypes.arithmetic) 
-
-let secondAssignSubtree = TreeNode("", AllTypes.assign)
-let secondVarLeft = TreeNode("a", AllTypes.variable)
-let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic) 
-
-let firstIfBlockSubtree = TreeNode("(6 + 2) % 8 == 0", AllTypes.ifBlock) 
-
-let firstIfAssignSubtree = TreeNode("", AllTypes.assign) 
-let firstIfBlockVarLeft = TreeNode("b", AllTypes.variable) 
-let firstIfBlockVarRight = TreeNode("b + 100", AllTypes.arithmetic)
+enum DelimiterType {
+    case begin
+    case end
+}
 
 
-let secondIfBlockSubtree = TreeNode("a != b", AllTypes.ifBlock) 
-
-let secondIfAssignSubtree = TreeNode("", AllTypes.assign) 
-let secondIfBlockVarLeft = TreeNode("c", AllTypes.variable) 
-let secondIfBlockVarRight = TreeNode("a + 100", AllTypes.arithmetic)
+struct BlockDelimiter: IBlock {
+    let type: DelimiterType
+}
 
 
+protocol IBlock {
+
+}
+
+enum ConditionType {
+    case ifBlock
+    case elifBlock
+    case elseBlock
+}
 
 
-firstAssignSubtree.addChild(firstVarLeft)
-firstAssignSubtree.addChild(firstVarRight)
-
-secondAssignSubtree.addChild(secondVarLeft)
-secondAssignSubtree.addChild(secondVarRight) 
-
-firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
-firstIfAssignSubtree.addChild(firstIfBlockVarRight)
-firstIfBlockSubtree.addChild(firstIfAssignSubtree)
-
-secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
-secondIfAssignSubtree.addChild(secondIfBlockVarRight)
-secondIfBlockSubtree.addChild(secondIfAssignSubtree)
-
-firstIfBlockSubtree.addChild(secondIfBlockSubtree)
+struct Condition: IBlock {
+    let id: Int
+    let type: ConditionType
+    let value: String
+}
 
 
-treeMain.addChild(firstAssignSubtree)
-treeMain.addChild(secondAssignSubtree)
-treeMain.addChild(firstIfBlockSubtree)
+enum LoopType {
+    case forLoop
+    case whileLoop
+}
+
+
+struct Loop: IBlock {
+    let id: Int
+    let type: LoopType
+    let value: String
+}
+
+struct Printing: IBlock {
+    let id: Int
+    let value: String
+}
+
+
+class Tree {
+    var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
+    var index: Int = 0
+    var blocks: [IBlock]
+    init(_ blocks: [IBlock]) {
+        self.blocks = blocks
+    }
+
+    func setBlocks(_ blocks: [IBlock]) {
+        self.blocks = blocks
+    }
+
+    func buildTree() {
+        while index < blocks.count {
+            let block = blocks[index]
+            switch block {
+            case let variableBlock as Variable:
+                let variableNode = buildVariableNode(variable: variableBlock)
+                rootNode.addChild(variableNode)
+                index += 1
+            case let printBlock as Printing:
+                let printingNode = buildPrintingNode(printing: printBlock)
+                rootNode.addChild(printingNode)
+                index += 1
+            case is Loop:
+                if let loopNode = buildNode(getBlockAndMoveIndex(),
+                        type: AllTypes.loop) {
+                    rootNode.addChild(loopNode)
+                }
+            case is Condition:
+                if let conditionNode = buildNode(getBlockAndMoveIndex(),
+                        type: AllTypes.ifBlock) {
+                    rootNode.addChild(conditionNode)
+                }
+            case is BlockDelimiter:
+                index += 1
+            default:
+                index += 1
+            }
+        }
+    }
+
+    private func getMatchingDelim   iterIndex() -> Int? {
+        var countBegin = 0
+        for i in (index + 1)..<blocks.count {
+            guard let block = blocks[i] as? BlockDelimiter else {
+                continue
+            }
+            countBegin += countForMatchingDelimiter(block)
+            if countBegin == 0 {
+                return i
+            }
+        }
+        return nil
+    }
+
+    private func countForMatchingDelimiter(_ block: BlockDelimiter) -> Int {
+        if isEndDelimiter(block) {
+            return -1
+        } else if isBeginDelimiter(block) {
+            return 1
+        }
+        return 0
+    }
+
+    private func isBeginDelimiter(_ block: BlockDelimiter) -> Bool {
+        block.type == DelimiterType.begin
+    }
+
+    private func isEndDelimiter(_ block: BlockDelimiter) -> Bool {
+        block.type == DelimiterType.end
+    }
+
+
+    private func getBlockAndMoveIndex() -> [IBlock] {
+        var wholeBlock: [IBlock] = []
+        guard let endIndex = getMatchingDelimiterIndex() else {
+            return wholeBlock
+        }
+        wholeBlock.append(blocks[index])
+        wholeBlock += Array(blocks[(index + 1)...endIndex])
+        index = endIndex + 1
+        return wholeBlock
+    }
+    
+    private func buildVariableNode(variable: Variable) -> Node {
+        let node = Node(value: "", type: AllTypes.assign)
+        let nameVariable = Node(value: variable.getName(), type: AllTypes.variable)
+        let valueVariable = Node(value: variable.getValue(), type: AllTypes.arithmetic)
+        node.addChild(nameVariable)
+        node.addChild(valueVariable)
+        return node
+    }
+    
+    
+    private func buildPrintingNode(printing: Printing) -> Node {
+        let node = Node(value: printing.value, type: AllTypes.print)
+        return node
+    }
+
+    private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
+        guard let firstBlock = block.first else {
+            re turn nil
+        }
+
+        var node: Node?
+
+        if type == AllTypes.ifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: type)
+        } else if type == AllTypes.loop {
+            guard let loop = firstBlock as? Loop else {
+                return nil
+            }
+            node = Node(value: loop.value, type: type)
+        }
+
+        var index = 1
+
+        while index < block.count {
+            if block[index] is BlockDelimiter {
+                index += 1
+                continue
+            } else if let variableBlock = block[index] as? Variable {
+                let variableNode = buildVariableNode(variable: variableBlock)
+                node?.addChild(variableNode)
+            } else if let printBlock = block[index] as? Printing {
+                let printingNode = buildPrintingNode(printing: printBlock)
+                node?.addChild(printingNode)
+            } else if let nestedConditionBlock = block[index] as? Condition {
+                var nestedBlocks: [IBlock] = []
+                var additionIndex = index + 1
+                nestedBlocks.append(nestedConditionBlock)
+                var countBegin: Int = 0
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
+                        }
+                    }
+                    nestedBlocks.append(block[additionIndex])
+                    additionIndex += 1
+                }
+                if let nestedNode = buildNode(nestedBlocks, type: .ifBlock) {
+                    node?.addChild(nestedNode)
+                }
+                index = additionIndex
+            } else if let nestedLoopBlock = block[index] as? Loop {
+                var nestedBlocks: [IBlock] = []
+                var additionIndex = index + 1
+                nestedBlocks.append(nestedLoopBlock)
+                var countBegin: Int = 0
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
+                        }
+                    }
+                    nestedBlocks.append(block[additionIndex])
+                    additionIndex += 1
+                }
+                if let nestedNode = buildNode(nestedBlocks, type: .loop) {
+                    node?.addChild(nestedNode)
+                }
+                index = additionIndex
+            }
+            index += 1
+        }
+        return node
+    }
+}
+
+
+
+
+var array: [IBlock] = []
+
+
+array.append(Printing(id: 1, value: "a"))
+array.append(Condition(id: 2, type: AllTypes.ifBlock, value: "i > 5"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Printing(id: 3, value: "b"))
+array.append(Condition(id: 4, type: AllTypes.ifBlock, value: "i > 5"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+
+array.append(Loop(id: 5, type: AllTypes.forLoop, value: "i in 0...10"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Printing(id: 6, value: "c"))
+
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Printing(id: 7, value: "d"))
+
+array.append(BlockDelimiter(type: DelimiterType.end))
+
+array.append(Printing(id: 8, value: "e"))
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Printing(id: 9, value: "f"))
+array.append(Printing(id: 10, value: "ok"))
+
+
+let tree = Tree(array)
+tree.buildTree()
+print("hi")
+let interpreter = Interpreter(tree.rootNode)
+let _ = interpreter.traverseTree(tree.rootNode)
+
+
+
+
+
+
+// let treeMain = Node("", AllTypes.root)
+// let firstAssignSubtree = Node("", AllTypes.assign)
+// let firstVarLeft = Node("b", AllTypes.variable)
+// let firstVarRight = Node("10", AllTypes.arithmetic) 
+
+// let secondAssignSubtree = Node("", AllTypes.assign)
+// let secondVarLeft = Node("a", AllTypes.variable)
+// let secondVarRight = Node("7 + b + 2", AllTypes.arithmetic) 
+
+// let firstIfBlockSubtree = Node("(6 + 2) % 8 == 0", AllTypes.ifBlock) 
+
+// let firstIfAssignSubtree = Node("", AllTypes.assign) 
+// let firstIfBlockVarLeft = Node("b", AllTypes.variable) 
+// let firstIfBlockVarRight = Node("b + 100", AllTypes.arithmetic)
+
+
+// let secondIfBlockSubtree = Node("a != b", AllTypes.ifBlock) 
+
+// let secondIfAssignSubtree = Node("", AllTypes.assign) 
+// let secondIfBlockVarLeft = Node("c", AllTypes.variable) 
+// let secondIfBlockVarRight = Node("a + 100", AllTypes.arithmetic)
+
+
+array.append(Printing(id: 1, value: "a"))
+array.append(Condition(id: 2, type: AllTypes.ifBlock, value: "i > 5"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Printing(id: 3, value: "b"))
+array.append(Condition(id: 4, type: AllTypes.ifBlock, value: "i > 5"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+
+array.append(Loop(id: 5, type: AllTypes.forLoop, value: "i in 0...10"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Printing(id: 6, value: "c"))
+
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Printing(id: 7, value: "d"))
+
+array.append(BlockDelimiter(type: DelimiterType.end))
+
+array.append(Printing(id: 8, value: "e"))
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Printing(id: 9, value: "f"))
+array.append(Printing(id: 10, value: "ok"))
+
+// firstAssignSubtree.addChild(firstVarLeft)
+// firstAssignSubtree.addChild(firstVarRight)
+
+// secondAssignSubtree.addChild(secondVarLeft)
+// secondAssignSubtree.addChild(secondVarRight) 
+
+// firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
+// firstIfAssignSubtree.addChild(firstIfBlockVarRight)
+// firstIfBlockSubtree.addChild(firstIfAssignSubtree)
+
+// secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
+// secondIfAssignSubtree.addChild(secondIfBlockVarRight)
+// secondIfBlockSubtree.addChild(secondIfAssignSubtree)
+
+// firstIfBlockSubtree.addChild(secondIfBlockSubtree)
+
+
+// treeMain.addChild(firstAssignSubtree)
+// treeMain.addChild(secondAssignSubtree)
+// treeMain.addChild(firstIfBlockSubtree)
 // treeMain.addChild(secondIfBlockSubtree)
 
 
-let interpreter = Interpreter(treeMain)
-let _ = interpreter.traverseTree(treeMain)
+// let interpreter = Interpreter(treeMain)
+// let _ = interpreter.traverseTree(treeMain)
+
+
 
 

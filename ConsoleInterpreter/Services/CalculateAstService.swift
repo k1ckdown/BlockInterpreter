@@ -2,6 +2,7 @@ import Foundation
  
 enum TokenType {
     case integer
+    case string
     case plus
     case minus
     case multiply
@@ -113,8 +114,8 @@ class Calculate {
         return result
     }
 
-   
-    
+
+
     private func term() -> Int {
         var result = self.factor()
         let possibleTokens: [TokenType] = [
@@ -129,8 +130,7 @@ class Calculate {
             switch token.type {
             case .modulo:
                 self.moveToken(.modulo)
-                var selfFactor = self.factor()
-                result %= selfFactor
+                result %= self.factor()
             case .multiply:
                 self.moveToken(.multiply)
                 result *= self.factor()
@@ -345,7 +345,6 @@ print(calculator.compare()) // Output: 2
 
 calculator.setText(text: "( 8 + 17 * 2 - 4 ) / 2 % 3")
 print(calculator.compare()) // Output: 1
-
 
 
 
