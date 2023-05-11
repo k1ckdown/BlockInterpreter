@@ -125,6 +125,7 @@ class Calculate {
 
     public func compare() -> Int {
         self.currentToken = self.getNextToken() 
+        
         var result = self.term()
         let possibleTokens: [TokenType] = [
             TokenType.plus,
@@ -212,7 +213,6 @@ class Calculate {
 
     private func factor() -> Int {
         let token = self.currentToken!
-
         switch token.getType() {
             case .integer:
                 self.moveToken(.integer)
@@ -228,7 +228,6 @@ class Calculate {
             case .eof:
                 return 0
             default:
-                print(token.getType())
                 fatalError("Invalid syntax")
         }
 
@@ -263,7 +262,6 @@ class Calculate {
 
             return Token(.integer, integerString)
         }
-
         self.position += 1
         return getToken(currentChar)
         
@@ -286,6 +284,7 @@ class Calculate {
             case ")":
                 return Token(.rightBrace, ")")
             case "=", "<", ">", "!", "&", "|":
+                
                 if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
                     self.position += 1
                     switch currentChar {
@@ -355,34 +354,53 @@ class Calculate {
 
 
 class AssignmentVariable {
-    private var variableIntMap: [String: String] = [:]
+    private var variableIntMap: [String: String]
 
     init(_ variableIntMap: [String: String]) {
-        self.variableIntMap.merge(variableIntMap){(_, new) in new}
+        self.variableIntMap = variableIntMap
     }
  
-    public func setMapOfVariableInt(_ mapOfVariableInt: [String: String]) {
-        self.variableIntMap.merge(mapOfVariableInt){(_, new) in new}
+    public func setMapOfVariable(_ mapOfVariable: [String: String]) {
+        self.variableIntMap.merge(mapOfVariable){(_, new) in new}
     }
  
     public func assign(_ variable: Variable) -> String {
-        if variable.getType() == VariableType.int{
-
+        if variable.getType() == .int {
             return assignInt(variable.getValue())
+        } else if variable.getType() == .String {
+            return assignString(variable.getValue())
+        } else {
+            fatalError("Invalid variable type")
         }
-        return variable.getValue()    
     }
 
     private func assignInt(_ variable: String) -> String {
-        let normalizedString = normalize(variable)
+
+        let normalizedString = normalizeInt(variable)
         let computedString = String(Calculate(normalizedString).compare())
         return computedString
     }
- 
-    private func normalize(_ name: String) -> String {
+
+    private func assignString(_ variable: String) -> String {
+        let normalizedString = normalizeString(variable)
+        return normalizedString
+    }
+
+    private func normalizeString(_ name: String) -> String {
         var result = "" 
         let components = name.split(whereSeparator: { $0 == " " })
-
+        for component in components {
+            if let value = self.variableIntMap[String(component)] {
+                result += "\(value)"
+            } else {
+                result += "\(component)"
+            }
+        }
+        return result
+    }
+    private func normalizeInt(_ name: String) -> String {
+        var result = "" 
+        let components = name.split(whereSeparator: { $0 == " " })
         for component in components {
             if let intValue = Int(component) {
                 result += "\(intValue)"
@@ -395,6 +413,7 @@ class AssignmentVariable {
         return result
     }
 }
+
 
 
 
@@ -433,9 +452,12 @@ class TreeNode{
 
 class Interpreter{
     private(set) var treeAST: TreeNode
+    internal var mapOfVariableStack: [[String: String]]
+    private var assignmentVariableInstance = AssignmentVariable([:])
 
     init(_ treeAST: TreeNode){
         self.treeAST = treeAST
+        self.mapOfVariableStack = []
     }
 
     func traverseTree(_ treeAST: TreeNode) -> String{ 
@@ -457,49 +479,47 @@ class Interpreter{
     }
     
     private func processIfBlockNode(_ node: TreeNode){
-        var tempDictionary: [String: String] = [:]
-        let calculator = Calculate(node.value)
-        let value = calculator.compare()
+        let calculatedValue = calculateArithmetic(node.value)
+
+        guard let value = Int(calculatedValue) else {
+            fatalError("Invalid syntax")
+        }
         if value != 0{
+            mapOfVariableStack.append([:])
+
             for child in node.children{
                 let _ = traverseTree(child)
-                for (key, value) in child.dictionary{
-                    // print(node.dictionary)
-                    // print(key, value, node.dictionary[key] != nil, node.dictionary[key] != "", node.dictionary[key] != Optional(""))
-                    if node.dictionary[key] == "" || node.dictionary[key] == Optional("") {
-                        node.dictionary[key] = value
-                        tempDictionary.merge([key: value]){(_, new) in new}
-                    } else{
-                        node.dictionary[key] = nil
-                        tempDictionary.merge([key: value]){(_, new) in new}
+
+                if child.type == .ifBlock {
+                    mapOfVariableStack.append([:])
+                }
+
+                if let lastDictionary = mapOfVariableStack.last {
+                    mapOfVariableStack.removeLast()
+            
+                    for (key, value) in lastDictionary {
+                        for (index, var dictionary) in mapOfVariableStack.enumerated().reversed() {
+                            if dictionary[key] != nil {
+                                dictionary[key] = value
+                                mapOfVariableStack[index] = dictionary
+                                break
+                            }
+                        }
                     }
-                } 
-                
+
+                }
             }
         }
-        // print(node.dictionary, "node")
-        // print(tempDictionary, "temp")
     }
 
 
 
     private func processRootNode(_ node: TreeNode){
-        // print(node.dictionary)
+        mapOfVariableStack.append([:])
         for child in node.children{
             let _ = traverseTree(child)
-            
-            node.dictionary.merge(child.dictionary){(_, new) in new}
-            // for (key, value) in child.dictionary{
-            //         // print(key, value)
-            //         if value != "" && value != Optional("") && value != nil  {
-            //             node.dictionary[key] = value
-            //         } else{
-            //             node.dictionary[key] = nil
-            //         }
-            //     } 
-            
         } 
-        print(node.dictionary)
+        print(mapOfVariableStack)
     }
 
     private func processVariableNode(_ node: TreeNode) -> String{
@@ -510,7 +530,10 @@ class Interpreter{
     
         let varName = traverseTree(node.children[0])
         let assignValue = traverseTree(node.children[1])
-        node.dictionary[varName] = assignValue
+        if var lastDictionary = mapOfVariableStack.last {
+            lastDictionary[varName] = assignValue
+            mapOfVariableStack[mapOfVariableStack.count - 1] = lastDictionary
+        }
     }
 
     private func processArithmeticNode(_ node: TreeNode) -> String {
@@ -518,15 +541,25 @@ class Interpreter{
     }
 
     private func calculateArithmetic(_ expression: String) -> String {
+        var lastDictionary:[String: String] = [:]
+        for dictionary in mapOfVariableStack {
+            lastDictionary.merge(dictionary){(_, new) in new}
+        }
+        assignmentVariableInstance.setMapOfVariable(lastDictionary)
+
         let variableForInt = Variable(
             id: 1,
             type: VariableType.int,
             value: expression
         )
-
-        let mapElement = AssignmentVariable(self.treeAST.dictionary).assign(variableForInt)
-
-        return mapElement
+        let mapElement = assignmentVariableInstance.assign(variableForInt)
+        if mapElement == "" {
+            fatalError("Invalid syntax")
+        } else if let intValue = Int(mapElement) {
+            return "\(intValue)"
+        } else {
+            return mapElement
+        }
     }
 }
 
@@ -534,20 +567,27 @@ class Interpreter{
 let treeMain = TreeNode("", AllTypes.root)
 let firstAssignSubtree = TreeNode("", AllTypes.assign)
 let firstVarLeft = TreeNode("b", AllTypes.variable)
-let firstVarRight = TreeNode("10", AllTypes.arithmetic) // присваиваем значение 10 переменной b
+let firstVarRight = TreeNode("10", AllTypes.arithmetic) 
 
 let secondAssignSubtree = TreeNode("", AllTypes.assign)
 let secondVarLeft = TreeNode("a", AllTypes.variable)
-let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic) // присваиваем значение 7 + b + 2 переменной a
+let secondVarRight = TreeNode("7 + b + 2", AllTypes.arithmetic) 
 
-let firstIfBlockSubtree = TreeNode("(6 + 2) % 8 == 0", AllTypes.ifBlock) // условие для if
+let firstIfBlockSubtree = TreeNode("(6 + 2) % 8 == 0", AllTypes.ifBlock) 
 
 let firstIfAssignSubtree = TreeNode("", AllTypes.assign) 
-let firstIfBlockVarLeft = TreeNode("c", AllTypes.variable) // присваиваем значение 110 переменной b
+let firstIfBlockVarLeft = TreeNode("b", AllTypes.variable) 
 let firstIfBlockVarRight = TreeNode("b + 100", AllTypes.arithmetic)
 
 
-// MAIN LOOP
+let secondIfBlockSubtree = TreeNode("a != b", AllTypes.ifBlock) 
+
+let secondIfAssignSubtree = TreeNode("", AllTypes.assign) 
+let secondIfBlockVarLeft = TreeNode("c", AllTypes.variable) 
+let secondIfBlockVarRight = TreeNode("a + 100", AllTypes.arithmetic)
+
+
+
 
 firstAssignSubtree.addChild(firstVarLeft)
 firstAssignSubtree.addChild(firstVarRight)
@@ -559,11 +599,18 @@ firstIfAssignSubtree.addChild(firstIfBlockVarLeft)
 firstIfAssignSubtree.addChild(firstIfBlockVarRight)
 firstIfBlockSubtree.addChild(firstIfAssignSubtree)
 
+secondIfAssignSubtree.addChild(secondIfBlockVarLeft)
+secondIfAssignSubtree.addChild(secondIfBlockVarRight)
+secondIfBlockSubtree.addChild(secondIfAssignSubtree)
+
+firstIfBlockSubtree.addChild(secondIfBlockSubtree)
+
 
 treeMain.addChild(firstAssignSubtree)
 treeMain.addChild(secondAssignSubtree)
 treeMain.addChild(firstIfBlockSubtree)
 // treeMain.addChild(secondIfBlockSubtree)
+
 
 let interpreter = Interpreter(treeMain)
 let _ = interpreter.traverseTree(treeMain)
