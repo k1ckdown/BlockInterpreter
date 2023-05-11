@@ -21,9 +21,8 @@ final class BlockTextField: UITextField {
         textAlignment = .center
         returnKeyType = .done
         clearButtonMode = .never
-        tintColor = .appPurple
-        textColor = .appBlack
-        backgroundColor = .appWhite
+        textColor = .appWhite
+        backgroundColor = .blockBorder
         layer.cornerRadius = 10
         font = .blockTextField
         adjustsFontSizeToFitWidth = true

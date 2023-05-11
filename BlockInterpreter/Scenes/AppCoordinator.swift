@@ -14,7 +14,7 @@ final class AppCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        navigationController.overrideUserInterfaceStyle = .light
+        navigationController.overrideUserInterfaceStyle = .dark
         self.window.rootViewController = navigationController
         self.window.makeKeyAndVisible()
         

@@ -41,7 +41,7 @@ final class BlockHeaderView: UIView {
     }
     
     private func setupSuperView() {
-        backgroundColor = .appWhite
+        backgroundColor = .blockBorder
         layer.cornerRadius = Constants.SuperView.cornerRadius
     }
     
@@ -50,7 +50,7 @@ final class BlockHeaderView: UIView {
         
         headerTitleLabel.font = .blockHeader
         headerTitleLabel.textAlignment = .left
-        headerTitleLabel.textColor = .appBlack
+        headerTitleLabel.textColor = .appWhite
         
         headerTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(Constants.HeaderTitleLabel.insetLeading)

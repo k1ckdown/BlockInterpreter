@@ -28,7 +28,7 @@ final class CodeBlocksViewController: UIViewController {
     private lazy var plusImageView: UIImageView = {
         let imageView = UIImageView()
         
-        imageView.tintColor = .orange
+        imageView.tintColor = .appMain
         imageView.image = UIImage(systemName: "plus.circle.fill")
         
         return imageView
@@ -85,7 +85,7 @@ final class CodeBlocksViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .appPurple
+        view.backgroundColor = .appBackground
     }
     
     private func setupBlocksTableView() {

@@ -105,18 +105,18 @@ final class VariableBlockCell: BlockCell {
         setupVariableTypeLabel()
         setupAssignmentStackView()
         setupVariableNameTextField()
-        setupEqualSignLabel()
+        setupEqualSignImageView()
         setupVariableValueTextField()
     }
     
     private func setupContainerView() {
-        containerView.backgroundColor = .appBlack
+        containerView.backgroundColor = .variableBlock
     }
     
     private func setupVariableTypeLabel() {
         containerView.addSubview(variableTypeLabel)
         
-        variableTypeLabel.textColor = .appTeal
+        variableTypeLabel.textColor = .appBlack
         variableTypeLabel.font = .variableType
         variableTypeLabel.textAlignment = .center
         variableTypeLabel.adjustsFontSizeToFitWidth = true
@@ -141,17 +141,19 @@ final class VariableBlockCell: BlockCell {
     private func setupVariableNameTextField() {
         assignmentStackView.addArrangedSubview(variableNameTextField)
         
+        variableNameTextField.tintColor = .variableBlock
+        
         variableNameTextField.snp.makeConstraints { make in
             make.height.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierHeight)
             make.width.equalToSuperview().multipliedBy(Constants.VariableNameTextField.multiplierWidth)
         }
     }
     
-    private func setupEqualSignLabel() {
+    private func setupEqualSignImageView() {
         assignmentStackView.addArrangedSubview(equalSignImageView)
         
         equalSignImageView.contentMode = .scaleAspectFit
-        equalSignImageView.tintColor = .systemRed
+        equalSignImageView.tintColor = .appBlack
         equalSignImageView.image = UIImage(systemName: "equal")
         
         equalSignImageView.snp.makeConstraints { make in
@@ -162,6 +164,8 @@ final class VariableBlockCell: BlockCell {
     
     private func setupVariableValueTextField() {
         assignmentStackView.addArrangedSubview(variableValueTextField)
+        
+        variableValueTextField.tintColor = .variableBlock
         
         variableValueTextField.snp.makeConstraints { make in
             make.width.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierWidth)

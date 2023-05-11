@@ -43,7 +43,7 @@ class BlockCell: UITableViewCell {
     }
     
     private func updateAppearance() {
-        containerView.layer.borderColor = isSelectedState == true ? UIColor.orange.cgColor : .none
+        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : .none
     }
     
     func configure(with viewModel: BlockCellViewModel) {
@@ -70,7 +70,7 @@ class BlockCell: UITableViewCell {
         contentView.addSubview(containerView)
         
         containerView.backgroundColor = .clear
-        containerView.layer.borderColor = UIColor.clear.cgColor
+        containerView.layer.borderColor = UIColor.blockBorder?.cgColor
         containerView.layer.borderWidth = Constants.ContainerView.borderWidth
         
         containerView.snp.makeConstraints { make in

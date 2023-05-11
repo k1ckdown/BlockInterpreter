@@ -73,7 +73,7 @@ final class ConditionBlockCell: BlockCell {
     }
     
     private func setupContainerView() {
-        containerView.backgroundColor = #colorLiteral(red: 0.6888309717, green: 0.7562592626, blue: 0.7880410552, alpha: 1)
+        containerView.backgroundColor = .conditionBlock
     }
     
     private func setupConditionStatementLabel() {
@@ -101,6 +101,8 @@ final class ConditionBlockCell: BlockCell {
     
     private func setupConditionTextField() {
         conditionFieldView.addSubview(conditionTextField)
+        
+        conditionTextField.tintColor = .conditionBlock
         
         conditionTextField.snp.makeConstraints { make in
             make.width.equalToSuperview().multipliedBy(Constants.ConditionTextField.multiplierWidth)

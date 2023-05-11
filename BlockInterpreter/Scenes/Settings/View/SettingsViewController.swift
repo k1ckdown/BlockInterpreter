@@ -29,7 +29,7 @@ final class SettingsViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .appBlack
+        view.backgroundColor = .appBackground
     }
 
 }

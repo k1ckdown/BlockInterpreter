@@ -60,7 +60,7 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .systemBlue
+        view.backgroundColor = .appBackground
     }
     
     private func setupWorkBlocksTableView() {
@@ -71,7 +71,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.dragDelegate = self
         workBlocksTableView.dropDelegate = self
         workBlocksTableView.separatorStyle = .none
-        workBlocksTableView.backgroundColor = .systemBlue
+        workBlocksTableView.backgroundColor = .clear
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
@@ -89,7 +89,7 @@ final class WorkspaceViewController: UIViewController {
     private func setupRunButton() {
         view.addSubview(runButton)
         
-        runButton.backgroundColor = .appBlack
+        runButton.backgroundColor = .blockBorder
         runButton.tintColor = .systemGreen
         runButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         runButton.layer.cornerRadius = Constants.RunButton.cornerRadius

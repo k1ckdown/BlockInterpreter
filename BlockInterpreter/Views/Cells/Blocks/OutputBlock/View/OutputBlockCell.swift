@@ -45,11 +45,13 @@ final class OutputBlockCell: BlockCell {
     }
     
     private func setupContainerView() {
-        containerView.backgroundColor = .systemRed
+        containerView.backgroundColor = .outputBlock
     }
     
     private func setupOutputTextField() {
         containerView.addSubview(outputTextField)
+        
+        outputTextField.tintColor = .outputBlock
         
         outputTextField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(12)
@@ -62,7 +64,7 @@ final class OutputBlockCell: BlockCell {
         containerView.addSubview(outputLabel)
         
         outputLabel.text = "PRINT"
-        outputLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        outputLabel.font = UIFont.systemFont(ofSize: 20, weight: .heavy)
         outputLabel.textColor = .appBlack
         outputLabel.textAlignment = .center
         outputLabel.adjustsFontSizeToFitWidth = true
