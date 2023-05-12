@@ -2,18 +2,23 @@
 //  CodeBlocksViewModelType.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import Foundation
+import Combine
 
 protocol CodeBlocksViewModelType {
-    var variableBlockCellViewModels: [VariableBlockCellViewModel] { get }
+    var cellViewModels: [[BlockCellViewModel]] { get }
     
-    func viewDidLoad()
+    var isOptionsMenuVisible: CurrentValueSubject<Bool, Never> { get }
+    var didUpdateTable: PassthroughSubject<Void, Never> { get }
+
+    var viewDidLoad: PassthroughSubject<Void, Never> { get }
+    var moveToWorkspace: PassthroughSubject<Void, Never> { get }
+    var toggleSelectedIndexPath: PassthroughSubject<IndexPath, Never> { get }
+
     func getNumberOfSections() -> Int
-    func getHeightForRowAt(_ indexPath: IndexPath) -> CGFloat
-    func getSection(at indexPath: IndexPath) -> BlocksSection
     func getNumberOfItemsInSection(_ section: Int) -> Int
+    func getSection(at indexPath: IndexPath) -> BlocksSection
+    func getHeightForRowAt(_ indexPath: IndexPath) -> CGFloat
     func getTitleForHeaderInSection(_ section: Int) -> String
 }

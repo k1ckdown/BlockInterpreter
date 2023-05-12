@@ -1,23 +1,27 @@
+
 import Foundation
 
-
-class Interpreter{
-    private(set) var treeAST: Node
-    internal var mapOfVariableStack: [[String: String]]
+class Interpreter {
+    private var treeAST: Node
+    internal var mapOfVariableStack = [[String: String]]()
     private var assignmentVariableInstance = AssignmentVariable([:])
     private var printResult = ""
 
-    init(_ treeAST: Node){
+    init() {
+        treeAST = Node(value: "", type: .root, id: 0)
+    }
+    
+    func setTreeAST(_ treeAST: Node){
+        printResult = ""
         self.treeAST = treeAST
-        self.mapOfVariableStack = []
         let _ = traverseTree(treeAST)
     }
-
+    
     func getPrintResult() -> String {
         return printResult
     }
     
-    func traverseTree(_ treeAST: Node) -> String{ 
+    func traverseTree(_ treeAST: Node) -> String { 
         switch treeAST.type{
         case .variable:
             return processVariableNode(treeAST)
@@ -36,7 +40,7 @@ class Interpreter{
         default:
             return "" // в этом случае нужно возвращать ID блока
         }
-        
+         
         return ""
     }
     private func processLoopNode(_ node: Node){
@@ -105,7 +109,7 @@ class Interpreter{
         return node.value
     }
 
-    private func processAssignNode(_ node: Node){ 
+    private func processAssignNode(_ node: Node){
     
         let varName = traverseTree(node.children[0])
         let assignValue = traverseTree(node.children[1])

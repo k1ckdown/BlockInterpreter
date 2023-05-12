@@ -2,19 +2,19 @@
 //  ConsoleCoordinator.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 02.05.2023.
-//
 
 import UIKit
 
 final class ConsoleCoordinator: BaseCoordinator {
     
-    override init(navigationController: UINavigationController) {
+    private let consoleViewModel: ConsoleViewModel
+    
+    init(navigationController: UINavigationController, outputText: String) {
+        consoleViewModel = ConsoleViewModel(outputText: outputText)
         super.init(navigationController: navigationController)
     }
     
     override func start() {
-        let consoleViewModel = ConsoleViewModel()
         let consoleViewController = ConsoleViewController(with: consoleViewModel)
         
         navigationController.navigationBar.isHidden = true
