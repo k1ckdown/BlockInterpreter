@@ -6,6 +6,7 @@ enum AllTypes {
     case ifBlock
     case loop
     case function
+    case returnFunction
     case variable
     case arithmetic
     case print
@@ -20,11 +21,13 @@ class Node {
     private(set) var children: [Node]
     private(set) var countWasHere: Int
     private(set) var id: Int
-    
-    init(value: String, type: AllTypes, id: Int) {
+    private(set) var isDebug: Bool
+
+    init(value: String, type: AllTypes, id: Int, isDebug: Bool = false) {
         self.value = value
         self.type = type
         self.id = id
+        self.isDebug = isDebug
         countWasHere = 0
         children = []
     }
