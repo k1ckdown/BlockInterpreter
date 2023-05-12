@@ -2,12 +2,28 @@
 //  BlockHeaderView.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 06.05.2023.
-//
 
 import UIKit
 
 final class BlockHeaderView: UIView {
+    
+    var headerTitle: String? {
+        didSet {
+            headerTitleLabel.text = headerTitle
+        }
+    }
+    
+    private enum Constants {
+            enum SuperView {
+                static let cornerRadius: CGFloat = 8
+                static let borderWidth: CGFloat = 0.3
+            }
+        
+            enum HeaderTitleLabel {
+                static let insetLeading: CGFloat = 20
+                static let insetTopBottom: CGFloat = 4
+            }
+    }
     
     private let headerTitleLabel = UILabel()
     
@@ -19,12 +35,6 @@ final class BlockHeaderView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var headerTitle: String? {
-        didSet {
-            headerTitleLabel.text = headerTitle
-        }
-    }
 
     private func setup() {
         setupSuperView()
@@ -32,21 +42,22 @@ final class BlockHeaderView: UIView {
     }
     
     private func setupSuperView() {
-        backgroundColor = .appWhite
-        layer.cornerRadius = 8
+        backgroundColor = .blockBorder
+        layer.borderColor = UIColor.appWhite?.cgColor
+        layer.borderWidth = Constants.SuperView.borderWidth
+        layer.cornerRadius = Constants.SuperView.cornerRadius
     }
     
     private func setupHeaderTitleLabel() {
         addSubview(headerTitleLabel)
         
-        headerTitleLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        headerTitleLabel.font = .blockHeader
         headerTitleLabel.textAlignment = .left
-        headerTitleLabel.textColor = .appBlack
-        headerTitleLabel.backgroundColor = .clear
+        headerTitleLabel.textColor = .appWhite
         
         headerTitleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.top.bottom.equalToSuperview().inset(4)
+            make.leading.equalToSuperview().offset(Constants.HeaderTitleLabel.insetLeading)
+            make.top.bottom.equalToSuperview().inset(Constants.HeaderTitleLabel.insetTopBottom)
         }
     }
 }

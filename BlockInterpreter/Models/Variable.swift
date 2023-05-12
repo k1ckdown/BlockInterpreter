@@ -16,21 +16,5 @@ struct Variable: IBlock {
     let type: VariableType
     let name: String
     let value: String
-
-     
-    func getId() -> Int {
-        return self.id
-    }
-
-    func getType() -> VariableType {
-        return self.type
-    }
-
-    func getValue() -> String {
-        return self.value
-    }
-    func getName() -> String {
-        return self.name
-    }
 }
 

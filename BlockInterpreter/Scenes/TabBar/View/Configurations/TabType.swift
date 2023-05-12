@@ -2,8 +2,6 @@
 //  TabType.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 02.05.2023.
-//
 
 import UIKit
 

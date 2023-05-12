@@ -2,12 +2,18 @@
 //  CodeBlocksCoordinator.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 02.05.2023.
-//
 
 import UIKit
+import Combine
+
+protocol CodeBlocksCoordinatorDelegate: AnyObject {
+    func goToWorkspace(blocks: [BlockCellViewModel])
+}
 
 final class CodeBlocksCoordinator: BaseCoordinator {
+    
+    weak var delegate: CodeBlocksCoordinatorDelegate?
+    private var subscriptions = Set<AnyCancellable>()
     
     override init(navigationController: UINavigationController) {
         super.init(navigationController: navigationController)
@@ -16,6 +22,10 @@ final class CodeBlocksCoordinator: BaseCoordinator {
     override func start() {
         let codeBlocksViewModel = CodeBlocksViewModel()
         let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
+        
+        codeBlocksViewModel.didGoToWorkspaceScreen
+            .sink { [weak self] in self?.delegate?.goToWorkspace(blocks: $0) }
+            .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(codeBlocksViewController, animated: true)

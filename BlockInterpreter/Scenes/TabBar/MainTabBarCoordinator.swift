@@ -2,20 +2,17 @@
 //  MainTabBarCoordinator.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import UIKit
 
 final class MainTabBarCoordinator: BaseCoordinator {
     
-    private let mainTabBarViewModel: MainTabBarViewModel
+    private let workspaceViewModel: WorkspaceViewModel
     private let mainTabBarController: UITabBarController
     
     override init(navigationController: UINavigationController) {
-        mainTabBarViewModel = MainTabBarViewModel()
-        mainTabBarController = MainTabBarViewController(with: mainTabBarViewModel)
-        
+        workspaceViewModel = WorkspaceViewModel()
+        mainTabBarController = MainTabBarViewController()
         super.init(navigationController: navigationController)
     }
     
@@ -38,9 +35,13 @@ final class MainTabBarCoordinator: BaseCoordinator {
         switch tabType {
         case .codeblocks:
             coordinator = CodeBlocksCoordinator(navigationController: navController)
+            if let coordinator = coordinator as? CodeBlocksCoordinator {
+                coordinator.delegate = self
+            }
             
         case .workspace:
-            coordinator = WorkspaceCoordinator(navigationController: navController)
+            coordinator = WorkspaceCoordinator(navigationController: navController,
+                                               workspaceViewModel: workspaceViewModel)
             
         case .settings:
             coordinator = SettingsCoordinator(navigationController: navController)
@@ -51,9 +52,28 @@ final class MainTabBarCoordinator: BaseCoordinator {
         coordinator.start()
         
         navController.tabBarItem = UITabBarItem(title: tabType.title,
-                                                       image: tabType.image,
-                                                       tag: tabType.orderNumber)
+                                                image: tabType.image,
+                                                tag: tabType.orderNumber)
         
         return navController
+    }
+}
+
+// MARK: - Navigation
+
+private extension MainTabBarCoordinator {
+    func showWorkspace(blocks: [BlockCellViewModel]) {
+        workspaceViewModel.addBlocks.send(blocks)
+        mainTabBarController.tabBar(mainTabBarController.tabBar,
+                                    didSelect: mainTabBarController.viewControllers?[TabType.workspace.orderNumber].tabBarItem ?? .init())
+        selectTab(with: .workspace)
+    }
+}
+
+// MARK: - CodeBlocksCoordinatorDelegate
+
+extension MainTabBarCoordinator: CodeBlocksCoordinatorDelegate {
+    func goToWorkspace(blocks: [BlockCellViewModel]) {
+        showWorkspace(blocks: blocks)
     }
 }

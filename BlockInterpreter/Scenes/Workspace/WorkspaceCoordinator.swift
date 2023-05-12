@@ -2,33 +2,37 @@
 //  WorkspaceCoordinator.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 02.05.2023.
-//
 
 import UIKit
+import Combine
 
 final class WorkspaceCoordinator: BaseCoordinator {
     
-    override init(navigationController: UINavigationController) {
+    let workspaceViewModel: WorkspaceViewModel
+    private var subscriptions = Set<AnyCancellable>()
+    
+    init(navigationController: UINavigationController, workspaceViewModel: WorkspaceViewModel) {
+        self.workspaceViewModel = workspaceViewModel
         super.init(navigationController: navigationController)
     }
     
     override func start() {
-        let workspaceViewModel = WorkspaceViewModel()
         let workspaceViewController = WorkspaceViewController(with: workspaceViewModel)
         
-        workspaceViewModel.didGoToConsole = { [weak self] in
-            self?.showConsoleScene()
-        }
+        workspaceViewModel.didGoToConsole
+            .sink { [weak self] in self?.showConsoleScene(outputText: $0) }
+            .store(in: &subscriptions)
         
         navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(workspaceViewController, animated: true)
     }
 }
 
+// MARK: - Navigation
+
 private extension WorkspaceCoordinator {
-    func showConsoleScene() {
-        let consoleViewModel = ConsoleViewModel()
+    func showConsoleScene(outputText: String) {
+        let consoleViewModel = ConsoleViewModel(outputText: outputText)
         let consoleViewController = ConsoleViewController(with: consoleViewModel)
         
         consoleViewController.navigationItem.title = "Console"
@@ -42,7 +46,6 @@ private extension WorkspaceCoordinator {
             }
         }
         
-        navigationController.present(consoleNavController,
-                                     animated: true)
+        navigationController.present(consoleNavController, animated: true)
     }
 }

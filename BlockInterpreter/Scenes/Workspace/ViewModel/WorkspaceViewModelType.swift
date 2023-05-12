@@ -2,11 +2,16 @@
 //  WorkspaceViewModelType.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 30.04.2023.
-//
 
 import Foundation
+import Combine
 
 protocol WorkspaceViewModelType {
-    func showConsole()
+    var cellViewModels:  CurrentValueSubject<[BlockCellViewModel], Never> { get }
+    
+    var showConsole: PassthroughSubject<Void, Never> { get }
+    var moveBlock: PassthroughSubject<(IndexPath, IndexPath), Never> { get }
+    var addBlocks: PassthroughSubject<[BlockCellViewModel], Never> { get }
+    
+    var didUpdateBlocksTable: PassthroughSubject<Void, Never> { get }
 }
