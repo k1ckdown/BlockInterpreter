@@ -17,12 +17,6 @@ class Interpreter {
         let _ = traverseTree(treeAST)
     }
     
-    func setTreeAST(_ treeAST: Node){
-        printResult = ""
-        self.treeAST = treeAST
-        let _ = traverseTree(treeAST)
-    }
-
     func getPrintResult() -> String {
         return printResult
     }
