@@ -8,8 +8,12 @@ class Interpreter{
     private var printResult = ""
 
     init(_ treeAST: Node){
-        self.treeAST = treeAST
         self.mapOfVariableStack = []
+    }
+    
+    func setTreeAST(_ treeAST: Node){
+        printResult = ""
+        self.treeAST = treeAST
         let _ = traverseTree(treeAST)
     }
 

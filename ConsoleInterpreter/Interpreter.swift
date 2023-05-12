@@ -466,15 +466,19 @@ class Node{
 
 
 
-class Interpreter{
-    private(set) var treeAST: Node
-    internal var mapOfVariableStack: [[String: String]]
+class Interpreter {
+    private var treeAST: Node
+    internal var mapOfVariableStack = [[String: String]]()
     private var assignmentVariableInstance = AssignmentVariable([:])
     private var printResult = ""
 
-    init(_ treeAST: Node){
+    init() {
+        treeAST = Node(value: "", type: .root)
+    }
+    
+    func setTreeAST(_ treeAST: Node){
+        printResult = ""
         self.treeAST = treeAST
-        self.mapOfVariableStack = []
         let _ = traverseTree(treeAST)
     }
 
@@ -482,7 +486,7 @@ class Interpreter{
         return printResult
     }
     
-    func traverseTree(_ treeAST: Node) -> String{ 
+    func traverseTree(_ treeAST: Node) -> String{
         switch treeAST.type{
         case .variable:
             return processVariableNode(treeAST)
@@ -561,7 +565,7 @@ class Interpreter{
         mapOfVariableStack.append([:])
         for child in node.children{
             let _ = traverseTree(child)
-        } 
+        }
         // print(mapOfVariableStack)
         // print(printResult)
     }
@@ -570,7 +574,7 @@ class Interpreter{
         return node.value
     }
 
-    private func processAssignNode(_ node: Node){ 
+    private func processAssignNode(_ node: Node){
     
         let varName = traverseTree(node.children[0])
         let assignValue = traverseTree(node.children[1])
@@ -793,20 +797,45 @@ class Tree {
 //    b = 10
 //    a = 7 + b + 2
 //    print(a)
-//    for(int i = 0; i < 10; i++){
+//    if a > b {
 //         b = b + 10
 //         a = a * 2
+//         print(a)
 //    }
 //     if (6 + 2) % 8 == 0 {
 //         b = b + 100
 //         if a != b {
 //             b = b + 100
+//             print(b)
 //         }
 //     } 
+//     print(b)
 // }
 
 
-// var array: [IBlock] = []
+var array: [IBlock] = []
+
+array.append(Variable(id: 0, type: .int, name: "b", value: "10"))
+array.append(Variable(id: 1, type: .int, name: "a", value: "7 + b + 2"))
+array.append(Printing(id: 2, value: "a"))
+array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Variable(id: 4, type: .int, name: "b", value: "b + 10"))
+array.append(Variable(id: 5, type: .int, name: "a", value: "a * 2"))
+array.append(Printing(id: 6, value: "a"))
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Condition(id: 7, type: .ifBlock,  value: "(6 + 2) % 8 == 0"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Variable(id: 8, type: .int, name: "b", value: "b + 100"))
+array.append(Condition(id: 9, type: .ifBlock,  value: "a != b"))
+array.append(BlockDelimiter(type: DelimiterType.begin))
+array.append(Variable(id: 10, type: .int, name: "b", value: "b + 100"))
+array.append(Printing(id: 11, value: "b"))
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(BlockDelimiter(type: DelimiterType.end))
+array.append(Printing(id: 12, value: "b"))
+
+
 
 
 // array.append(Variable(id: 1, type: .int, name: "b", value: "10"))
@@ -819,7 +848,7 @@ class Tree {
 // array.append(Variable(id: 7, type: .int, name: "a", value: "a * 2"))
 
 // array.append(BlockDelimiter(type: DelimiterType.end))
-// array.append(Condition(id: 8, type: .ifBlock, value: "(6 + 2) % 8 == 0"))
+// array.append(Condition(id: 8, type: .ifBlock, value: "(( a > 5 ) && ( a < 100 ))"))
 // array.append(BlockDelimiter(type: .begin))
 // array.append(Variable(id: 9, type: .int, name: "b", value: "b + 100"))
 // array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
@@ -828,10 +857,30 @@ class Tree {
 // array.append(BlockDelimiter(type: .end))
 // array.append(BlockDelimiter(type: .end))
 
+// {
+//     a = 17
+//     a = 77
+//     print(a)
+//     p = 45
+//     p = 111
+//     print(p)
+// }
+// array.append(Variable(id: 1, type: .int, name: "a", value: "17"))
+// array.append(Variable(id: 2, type: .int, name: "a", value: "77"))
+// array.append(Printing(id: 3, value: "a"))
+// array.append(Variable(id: 4, type: .int, name: "p", value: "45"))
+// array.append(Variable(id: 5, type: .int, name: "p", value: "111"))
+// array.append(Printing(id: 6, value: "p"))
+// a= 10
+// print(a)
 
-// let tree = Tree(array)
-// tree.buildTree()
+// array.append(Variable(id: 1, type: .int, name: "a", value: "10"))
+// array.append(Printing(id: 2, value: "a"))
 
-// let interpreter = Interpreter(tree.rootNode)
-// print(interpreter.getPrintResult())
+let tree = Tree(array)
+tree.buildTree()
+
+let interpreter = Interpreter()
+interpreter.setTreeAST(tree.rootNode)
+print(interpreter.getPrintResult())
 
