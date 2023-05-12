@@ -19,13 +19,15 @@ enum TokenType {
 }
 
 
-enum VariableType {
+enum VariableType: String {
     case int
     case double
     case String
     case bool
     case another
+    case array
 }
+
 
 
 enum AllTypes {
@@ -150,7 +152,6 @@ class Calculate {
 
     public func compare() -> Int {
         self.currentToken = self.getNextToken() 
-        
         var result = self.term()
         let possibleTokens: [TokenType] = [
             TokenType.plus,
@@ -204,8 +205,8 @@ class Calculate {
         return result
     }
 
-   
-    
+
+
     private func term() -> Int {
         var result = self.factor()
         let possibleTokens: [TokenType] = [
@@ -216,7 +217,7 @@ class Calculate {
         if self.currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.getType()){
+        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
             switch token.getType() {
             case .modulo:
                 self.moveToken(.modulo)
@@ -238,6 +239,7 @@ class Calculate {
 
     private func factor() -> Int {
         let token = self.currentToken!
+
         switch token.getType() {
             case .integer:
                 self.moveToken(.integer)
@@ -253,6 +255,7 @@ class Calculate {
             case .eof:
                 return 0
             default:
+                print(token.getType())
                 fatalError("Invalid syntax")
         }
 
@@ -287,6 +290,7 @@ class Calculate {
 
             return Token(.integer, integerString)
         }
+
         self.position += 1
         return getToken(currentChar)
         
@@ -309,9 +313,8 @@ class Calculate {
             case ")":
                 return Token(.rightBrace, ")")
             case "=", "<", ">", "!", "&", "|":
-                
-                if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "=" {
-                    position += 1
+                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
+                    self.position += 1
                     switch currentChar {
                         case "=":
                             return Token(.equal, "==")
@@ -333,16 +336,16 @@ class Calculate {
                         case ">":
                             return Token(.greater, ">")
                         case "&":
-                            if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "&" {
-                                position += 1
+                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "&" {
+                                self.position += 1
                                 return Token(.logicalAnd, "&&")
                             } else {
                                 fatalError("Invalid character")
                             }
                             
                         case "|":
-                            if position < text.count && text[text.index(text.startIndex, offsetBy: position)] == "|" {
-                                position += 1
+                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
+                                self.position += 1
                                 return Token(.logicalOr, "||")
                             } else {
                                 fatalError("Invalid character")
@@ -373,6 +376,8 @@ class Calculate {
         return char == " "
     }
 }
+
+
 
 
 
@@ -442,27 +447,30 @@ class AssignmentVariable {
 
 
 
-class Node{
+
+
+class Node {
     private(set) var value: String
     private(set) var type: AllTypes
     private(set) var parent: Node?
     private(set) var children: [Node]
     private(set) var countWasHere: Int
-
-
-    init(value: String, type: AllTypes) {
+    private(set) var id: Int
+    
+    init(value: String, type: AllTypes, id: Int) {
         self.value = value
         self.type = type
-        self.countWasHere = 0
-        self.children = []
+        self.id = id
+        countWasHere = 0
+        children = []
     }
-
-
+    
     func addChild(_ child: Node) {
         children.append(child)
         child.parent = self
     }
 }
+
 
 
 
@@ -473,8 +481,9 @@ class Interpreter {
     private var printResult = ""
 
     init() {
-        treeAST = Node(value: "", type: .root)
+        treeAST = Node(value: "", type: .root, id: 0)
     }
+    
     
     func setTreeAST(_ treeAST: Node){
         printResult = ""
@@ -486,7 +495,7 @@ class Interpreter {
         return printResult
     }
     
-    func traverseTree(_ treeAST: Node) -> String{
+    func traverseTree(_ treeAST: Node) -> String { 
         switch treeAST.type{
         case .variable:
             return processVariableNode(treeAST)
@@ -505,19 +514,16 @@ class Interpreter {
         default:
             return "" // в этом случае нужно возвращать ID блока
         }
-        
+         
         return ""
     }
     private func processLoopNode(_ node: Node){
-        // print("processLoopNode")
-        // print(node.value)
     }
 
  
     private func processPrintNode(_ node: Node){
+        print(mapOfVariableStack, "mapOfVariableStack", node.value)
         let calculatedValue = calculateArithmetic(node.value)
-        // print(calculatedValue)
-        // print("processPrintNode")
         if let value = Int(calculatedValue) {
             printResult += "\(value)\n"
         } else {
@@ -533,17 +539,13 @@ class Interpreter {
         }
         if value != 0{
             mapOfVariableStack.append([:])
-
             for child in node.children{
                 let _ = traverseTree(child)
-
                 if child.type == .ifBlock {
                     mapOfVariableStack.append([:])
                 }
 
                 if let lastDictionary = mapOfVariableStack.last {
-                    mapOfVariableStack.removeLast()
-            
                     for (key, value) in lastDictionary {
                         for (index, var dictionary) in mapOfVariableStack.enumerated().reversed() {
                             if dictionary[key] != nil {
@@ -551,12 +553,16 @@ class Interpreter {
                                 mapOfVariableStack[index] = dictionary
                                 break
                             }
+                            
                         }
                     }
+
+                    mapOfVariableStack.removeLast()
 
                 }
             }
         }
+        
     }
 
 
@@ -565,9 +571,7 @@ class Interpreter {
         mapOfVariableStack.append([:])
         for child in node.children{
             let _ = traverseTree(child)
-        }
-        // print(mapOfVariableStack)
-        // print(printResult)
+        } 
     }
 
     private func processVariableNode(_ node: Node) -> String{
@@ -580,8 +584,11 @@ class Interpreter {
         let assignValue = traverseTree(node.children[1])
         if var lastDictionary = mapOfVariableStack.last {
             lastDictionary[varName] = assignValue
+
             mapOfVariableStack[mapOfVariableStack.count - 1] = lastDictionary
+
         }
+
     }
 
     private func processArithmeticNode(_ node: Node) -> String {
@@ -617,11 +624,12 @@ class Interpreter {
 
 
 class Tree {
-    var rootNode: Node = Node(value: "Begin", type: AllTypes.root)
+    var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
-    var blocks: [IBlock]
-    init(_ blocks: [IBlock]) {
-        self.blocks = blocks
+    var blocks = [IBlock]()
+    
+    init() {
+        
     }
 
     func setBlocks(_ blocks: [IBlock]) {
@@ -700,19 +708,22 @@ class Tree {
         index = endIndex + 1
         return wholeBlock
     }
-    
+
     private func buildVariableNode(variable: Variable) -> Node {
-        let node = Node(value: "", type: AllTypes.assign)
-        let nameVariable = Node(value: variable.name, type: AllTypes.variable)
-        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic)
+        let node = Node(value: variable.type.rawValue, type: AllTypes.assign, id: variable.id)
+        let nameVariable = Node(value: variable.name, type: AllTypes.variable,
+                id: variable.id)
+        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
+                id: variable.id)
         node.addChild(nameVariable)
         node.addChild(valueVariable)
         return node
     }
-    
-    
+
+
     private func buildPrintingNode(printing: Printing) -> Node {
-        let node = Node(value: printing.value, type: AllTypes.print)
+        let node = Node(value: printing.value, type: AllTypes.print,
+                id: printing.id)
         return node
     }
 
@@ -727,12 +738,12 @@ class Tree {
             guard let condition = firstBlock as? Condition else {
                 return nil
             }
-            node = Node(value: condition.value, type: type)
+            node = Node(value: condition.value, type: type, id: condition.id)
         } else if type == AllTypes.loop {
             guard let loop = firstBlock as? Loop else {
                 return nil
             }
-            node = Node(value: loop.value, type: type)
+            node = Node(value: loop.value, type: type, id: loop.id)
         }
 
         var index = 1
@@ -795,17 +806,17 @@ class Tree {
 
 // {
 //    b = 10
-//    a = 7 + b + 2
+//    a = 7 + b + 2 = 19
 //    print(a)
 //    if a > b {
-//         b = b + 10
-//         a = a * 2
+//         b = b + 10 = 20
+//         a = a * 2    = 38
 //         print(a)
 //    }
 //     if (6 + 2) % 8 == 0 {
-//         b = b + 100
+//         b = b + 100  = 120
 //         if a != b {
-//             b = b + 100
+//             b = b + 100 = 220
 //             print(b)
 //         }
 //     } 
@@ -818,7 +829,7 @@ var array: [IBlock] = []
 array.append(Variable(id: 0, type: .int, name: "b", value: "10"))
 array.append(Variable(id: 1, type: .int, name: "a", value: "7 + b + 2"))
 array.append(Printing(id: 2, value: "a"))
-array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
+array.append(Condition(id: 3, type: .ifBlock, value: "a != b"))
 array.append(BlockDelimiter(type: DelimiterType.begin))
 array.append(Variable(id: 4, type: .int, name: "b", value: "b + 10"))
 array.append(Variable(id: 5, type: .int, name: "a", value: "a * 2"))
@@ -877,7 +888,8 @@ array.append(Printing(id: 12, value: "b"))
 // array.append(Variable(id: 1, type: .int, name: "a", value: "10"))
 // array.append(Printing(id: 2, value: "a"))
 
-let tree = Tree(array)
+let tree = Tree()
+tree.setBlocks(array)
 tree.buildTree()
 
 let interpreter = Interpreter()
