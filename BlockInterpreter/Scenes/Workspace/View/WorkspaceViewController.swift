@@ -75,6 +75,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
+        workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
@@ -133,6 +134,15 @@ extension WorkspaceViewController: UITableViewDataSource {
             cell.configure(with: cellViewModel)
             return cell
             
+        case .flow:
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: FlowBlockCell.identifier, for: indexPath) as? FlowBlockCell,
+                let cellViewModel = cellViewModel as? FlowBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
         case .variable:
             guard
                 let cell = tableView.dequeueReusableCell(
@@ -178,8 +188,6 @@ extension WorkspaceViewController: UITableViewDataSource {
             cell.configure(with: cellViewModel)
             return cell
             
-        case .flow:
-            return UITableViewCell()
         case .loop:
             return UITableViewCell()
         }

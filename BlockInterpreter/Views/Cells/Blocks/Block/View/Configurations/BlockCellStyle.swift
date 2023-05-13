@@ -42,7 +42,7 @@ enum BlockCellStyle {
         case .output:
             return 0.95
         case .flow:
-            return 0.4
+            return 0.5
         case .variable:
             return 0.8
         case .condition:

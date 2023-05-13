@@ -70,7 +70,7 @@ extension CodeBlocksViewModel {
         cellViewModels[BlocksSection.output.rawValue] = [OutputBlockCellViewModel(style: .presentation)]
         
         cellViewModels[BlocksSection.flow.rawValue] = FlowType.allCases.map {
-            FlowCellViewModel(flowType: $0, style: .presentation)
+            FlowBlockCellViewModel(flowType: $0, style: .presentation)
         }
         
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {

@@ -38,7 +38,7 @@
 		49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */; };
 		49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */; };
 		49B67C502A0F9FC000B70F25 /* FlowBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C4F2A0F9FC000B70F25 /* FlowBlockCell.swift */; };
-		49B67C522A0F9FCC00B70F25 /* FlowCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C512A0F9FCC00B70F25 /* FlowCellViewModel.swift */; };
+		49B67C522A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C512A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift */; };
 		49B67C572A0FC77E00B70F25 /* FlowBlockStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C562A0FC77E00B70F25 /* FlowBlockStyle.swift */; };
 		49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */; };
 		49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */; };
@@ -95,7 +95,7 @@
 		49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockHeaderView.swift; sourceTree = "<group>"; };
 		49B67C4F2A0F9FC000B70F25 /* FlowBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockCell.swift; sourceTree = "<group>"; };
-		49B67C512A0F9FCC00B70F25 /* FlowCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCellViewModel.swift; sourceTree = "<group>"; };
+		49B67C512A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49B67C562A0FC77E00B70F25 /* FlowBlockStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockStyle.swift; sourceTree = "<group>"; };
 		49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCell.swift; sourceTree = "<group>"; };
 		49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCellViewModel.swift; sourceTree = "<group>"; };
@@ -380,7 +380,7 @@
 		49B67C542A0F9FE400B70F25 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				49B67C512A0F9FCC00B70F25 /* FlowCellViewModel.swift */,
+				49B67C512A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -783,7 +783,7 @@
 				49D8A2EA29FED8DB00DF5B8E /* SettingsViewModelType.swift in Sources */,
 				495B416C29FCEFD300DEF375 /* AppDelegate.swift in Sources */,
 				49D8A2D029FEC5D100DF5B8E /* CodeBlocksViewModelType.swift in Sources */,
-				49B67C522A0F9FCC00B70F25 /* FlowCellViewModel.swift in Sources */,
+				49B67C522A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift in Sources */,
 				490351AE2A0D448900B3693B /* Flow.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				490351B22A0D448900B3693B /* Output.swift in Sources */,

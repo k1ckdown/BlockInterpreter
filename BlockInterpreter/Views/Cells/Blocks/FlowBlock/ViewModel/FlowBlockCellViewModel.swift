@@ -1,11 +1,11 @@
 //
-//  FlowCellViewModel.swift
+//  FlowBlockCellViewModel.swift
 //  BlockInterpreter
 //
 
 import Foundation
 
-final class FlowCellViewModel: BlockCellViewModel {
+final class FlowBlockCellViewModel: BlockCellViewModel {
     
     var title: String {
         flowBlockStyle.title
@@ -18,6 +18,10 @@ final class FlowCellViewModel: BlockCellViewModel {
         self.flowType = flowType
         flowBlockStyle = flowType == .begin ? .begin : .end
         super.init(type: .flow, style: style)
+    }
+    
+    override func copyToWork() -> FlowBlockCellViewModel {
+        return FlowBlockCellViewModel(flowType: flowType, style: .work)
     }
     
 }

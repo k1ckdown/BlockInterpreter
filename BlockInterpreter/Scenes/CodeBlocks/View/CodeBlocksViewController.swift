@@ -171,7 +171,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     withIdentifier: FlowBlockCell.identifier,
                     for: indexPath
                 ) as? FlowBlockCell,
-                let cellViewModel = cellViewModel as? FlowCellViewModel
+                let cellViewModel = cellViewModel as? FlowBlockCellViewModel
             else { return .init() }
 
             cell.configure(with: cellViewModel)

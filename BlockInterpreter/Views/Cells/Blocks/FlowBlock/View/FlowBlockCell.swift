@@ -43,7 +43,7 @@ class FlowBlockCell: BlockCell {
         blockTitleLabel.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
     }
     
-    func configure(with viewModel: FlowCellViewModel) {
+    func configure(with viewModel: FlowBlockCellViewModel) {
         super.configure(with: viewModel)
         
         blockTitleLabel.text = viewModel.title
@@ -53,6 +53,8 @@ class FlowBlockCell: BlockCell {
             make.top.bottom.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(Constants.BlockTitleLabel.multiplierWidth)
         }
+        
+        guard viewModel.style == .presentation else { return }
 
         if viewModel.flowType == .begin {
             blockTitleLabel.snp.makeConstraints { make in
