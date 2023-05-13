@@ -13,15 +13,17 @@ final class OutputBlockCell: BlockCell {
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {
+        
             enum OutputLabel {
-                static let insetLeading: CGFloat = 30
+                static let insetLeading: CGFloat = 22
             }
         
             enum OutputTextField {
-                static let insetTrailing: CGFloat = 30
+                static let insetTrailing: CGFloat = 22
                 static let insetTopBottom: CGFloat = 12
                 static let multiplierWidth: CGFloat = 0.6
             }
+        
     }
     
     private let outputLabel = UILabel()
@@ -77,7 +79,6 @@ final class OutputBlockCell: BlockCell {
         outputLabel.font = UIFont.systemFont(ofSize: 20, weight: .heavy)
         outputLabel.textColor = .appBlack
         outputLabel.textAlignment = .center
-        outputLabel.adjustsFontSizeToFitWidth = true
         
         outputLabel.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()

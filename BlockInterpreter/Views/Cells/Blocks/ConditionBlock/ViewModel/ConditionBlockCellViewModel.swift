@@ -10,11 +10,11 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     var conditionText: String?
     
     var conditionStatement: String {
-        return conditionType.name.uppercased()
+        conditionType.name.uppercased()
     }
     
     var shouldShowConditionField: Bool {
-        return conditionType != .elseBlock
+        conditionType != .elseBlock
     }
     
     private(set) var conditionTextPlaceholder: String

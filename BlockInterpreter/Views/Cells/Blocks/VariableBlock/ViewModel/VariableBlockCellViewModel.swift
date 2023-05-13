@@ -11,7 +11,7 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     var variableValue: String?
     
     var shouldShowVariableType: Bool {
-        return variableType != nil
+        variableType != nil
     }
     
     private(set) var variableType: VariableType?

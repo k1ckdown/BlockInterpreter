@@ -36,7 +36,7 @@ class Tree {
                         type: AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
-            case is BlockDelimiter:
+            case is Flow:
                 index += 1
             default:
                 index += 1
@@ -47,7 +47,7 @@ class Tree {
     private func getMatchingDelimiterIndex() -> Int? {
         var countBegin = 0
         for i in (index + 1)..<blocks.count {
-            guard let block = blocks[i] as? BlockDelimiter else {
+            guard let block = blocks[i] as? Flow else {
                 continue
             }
             countBegin += countForMatchingDelimiter(block)
@@ -58,7 +58,7 @@ class Tree {
         return nil
     }
 
-    private func countForMatchingDelimiter(_ block: BlockDelimiter) -> Int {
+    private func countForMatchingDelimiter(_ block: Flow) -> Int {
         if isEndDelimiter(block) {
             return -1
         } else if isBeginDelimiter(block) {
@@ -67,12 +67,12 @@ class Tree {
         return 0
     }
 
-    private func isBeginDelimiter(_ block: BlockDelimiter) -> Bool {
-        block.type == DelimiterType.begin
+    private func isBeginDelimiter(_ block: Flow) -> Bool {
+        block.type == FlowType.begin
     }
 
-    private func isEndDelimiter(_ block: BlockDelimiter) -> Bool {
-        block.type == DelimiterType.end
+    private func isEndDelimiter(_ block: Flow) -> Bool {
+        block.type == FlowType.end
     }
 
 
@@ -127,7 +127,7 @@ class Tree {
         var index = 1
 
         while index < block.count {
-            if block[index] is BlockDelimiter {
+            if block[index] is Flow {
                 index += 1
                 continue
             } else if let variableBlock = block[index] as? Variable {
@@ -142,7 +142,7 @@ class Tree {
                 nestedBlocks.append(nestedConditionBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
-                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                    if let blockEnd = block[additionIndex] as? Flow {
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break
@@ -161,7 +161,7 @@ class Tree {
                 nestedBlocks.append(nestedLoopBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
-                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                    if let blockEnd = block[additionIndex] as? Flow {
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break

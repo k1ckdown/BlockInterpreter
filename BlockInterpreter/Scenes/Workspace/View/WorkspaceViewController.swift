@@ -12,7 +12,7 @@ final class WorkspaceViewController: UIViewController {
     private enum Constants {
             enum WorkBlocksTableView {
                 static let insetTop: CGFloat = 10
-                static let insetLeadingTrailing: CGFloat = 20
+                static let insetSide: CGFloat = 20
             }
         
             enum RunButton {
@@ -81,7 +81,7 @@ final class WorkspaceViewController: UIViewController {
         
         workBlocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(Constants.WorkBlocksTableView.insetTop)
-            make.leading.trailing.equalToSuperview().inset(Constants.WorkBlocksTableView.insetLeadingTrailing)
+            make.leading.trailing.equalToSuperview().inset(Constants.WorkBlocksTableView.insetSide)
             make.bottom.equalToSuperview()
         }
     }

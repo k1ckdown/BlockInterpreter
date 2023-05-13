@@ -81,8 +81,7 @@ final class ConditionBlockCell: BlockCell {
         
         conditionStatementLabel.textColor = .appBlack
         conditionStatementLabel.textAlignment = .left
-        conditionStatementLabel.font = .conditionStatement
-        conditionStatementLabel.adjustsFontSizeToFitWidth = true
+        conditionStatementLabel.font = .blockTitle
         
         conditionStatementLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(Constants.ConditionStatementLabel.insetLeading)
@@ -118,8 +117,7 @@ final class ConditionBlockCell: BlockCell {
         thenLabel.text = "then"
         thenLabel.textColor = .appBlack
         thenLabel.textAlignment = .center
-        thenLabel.font = .conditionStatement
-        thenLabel.adjustsFontSizeToFitWidth = true
+        thenLabel.font = .blockTitle
         
         thenLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

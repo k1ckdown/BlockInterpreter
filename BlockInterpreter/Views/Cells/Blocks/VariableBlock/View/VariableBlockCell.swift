@@ -117,9 +117,8 @@ final class VariableBlockCell: BlockCell {
         containerView.addSubview(variableTypeLabel)
         
         variableTypeLabel.textColor = .appBlack
-        variableTypeLabel.font = .variableType
+        variableTypeLabel.font = .blockTitle
         variableTypeLabel.textAlignment = .center
-        variableTypeLabel.adjustsFontSizeToFitWidth = true
         variableTypeLabel.backgroundColor = .clear
         
         variableTypeLabel.snp.makeConstraints { make in

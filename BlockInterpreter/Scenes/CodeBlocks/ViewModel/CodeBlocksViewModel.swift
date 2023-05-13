@@ -69,6 +69,10 @@ extension CodeBlocksViewModel {
     private func updateCellViewModels() {
         cellViewModels[BlocksSection.output.rawValue] = [OutputBlockCellViewModel(style: .presentation)]
         
+        cellViewModels[BlocksSection.flow.rawValue] = FlowType.allCases.map {
+            FlowCellViewModel(flowType: $0, style: .presentation)
+        }
+        
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {
             VariableBlockCellViewModel(variableType: $0.defaultType, style: .presentation)
         }
@@ -76,8 +80,6 @@ extension CodeBlocksViewModel {
         cellViewModels[BlocksSection.conditions.rawValue] = ConditionType.allCases.map {
             ConditionBlockCellViewModel(conditionType: $0, style: .presentation)
         }
-        
-        cellViewModels[BlocksSection.flow.rawValue] = [FlowCellViewModel(style: .presentation)]
     }
     
     private func bind() {

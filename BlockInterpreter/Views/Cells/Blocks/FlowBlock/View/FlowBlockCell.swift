@@ -9,9 +9,22 @@ class FlowBlockCell: BlockCell {
     
     static let identifier = "FlowBlockCell"
     
-    private let flowStackView = UIStackView()
-    private(set) var endButton = UIButton()
-    private(set) var beganButton = UIButton()
+    private enum Constants {
+        
+        enum ContainerView {
+            static let borderWidth: CGFloat = 0
+        }
+        
+        enum BlockTitleLabel {
+            static let insetSide: CGFloat = 15
+            static let borderWidth: CGFloat = 3
+            static let cornerRadius: CGFloat = 15
+            static let multiplierWidth: CGFloat = 0.6
+        }
+        
+    }
+
+    private let blockTitleLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -22,54 +35,55 @@ class FlowBlockCell: BlockCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setup() {
-        setupContainerView()
-        setupFlowStackView()
-        setupEndButton()
-        setupBeganButton()
+    override func prepareForReuse() {
+        blockTitleLabel.snp.removeConstraints()
     }
     
-    private func setupContainerView() {
-        containerView.layer.borderWidth = 0
+    override func updateAppearance() {
+        blockTitleLabel.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
     }
     
-    private func setupFlowStackView() {
-        containerView.addSubview(flowStackView)
+    func configure(with viewModel: FlowCellViewModel) {
+        super.configure(with: viewModel)
         
-        flowStackView.axis = .horizontal
-        flowStackView.distribution = .fillEqually
-        flowStackView.spacing = 25
-        flowStackView.backgroundColor = .clear
+        blockTitleLabel.text = viewModel.title
+        blockTitleLabel.backgroundColor = viewModel.flowBlockStyle.backgroundColor
         
-        flowStackView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(10)
-            make.leading.trailing.equalToSuperview().inset(20)
+        blockTitleLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(Constants.BlockTitleLabel.multiplierWidth)
+        }
+
+        if viewModel.flowType == .begin {
+            blockTitleLabel.snp.makeConstraints { make in
+                make.leading.equalToSuperview().offset(Constants.BlockTitleLabel.insetSide)
+            }
+        } else {
+            blockTitleLabel.snp.makeConstraints { make in
+                make.trailing.equalToSuperview().inset(Constants.BlockTitleLabel.insetSide)
+            }
         }
     }
     
-    private func setupEndButton() {
-        flowStackView.addArrangedSubview(endButton)
-
-        endButton.setTitle("END", for: .normal)
-        endButton.setTitleColor(.appBlack, for: .normal)
-        endButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
-        endButton.backgroundColor = .appTeal
-        endButton.layer.cornerRadius = 10
-        endButton.layer.borderColor = UIColor.blockBorder?.cgColor
-        endButton.layer.borderWidth = 1
+    private func setup() {
+        setupContainerView()
+        setupBlockTitleLabelLabel()
     }
-
-    private func setupBeganButton() {
-        flowStackView.addArrangedSubview(beganButton)
-
-        beganButton.setTitle("BEGAN", for: .normal)
-        beganButton.setTitleColor(.appBlack, for: .normal)
-        beganButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
-        beganButton.backgroundColor = .appPurple
-        beganButton.layer.cornerRadius = 10
-        beganButton.layer.borderColor = UIColor.blockBorder?.cgColor
-        beganButton.layer.borderWidth = 1
+    
+    private func setupContainerView() {
+        containerView.layer.borderWidth = Constants.ContainerView.borderWidth
+    }
+    
+    private func setupBlockTitleLabelLabel() {
+        containerView.addSubview(blockTitleLabel)
         
+        blockTitleLabel.font = .blockTitle
+        blockTitleLabel.textColor = .appBlack
+        blockTitleLabel.textAlignment = .center
+        blockTitleLabel.clipsToBounds = true
+        blockTitleLabel.layer.borderWidth = Constants.BlockTitleLabel.borderWidth
+        blockTitleLabel.layer.borderColor = UIColor.blockBorder?.cgColor
+        blockTitleLabel.layer.cornerRadius = Constants.BlockTitleLabel.cornerRadius
     }
 
 }

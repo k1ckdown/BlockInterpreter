@@ -141,13 +141,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
         return viewModel.getNumberOfItemsInSection(section)
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = BlockHeaderView()
-        headerView.headerTitle = viewModel.getTitleForHeaderInSection(section)
-        
-        return headerView
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let section = viewModel.getSection(at: indexPath)
         let cellViewModel = viewModel.cellViewModels[section.rawValue][indexPath.row]
@@ -169,6 +162,18 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .flow:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: FlowBlockCell.identifier,
+                    for: indexPath
+                ) as? FlowBlockCell,
+                let cellViewModel = cellViewModel as? FlowCellViewModel
+            else { return .init() }
+
             cell.configure(with: cellViewModel)
             return cell
             
@@ -217,18 +222,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
             cell.configure(with: cellViewModel)
             return cell
             
-        case .flow:
-            guard
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: FlowBlockCell.identifier,
-                    for: indexPath
-                ) as? FlowBlockCell,
-                let cellViewModel = cellViewModel as? FlowCellViewModel
-            else { return .init() }
-            
-            cell.configure(with: cellViewModel)
-            return cell
-            
         case .loops:
             return .init()
         case .arrays:
@@ -248,11 +241,20 @@ extension CodeBlocksViewController: UITableViewDelegate {
         return viewModel.getHeightForRowAt(indexPath)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = BlockHeaderView()
+        headerView.headerTitle = viewModel.getTitleForHeaderInSection(section)
+        
+        return headerView
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? BlockCell else { return }
+        
         viewModel.toggleSelectedIndexPath.send(indexPath)
         cell.select()
     }
+    
 }
 
 // MARK: - Reactive Behavior

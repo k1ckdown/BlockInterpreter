@@ -16,7 +16,7 @@ class BlockCell: UITableViewCell {
     
     private enum Constants {
             enum ContainerView {
-                static let borderWidth: CGFloat = 2
+                static let borderWidth: CGFloat = 2.5
             }
     }
     
@@ -42,8 +42,8 @@ class BlockCell: UITableViewCell {
         isSelectedState = !isSelectedState
     }
     
-    private func updateAppearance() {
-        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : .none
+    func updateAppearance() {
+        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
     }
     
     func configure(with viewModel: BlockCellViewModel) {
