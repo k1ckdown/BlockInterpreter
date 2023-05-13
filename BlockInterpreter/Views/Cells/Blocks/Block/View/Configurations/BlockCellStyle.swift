@@ -11,18 +11,9 @@ enum BlockCellStyle {
     var cornerRadius: CGFloat {
         switch self {
         case .work:
-            return 8
+            return 12
         case .presentation:
-            return 15
-        }
-    }
-    
-    var insetLeading: CGFloat {
-        switch self {
-        case .work:
-            return 7
-        case .presentation:
-            return 0
+            return 18
         }
     }
     
@@ -36,13 +27,21 @@ enum BlockCellStyle {
     }
     
     func multiplierWidth(for blockType: BlockType) -> CGFloat {
-        guard self == .work else { return 1 }
+        guard
+            self == .work
+        else {
+            if blockType == .flow {
+                return 0.6
+            } else {
+                return 1
+            }
+        }
         
         switch blockType {
         case .output:
             return 0.95
         case .flow:
-            return 0.5
+            return 0.35
         case .variable:
             return 0.8
         case .condition:
