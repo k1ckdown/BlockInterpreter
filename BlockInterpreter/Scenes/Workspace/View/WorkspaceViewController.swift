@@ -75,6 +75,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
+        workBlocksTableView.register(LoopBlockCell.self, forCellReuseIdentifier: LoopBlockCell.identifier)
         workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
@@ -126,8 +127,9 @@ extension WorkspaceViewController: UITableViewDataSource {
             
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.text = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.text = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -154,15 +156,17 @@ extension WorkspaceViewController: UITableViewDataSource {
             
             cell.variableNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.variableName = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.variableName = text
                 }
                 .store(in: &cell.subscriptions)
             
             cell.variableValueTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.variableValue = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.variableValue = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -180,8 +184,9 @@ extension WorkspaceViewController: UITableViewDataSource {
             
             cell.conditionTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.conditionText = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.conditionText = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -189,7 +194,21 @@ extension WorkspaceViewController: UITableViewDataSource {
             return cell
             
         case .loop:
-            return UITableViewCell()
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: LoopBlockCell.identifier, for: indexPath) as? LoopBlockCell,
+                let cellViewModel = cellViewModel as? LoopBlockCellViewModel
+            else { return .init() }
+            
+            cell.textField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.text = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
         }
     }
     

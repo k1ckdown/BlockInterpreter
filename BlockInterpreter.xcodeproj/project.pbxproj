@@ -431,8 +431,8 @@
 		49B67C612A0FF9F900B70F25 /* LabelTFBlock */ = {
 			isa = PBXGroup;
 			children = (
-				49B67C632A0FFA3500B70F25 /* ViewModel */,
 				49B67C622A0FFA2E00B70F25 /* View */,
+				49B67C632A0FFA3500B70F25 /* ViewModel */,
 			);
 			path = LabelTFBlock;
 			sourceTree = "<group>";

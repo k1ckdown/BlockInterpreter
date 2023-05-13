@@ -158,8 +158,9 @@ extension CodeBlocksViewController: UITableViewDataSource {
             
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.text = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.text = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -189,15 +190,17 @@ extension CodeBlocksViewController: UITableViewDataSource {
             
             cell.variableNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.variableName = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.variableName = text
                 }
                 .store(in: &cell.subscriptions)
             
             cell.variableValueTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.variableValue = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.variableValue = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -215,8 +218,9 @@ extension CodeBlocksViewController: UITableViewDataSource {
             
             cell.conditionTextField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.conditionText = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.conditionText = text
                 }
                 .store(in: &cell.subscriptions)
 
@@ -231,8 +235,9 @@ extension CodeBlocksViewController: UITableViewDataSource {
             
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] in
-                    cellViewModel?.text = $0
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.text = text
                 }
                 .store(in: &cell.subscriptions)
             
