@@ -41,6 +41,8 @@ enum BlockCellStyle {
         switch blockType {
         case .output:
             return 0.95
+        case .flow:
+            return 0.7
         case .variable:
             return 0.8
         case .condition:

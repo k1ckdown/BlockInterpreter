@@ -10,8 +10,11 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     var variableName: String?
     var variableValue: String?
     
+    var shouldShowVariableType: Bool {
+        return variableType != nil
+    }
+    
     private(set) var variableType: VariableType?
-    private(set) var shouldShowVariableType: Bool
     private(set) var variableNamePlaceHolder: String
     private(set) var variableValuePlaceholder: String
     
@@ -19,7 +22,6 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
         variableValuePlaceholder = "17"
         variableNamePlaceHolder = "name"
         self.variableType = variableType
-        shouldShowVariableType = variableType == nil ? false : true
         super.init(type: .variable, style: style)
     }
     

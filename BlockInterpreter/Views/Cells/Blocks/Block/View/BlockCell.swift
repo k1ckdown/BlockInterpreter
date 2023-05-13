@@ -77,4 +77,5 @@ class BlockCell: UITableViewCell {
             make.centerY.equalToSuperview()
         }
     }
+    
 }

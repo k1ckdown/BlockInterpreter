@@ -6,5 +6,5 @@
 import Foundation
 
 enum BlockType {
-    case output, variable, condition, loop
+    case output, flow, variable, condition, loop
 }

@@ -9,15 +9,19 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     
     var conditionText: String?
     
-    private(set) var conditionStatement: String
+    var conditionStatement: String {
+        return conditionType.name.uppercased()
+    }
+    
+    var shouldShowConditionField: Bool {
+        return conditionType != .elseBlock
+    }
+    
     private(set) var conditionTextPlaceholder: String
-    private(set) var shouldShowConditionField: Bool
     private(set) var conditionType: ConditionType
     
     init(conditionType: ConditionType, style: BlockCellStyle) {
         conditionTextPlaceholder = "condition"
-        conditionStatement = conditionType.name.uppercased()
-        shouldShowConditionField = conditionType != .elseBlock
         self.conditionType = conditionType
         super.init(type: .condition, style: style)
     }

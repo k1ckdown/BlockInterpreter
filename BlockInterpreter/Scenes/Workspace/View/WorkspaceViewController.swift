@@ -178,9 +178,9 @@ extension WorkspaceViewController: UITableViewDataSource {
             cell.configure(with: cellViewModel)
             return cell
             
-        case .loop:
+        case .flow:
             return UITableViewCell()
-        case .output:
+        case .loop:
             return UITableViewCell()
         }
     }

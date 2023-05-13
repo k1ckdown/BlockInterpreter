@@ -22,7 +22,7 @@ class Tree {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 rootNode.addChild(variableNode)
                 index += 1
-            case let printBlock as Printing:
+            case let printBlock as Output:
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
@@ -99,7 +99,7 @@ class Tree {
     }
     
     
-    private func buildPrintingNode(printing: Printing) -> Node {
+    private func buildPrintingNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
                 id: printing.id)
         return node
@@ -133,7 +133,7 @@ class Tree {
             } else if let variableBlock = block[index] as? Variable {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 node?.addChild(variableNode)
-            } else if let printBlock = block[index] as? Printing {
+            } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
             } else if let nestedConditionBlock = block[index] as? Condition {

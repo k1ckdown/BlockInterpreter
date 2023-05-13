@@ -1,7 +1,7 @@
 import Foundation
 
 
-enum DelimiterType {
+enum DelimiterType: CaseIterable {
     case begin
     case end
 }

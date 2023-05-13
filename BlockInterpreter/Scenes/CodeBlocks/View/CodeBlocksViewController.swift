@@ -97,6 +97,7 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.backgroundColor = .clear
         blocksTableView.showsVerticalScrollIndicator = false
         
+        blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
@@ -213,6 +214,18 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
 
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .flow:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: FlowBlockCell.identifier,
+                    for: indexPath
+                ) as? FlowBlockCell,
+                let cellViewModel = cellViewModel as? FlowCellViewModel
+            else { return .init() }
+            
             cell.configure(with: cellViewModel)
             return cell
             

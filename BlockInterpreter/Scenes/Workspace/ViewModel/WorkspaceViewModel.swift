@@ -47,7 +47,7 @@ extension WorkspaceViewModel  {
             }
             
             if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
-                blocks.append(Printing(id: index,
+                blocks.append(Output(id: index,
                                        value: outputBlockViewModel.outputText ?? ""))
             }
             
