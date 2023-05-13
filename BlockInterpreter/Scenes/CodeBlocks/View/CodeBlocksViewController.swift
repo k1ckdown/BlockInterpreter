@@ -98,6 +98,7 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.showsVerticalScrollIndicator = false
         
         blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
+        blocksTableView.register(LoopBlockCell.self, forCellReuseIdentifier: LoopBlockCell.identifier)
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
@@ -155,10 +156,10 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
             else { return .init() }
             
-            cell.outputTextField.textPublisher
+            cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] in
-                    cellViewModel?.outputText = $0
+                    cellViewModel?.text = $0
                 }
                 .store(in: &cell.subscriptions)
             
@@ -223,7 +224,21 @@ extension CodeBlocksViewController: UITableViewDataSource {
             return cell
             
         case .loops:
-            return .init()
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: LoopBlockCell.identifier, for: indexPath) as? LoopBlockCell,
+                let cellViewModel = cellViewModel as? LoopBlockCellViewModel
+            else { return .init() }
+            
+            cell.textField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] in
+                    cellViewModel?.text = $0
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
         case .arrays:
             return .init()
         case .functions:

@@ -80,6 +80,8 @@ extension CodeBlocksViewModel {
         cellViewModels[BlocksSection.conditions.rawValue] = ConditionType.allCases.map {
             ConditionBlockCellViewModel(conditionType: $0, style: .presentation)
         }
+        
+        cellViewModels[BlocksSection.loops.rawValue] = [LoopBlockCellViewModel(style: .presentation)]
     }
     
     private func bind() {

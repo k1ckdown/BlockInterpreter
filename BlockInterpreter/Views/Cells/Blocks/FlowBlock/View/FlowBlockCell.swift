@@ -5,7 +5,7 @@
 
 import UIKit
 
-class FlowBlockCell: BlockCell {
+final class FlowBlockCell: BlockCell {
     
     static let identifier = "FlowBlockCell"
     

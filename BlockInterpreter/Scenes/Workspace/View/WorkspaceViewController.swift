@@ -124,10 +124,10 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
             else { return .init() }
             
-            cell.outputTextField.textPublisher
+            cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] in
-                    cellViewModel?.outputText = $0
+                    cellViewModel?.text = $0
                 }
                 .store(in: &cell.subscriptions)
             

@@ -48,7 +48,7 @@ enum BlockCellStyle {
         case .condition:
             return 0.9
         case .loop:
-            return 1
+            return 0.8
         }
     }
 }

@@ -40,6 +40,10 @@
 		49B67C502A0F9FC000B70F25 /* FlowBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C4F2A0F9FC000B70F25 /* FlowBlockCell.swift */; };
 		49B67C522A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C512A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift */; };
 		49B67C572A0FC77E00B70F25 /* FlowBlockStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C562A0FC77E00B70F25 /* FlowBlockStyle.swift */; };
+		49B67C5E2A0FEF6B00B70F25 /* LoopBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C5D2A0FEF6B00B70F25 /* LoopBlockCell.swift */; };
+		49B67C602A0FF24B00B70F25 /* LoopBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C5F2A0FF24B00B70F25 /* LoopBlockCellViewModel.swift */; };
+		49B67C652A0FFA4800B70F25 /* LabelTFBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */; };
+		49B67C672A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */; };
 		49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */; };
 		49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */; };
 		49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */; };
@@ -97,6 +101,10 @@
 		49B67C4F2A0F9FC000B70F25 /* FlowBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockCell.swift; sourceTree = "<group>"; };
 		49B67C512A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49B67C562A0FC77E00B70F25 /* FlowBlockStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBlockStyle.swift; sourceTree = "<group>"; };
+		49B67C5D2A0FEF6B00B70F25 /* LoopBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopBlockCell.swift; sourceTree = "<group>"; };
+		49B67C5F2A0FF24B00B70F25 /* LoopBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopBlockCellViewModel.swift; sourceTree = "<group>"; };
+		49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTFBlockCell.swift; sourceTree = "<group>"; };
+		49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTFBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCell.swift; sourceTree = "<group>"; };
 		49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -240,6 +248,8 @@
 		4951477F2A08CF4800FD13AB /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				49B67C612A0FF9F900B70F25 /* LabelTFBlock */,
+				49B67C5A2A0FEF4900B70F25 /* LoopBlock */,
 				49B67C4E2A0F9F1100B70F25 /* FlowBlock */,
 				4997E0E52A0CA171000C35AD /* OutputBlock */,
 				492150212A0B22AF00DD171F /* Block */,
@@ -391,6 +401,56 @@
 				49B67C562A0FC77E00B70F25 /* FlowBlockStyle.swift */,
 			);
 			path = Configuration;
+			sourceTree = "<group>";
+		};
+		49B67C5A2A0FEF4900B70F25 /* LoopBlock */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C5B2A0FEF5200B70F25 /* View */,
+				49B67C5C2A0FEF5600B70F25 /* ViewModel */,
+			);
+			path = LoopBlock;
+			sourceTree = "<group>";
+		};
+		49B67C5B2A0FEF5200B70F25 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C5D2A0FEF6B00B70F25 /* LoopBlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		49B67C5C2A0FEF5600B70F25 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C5F2A0FF24B00B70F25 /* LoopBlockCellViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		49B67C612A0FF9F900B70F25 /* LabelTFBlock */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C632A0FFA3500B70F25 /* ViewModel */,
+				49B67C622A0FFA2E00B70F25 /* View */,
+			);
+			path = LabelTFBlock;
+			sourceTree = "<group>";
+		};
+		49B67C622A0FFA2E00B70F25 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		49B67C632A0FFA3500B70F25 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		49C661B92A02D97A00439E2A /* Services */ = {
@@ -756,6 +816,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49B67C652A0FFA4800B70F25 /* LabelTFBlockCell.swift in Sources */,
 				49D8A2DB29FEC75700DF5B8E /* ConsoleViewModel.swift in Sources */,
 				49B67C502A0F9FC000B70F25 /* FlowBlockCell.swift in Sources */,
 				49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */,
@@ -770,6 +831,7 @@
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
 				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49B67C572A0FC77E00B70F25 /* FlowBlockStyle.swift in Sources */,
+				49B67C672A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift in Sources */,
 				49D8A2D729FEC6D500DF5B8E /* WorkspaceViewModel.swift in Sources */,
 				492E820C29FEFA2F000C909A /* UIColor+AppColors.swift in Sources */,
 				496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */,
@@ -787,6 +849,7 @@
 				490351AE2A0D448900B3693B /* Flow.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
 				490351B22A0D448900B3693B /* Output.swift in Sources */,
+				49B67C5E2A0FEF6B00B70F25 /* LoopBlockCell.swift in Sources */,
 				490351AA2A0D441C00B3693B /* ReversePolishService.swift in Sources */,
 				49D8A2BF29FEBD8C00DF5B8E /* MainTabBarCoordinator.swift in Sources */,
 				496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */,
@@ -798,6 +861,7 @@
 				49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */,
 				49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */,
 				490351B02A0D448900B3693B /* TokenAST.swift in Sources */,
+				49B67C602A0FF24B00B70F25 /* LoopBlockCellViewModel.swift in Sources */,
 				49D8A2E329FED81900DF5B8E /* SettingsCoordinator.swift in Sources */,
 				49D8A2E729FED8CB00DF5B8E /* SettingsViewModel.swift in Sources */,
 				495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */,

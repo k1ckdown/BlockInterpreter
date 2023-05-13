@@ -18,6 +18,7 @@ extension UIColor {
     static let blockBorder = UIColor(named: "block-border")
     
     static let endBlock = UIColor(named: "end-block")
+    static let loopBlock = UIColor(named: "loop-block")
     static let beginBlock = UIColor(named: "begin-block")
     static let outputBlock = UIColor(named: "output-block")
     static let variableBlock = UIColor(named: "variable-block")

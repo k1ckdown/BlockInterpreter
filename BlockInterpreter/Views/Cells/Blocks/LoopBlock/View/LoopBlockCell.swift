@@ -1,14 +1,14 @@
 //
-//  OutputBlockCell.swift
+//  LoopBlockCell.swift
 //  BlockInterpreter
 //
 
 import UIKit
 import Combine
 
-final class OutputBlockCell: LabelTFBlockCell {
+final class LoopBlockCell: LabelTFBlockCell {
     
-    static let identifier = "OutputBlockCell"
+    static let identifier = "LoopBlockCell"
     
     var subscriptions = Set<AnyCancellable>()
     
@@ -26,7 +26,7 @@ final class OutputBlockCell: LabelTFBlockCell {
         subscriptions.removeAll()
     }
     
-    func configure(with viewModel: OutputBlockCellViewModel) {
+    func configure(with viewModel: LoopBlockCellViewModel) {
         super.configure(with: viewModel)
     }
     
@@ -36,11 +36,10 @@ final class OutputBlockCell: LabelTFBlockCell {
     }
     
     private func setupContainerView() {
-        containerView.backgroundColor = .outputBlock
+        containerView.backgroundColor = .loopBlock
     }
     
     private func setupTextField() {
-        textField.tintColor = .outputBlock
+        textField.tintColor = .loopBlock
     }
-    
 }

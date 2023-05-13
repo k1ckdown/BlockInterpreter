@@ -46,9 +46,13 @@ extension WorkspaceViewModel  {
                                         value: conditionBlockViewModel.conditionText ?? ""))
             }
             
+            if let flowBlockViewModel = blockViewModel as? FlowBlockCellViewModel {
+                blocks.append(Flow(type: flowBlockViewModel.flowType))
+            }
+            
             if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
                 blocks.append(Output(id: index,
-                                       value: outputBlockViewModel.outputText ?? ""))
+                                       value: outputBlockViewModel.text ?? ""))
             }
             
         }
