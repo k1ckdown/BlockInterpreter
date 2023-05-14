@@ -1,3 +1,5 @@
+import Foundation
+
 enum TokenType {
     case integer
     case plus
@@ -33,8 +35,6 @@ enum VariableType: String {
 enum AllTypes {
     case assign
     case ifBlock
-    case begin
-    case end
     case loop
     case function
     case variable
@@ -383,6 +383,7 @@ class Calculate {
 
 
 
+
 class AssignmentVariable {
     private var variableIntMap: [String: String]
 
@@ -449,6 +450,7 @@ class AssignmentVariable {
 
 
 
+
 class Node {
     private(set) var value: String
     private(set) var type: AllTypes
@@ -474,6 +476,7 @@ class Node {
 
 
 
+
 class Interpreter {
     private var treeAST: Node
     internal var mapOfVariableStack = [[String: String]]()
@@ -484,13 +487,12 @@ class Interpreter {
         treeAST = Node(value: "", type: .root, id: 0)
     }
     
-    
     func setTreeAST(_ treeAST: Node){
         printResult = ""
         self.treeAST = treeAST
         let _ = traverseTree(treeAST)
     }
-
+    
     func getPrintResult() -> String {
         return printResult
     }
@@ -522,7 +524,6 @@ class Interpreter {
 
  
     private func processPrintNode(_ node: Node){
-        print(mapOfVariableStack, "mapOfVariableStack", node.value)
         let calculatedValue = calculateArithmetic(node.value)
         if let value = Int(calculatedValue) {
             printResult += "\(value)\n"
@@ -539,39 +540,51 @@ class Interpreter {
         }
         if value != 0{
             mapOfVariableStack.append([:])
+            
             for child in node.children{
                 let _ = traverseTree(child)
+                
+
                 if child.type == .ifBlock {
                     mapOfVariableStack.append([:])
                 }
+                
 
                 if let lastDictionary = mapOfVariableStack.last {
+                    mapOfVariableStack.removeLast()
+
                     for (key, value) in lastDictionary {
-                        for (index, var dictionary) in mapOfVariableStack.enumerated().reversed() {
-                            if dictionary[key] != nil {
+                        for index in (0..<mapOfVariableStack.count).reversed() {
+                            var dictionary = mapOfVariableStack[index]
+                            if dictionary[key] != nil && dictionary[key] != Optional("") {
                                 dictionary[key] = value
                                 mapOfVariableStack[index] = dictionary
                                 break
+                            } else if index == 0 {
+                                 mapOfVariableStack.append(lastDictionary)
                             }
-                            
                         }
+
                     }
-
-                    mapOfVariableStack.removeLast()
-
+                    if mapOfVariableStack.count == 0 {
+                        mapOfVariableStack.append(lastDictionary)
+                    }
                 }
-            }
+            } 
         }
         
     }
-
 
 
     private func processRootNode(_ node: Node){
         mapOfVariableStack.append([:])
         for child in node.children{
             let _ = traverseTree(child)
+            while mapOfVariableStack.count > 1 {
+                mapOfVariableStack.removeLast()
+            }
         } 
+        print(mapOfVariableStack, "mapOfVariableStack")
     }
 
     private func processVariableNode(_ node: Node) -> String{
@@ -584,11 +597,9 @@ class Interpreter {
         let assignValue = traverseTree(node.children[1])
         if var lastDictionary = mapOfVariableStack.last {
             lastDictionary[varName] = assignValue
-
             mapOfVariableStack[mapOfVariableStack.count - 1] = lastDictionary
-
         }
-
+        
     }
 
     private func processArithmeticNode(_ node: Node) -> String {
@@ -601,7 +612,6 @@ class Interpreter {
             lastDictionary.merge(dictionary){(_, new) in new}
         }
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
-
         let variableForInt = Variable(
             id: 1,
             type: VariableType.int,
@@ -620,7 +630,7 @@ class Interpreter {
     }
 }
 
-//! Tree for test 
+
 
 
 class Tree {
@@ -804,6 +814,7 @@ class Tree {
 }
 
 
+
 // {
 //    b = 10
 //    a = 7 + b + 2 = 19
@@ -846,48 +857,6 @@ array.append(BlockDelimiter(type: DelimiterType.end))
 array.append(BlockDelimiter(type: DelimiterType.end))
 array.append(Printing(id: 12, value: "b"))
 
-
-
-
-// array.append(Variable(id: 1, type: .int, name: "b", value: "10"))
-// array.append(Variable(id: 2, type: .int, name: "a", value: "7 + b + 2"))
-// array.append(Printing(id: 3, value: "b"))
-// array.append(Printing(id: 4, value: "a + b"))
-// array.append(Loop(id: 5, type: LoopType.forLoop, value: "i in 0...10"))
-// array.append(BlockDelimiter(type: DelimiterType.begin))
-// array.append(Variable(id: 6, type: .int, name: "b", value: "b + 10"))
-// array.append(Variable(id: 7, type: .int, name: "a", value: "a * 2"))
-
-// array.append(BlockDelimiter(type: DelimiterType.end))
-// array.append(Condition(id: 8, type: .ifBlock, value: "(( a > 5 ) && ( a < 100 ))"))
-// array.append(BlockDelimiter(type: .begin))
-// array.append(Variable(id: 9, type: .int, name: "b", value: "b + 100"))
-// array.append(Condition(id: 10, type: .ifBlock, value: "a != b"))
-// array.append(BlockDelimiter(type: .begin))
-// array.append(Variable(id: 11, type: .int, name: "c", value: "b + 100"))
-// array.append(BlockDelimiter(type: .end))
-// array.append(BlockDelimiter(type: .end))
-
-// {
-//     a = 17
-//     a = 77
-//     print(a)
-//     p = 45
-//     p = 111
-//     print(p)
-// }
-// array.append(Variable(id: 1, type: .int, name: "a", value: "17"))
-// array.append(Variable(id: 2, type: .int, name: "a", value: "77"))
-// array.append(Printing(id: 3, value: "a"))
-// array.append(Variable(id: 4, type: .int, name: "p", value: "45"))
-// array.append(Variable(id: 5, type: .int, name: "p", value: "111"))
-// array.append(Printing(id: 6, value: "p"))
-// a= 10
-// print(a)
-
-// array.append(Variable(id: 1, type: .int, name: "a", value: "10"))
-// array.append(Printing(id: 2, value: "a"))
-
 let tree = Tree()
 tree.setBlocks(array)
 tree.buildTree()
@@ -895,4 +864,3 @@ tree.buildTree()
 let interpreter = Interpreter()
 interpreter.setTreeAST(tree.rootNode)
 print(interpreter.getPrintResult())
-
