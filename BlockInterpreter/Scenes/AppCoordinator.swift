@@ -2,6 +2,8 @@
 //  AppCoordinator.swift
 //  BlockInterpreter
 //
+//  Created by Ivan Semenov on 30.04.2023.
+//
 
 import UIKit
 
@@ -14,7 +16,7 @@ final class AppCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        navigationController.overrideUserInterfaceStyle = .dark
+        navigationController.overrideUserInterfaceStyle = .light
         self.window.rootViewController = navigationController
         self.window.makeKeyAndVisible()
         

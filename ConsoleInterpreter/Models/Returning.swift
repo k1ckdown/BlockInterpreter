@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct Printing: IBlock {
+struct Returning: IBlock {
     let id: Int
     let value: String
 }

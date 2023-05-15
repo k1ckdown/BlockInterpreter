@@ -22,7 +22,7 @@ class Tree {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 rootNode.addChild(variableNode)
                 index += 1
-            case let printBlock as Printing:
+            case let printBlock as Output:
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
@@ -35,6 +35,11 @@ class Tree {
                 if let conditionNode = buildNode(getBlockAndMoveIndex(),
                         type: AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
+                }
+            case is Function:
+                if let functionNode = buildNode(getBlockAndMoveIndex(),
+                        type: AllTypes.function) {
+                    rootNode.addChild(functionNode)
                 }
             case is BlockDelimiter:
                 index += 1
@@ -88,7 +93,8 @@ class Tree {
     }
 
     private func buildVariableNode(variable: Variable) -> Node {
-        let node = Node(value: variable.type.rawValue, type: AllTypes.assign, id: variable.id)
+        let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
+                id: variable.id)
         let nameVariable = Node(value: variable.name, type: AllTypes.variable,
                 id: variable.id)
         let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
@@ -99,7 +105,7 @@ class Tree {
     }
 
 
-    private func buildPrintingNode(printing: Printing) -> Node {
+    private func buildPrintingNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
                 id: printing.id)
         return node
@@ -122,6 +128,11 @@ class Tree {
                 return nil
             }
             node = Node(value: loop.value, type: type, id: loop.id)
+        } else if type == AllTypes.function {
+            guard let function = firstBlock as? Function else {
+                return nil
+            }
+            node = Node(value: function.value, type: type, id: function.id)
         }
 
         var index = 1
@@ -133,9 +144,13 @@ class Tree {
             } else if let variableBlock = block[index] as? Variable {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 node?.addChild(variableNode)
-            } else if let printBlock = block[index] as? Printing {
+            } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
+            } else if let returnBlock = block[index] as? Returning {
+                let returnNode = Node(value: returnBlock.value,
+                        type: .returnFunction, id: returnBlock.id)
+                node?.addChild(returnNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
@@ -171,6 +186,25 @@ class Tree {
                     additionIndex += 1
                 }
                 if let nestedNode = buildNode(nestedBlocks, type: .loop) {
+                    node?.addChild(nestedNode)
+                }
+                index = additionIndex
+            } else if let nestedFunctionBlock = block[index] as? Function {
+                var nestedBlocks: [IBlock] = []
+                var additionIndex = index + 1
+                nestedBlocks.append(nestedFunctionBlock)
+                var countBegin: Int = 0
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
+                        }
+                    }
+                    nestedBlocks.append(block[additionIndex])
+                    additionIndex += 1
+                }
+                if let nestedNode = buildNode(nestedBlocks, type: .function) {
                     node?.addChild(nestedNode)
                 }
                 index = additionIndex
