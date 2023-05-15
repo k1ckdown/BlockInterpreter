@@ -4,6 +4,8 @@ import Foundation
 enum AllTypes {
     case assign
     case ifBlock
+    case elifBlock
+    case elseBlock
     case loop
     case function
     case returnFunction
