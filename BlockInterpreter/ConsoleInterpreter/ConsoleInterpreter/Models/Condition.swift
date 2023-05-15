@@ -3,7 +3,6 @@ import Foundation
 
 enum ConditionType: String, CaseIterable {
     case ifBlock, elifBlock, elseBlock
-
     var name: String {
         switch self {
         case .ifBlock:

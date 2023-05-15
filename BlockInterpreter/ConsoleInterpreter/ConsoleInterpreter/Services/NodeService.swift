@@ -13,6 +13,8 @@ enum AllTypes {
     case arithmetic
     case print
     case root
+    case breakBlock
+    case continueBlock
 }
 
 

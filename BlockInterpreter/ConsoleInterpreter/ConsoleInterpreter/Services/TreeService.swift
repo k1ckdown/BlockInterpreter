@@ -36,17 +36,46 @@ class Tree {
                         type: determineConditionBlock(block) ?? AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
+            case is BlockDelimiter:
+                index += 1
             case is Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
                         type: AllTypes.function) {
                     rootNode.addChild(functionNode)
                 }
-            case is BlockDelimiter:
+            case is Break:
+                if let breakNode = buildBreak(block) {
+                    rootNode.addChild(breakNode)
+                }
+                index += 1
+            case is Continue:
+                if let continueNode = buildContinue(block) {
+                    rootNode.addChild(continueNode)
+                }
                 index += 1
             default:
                 index += 1
+
             }
         }
+    }
+
+    private func buildBreak(_ block: IBlock) -> Node? {
+        if let breakBlock = block as? Break {
+            let node = Node(value: breakBlock.value, type: AllTypes.breakBlock,
+                    id: breakBlock.id)
+            return node
+        }
+        return nil
+    }
+
+    private func buildContinue(_ block: IBlock) -> Node? {
+        if let continueBlock = block as? Continue {
+            let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
+                    id: continueBlock.id)
+            return node
+        }
+        return nil
     }
 
     private func getMatchingDelimiterIndex() -> Int? {
@@ -176,6 +205,14 @@ class Tree {
                 let returnNode = Node(value: returnBlock.value,
                         type: .returnFunction, id: returnBlock.id)
                 node?.addChild(returnNode)
+            } else if let continueBlock = block[index] as? Continue {
+                let continueNode = Node(value: continueBlock.value,
+                        type: .continueBlock, id: continueBlock.id)
+                node?.addChild(continueNode)
+            } else if let breakBlock = block[index] as? Break {
+                let breakNode = Node(value: breakBlock.value,
+                        type: .breakBlock, id: breakBlock.id)
+                node?.addChild(breakNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
