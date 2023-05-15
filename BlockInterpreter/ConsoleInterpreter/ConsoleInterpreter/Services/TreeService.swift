@@ -196,3 +196,49 @@ class Tree {
                         node?.addChild(nestedNode)
                     }
                 }
+
+                index = additionIndex
+            } else if let nestedLoopBlock = block[index] as? Loop {
+                var nestedBlocks: [IBlock] = []
+                var additionIndex = index + 1
+                nestedBlocks.append(nestedLoopBlock)
+                var countBegin: Int = 0
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
+                        }
+                    }
+                    nestedBlocks.append(block[additionIndex])
+                    additionIndex += 1
+                }
+                if let nestedNode = buildNode(nestedBlocks, type: .loop) {
+                    node?.addChild(nestedNode)
+                }
+                index = additionIndex
+            } else if let nestedFunctionBlock = block[index] as? Function {
+                var nestedBlocks: [IBlock] = []
+                var additionIndex = index + 1
+                nestedBlocks.append(nestedFunctionBlock)
+                var countBegin: Int = 0
+                while additionIndex < block.count {
+                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                        countBegin += countForMatchingDelimiter(blockEnd)
+                        if countBegin == 0 {
+                            break
+                        }
+                    }
+                    nestedBlocks.append(block[additionIndex])
+                    additionIndex += 1
+                }
+                if let nestedNode = buildNode(nestedBlocks, type: .function) {
+                    node?.addChild(nestedNode)
+                }
+                index = additionIndex
+            }
+            index += 1
+        }
+        return node
+    }
+}

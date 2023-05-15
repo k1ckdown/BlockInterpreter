@@ -671,28 +671,7 @@ class Interpreter {
     }
     
 
-    private func updateMapOfStackFromLastDictionary(_ lastDictionary: [String: String]){
-        print("lastDictionary = \(lastDictionary)")
 
-        var dictionaryUpdated = false
-        
-
-        for (key, value) in lastDictionary {
-            for index in (0..<mapOfVariableStack.count).reversed() {
-                var dictionary = mapOfVariableStack[index]
-                if dictionary[key] != nil {
-                    dictionary[key] = String(value)
-                    mapOfVariableStack[index][key] = value
-                    dictionaryUpdated = true        
-                    break
-                } else if index == 0{
-                    mapOfVariableStack.append([:])
-                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
-                }
-            }
-        }
-  
-    }
 
 
     private func processRootNode(_ node: Node){
@@ -729,7 +708,28 @@ class Interpreter {
         }
         
     }
+    private func updateMapOfStackFromLastDictionary(_ lastDictionary: [String: String]){
+        print("lastDictionary = \(lastDictionary)")
 
+        var dictionaryUpdated = false
+        
+
+        for (key, value) in lastDictionary {
+            for index in (0..<mapOfVariableStack.count).reversed() {
+                var dictionary = mapOfVariableStack[index]
+                if dictionary[key] != nil {
+                    dictionary[key] = String(value)
+                    mapOfVariableStack[index][key] = value
+                    dictionaryUpdated = true        
+                    break
+                } else if index == 0{
+                    mapOfVariableStack.append([:])
+                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
+                }
+            }
+        }
+  
+    }
     private func calculateArithmetic(_ expression: String) -> String {
         var lastDictionary: [String: String] = [:]
         for dictionary in mapOfVariableStack {
