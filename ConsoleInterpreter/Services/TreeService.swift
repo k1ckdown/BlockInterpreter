@@ -5,9 +5,9 @@ class Tree {
     var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
     var blocks = [IBlock]()
-    
+
     init() {
-        
+
     }
 
     func setBlocks(_ blocks: [IBlock]) {
@@ -33,7 +33,7 @@ class Tree {
                 }
             case is Condition:
                 if let conditionNode = buildNode(getBlockAndMoveIndex(),
-                        type: AllTypes.ifBlock) {
+                        type: determineConditionBlock(block) ?? AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
             case is Function:
@@ -111,6 +111,20 @@ class Tree {
         return node
     }
 
+    private func determineConditionBlock(_ block: IBlock) -> AllTypes? {
+        if let condition = block as? Condition {
+            if condition.type == ConditionType.ifBlock {
+                return AllTypes.ifBlock
+            } else if condition.type == ConditionType.elifBlock {
+                return AllTypes.elifBlock
+            } else if condition.type == ConditionType.elseBlock {
+                return AllTypes.elseBlock
+            }
+        }
+        return nil
+    }
+
+
     private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
             return nil
@@ -122,8 +136,19 @@ class Tree {
             guard let condition = firstBlock as? Condition else {
                 return nil
             }
-            node = Node(value: condition.value, type: type, id: condition.id)
-        } else if type == AllTypes.loop {
+            node = Node(value: condition.value, type: AllTypes.ifBlock, id: condition.id)
+        } else if type == AllTypes.elifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: AllTypes.elifBlock, id: condition.id)
+        } else if type == AllTypes.elseBlock {
+            guard let condtion = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condtion.value, type: AllTypes.elseBlock, id: condtion.id)
+        }
+        else if type == AllTypes.loop {
             guard let loop = firstBlock as? Loop else {
                 return nil
             }
@@ -166,9 +191,12 @@ class Tree {
                     nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildNode(nestedBlocks, type: .ifBlock) {
-                    node?.addChild(nestedNode)
+                if let typeCondition = determineConditionBlock(nestedConditionBlock) {
+                    if let nestedNode = buildNode(nestedBlocks, type: typeCondition) {
+                        node?.addChild(nestedNode)
+                    }
                 }
+
                 index = additionIndex
             } else if let nestedLoopBlock = block[index] as? Loop {
                 var nestedBlocks: [IBlock] = []

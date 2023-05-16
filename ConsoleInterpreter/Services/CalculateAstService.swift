@@ -1,18 +1,18 @@
 import Foundation
  
 
-class Calculate {
+class Calculate { 
     private var text: String
     private var position: Int
     private var currentToken: Token?
- 
+    
     init(_ text: String) {
         self.text = text
-        position = 0
+        self.position = 0
     }
  
     public func getText() -> String {
-        return self.text
+        return text
     }
  
     public func setText(text: String) {
@@ -21,24 +21,25 @@ class Calculate {
     }
 
     public func compare() -> Int {
-        self.currentToken = self.getNextToken() 
-        var result = self.term()
+        currentToken = getNextToken() 
+        
+        var result = term()
         let possibleTokens: [TokenType] = [
-            TokenType.plus,
-            TokenType.minus,
-            TokenType.equal,
-            TokenType.less, 
-            TokenType.greater,
-            TokenType.notEqual,
-            TokenType.lessEqual,
-            TokenType.greaterEqual,
-            TokenType.logicalAnd,
-            TokenType.logicalOr
+            .plus,
+            .minus,
+            .equal,
+            .less,  
+            .greater,
+            .notEqual,
+            .lessEqual,
+            .greaterEqual,
+            .logicalAnd,
+            .logicalOr
         ]
-        if self.currentToken == nil {
+        if currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
             
             if token.getType() == .plus {
                 moveToken(.plus)
@@ -47,8 +48,8 @@ class Calculate {
                 moveToken(.minus)
                 result -= term()
             } else if possibleTokens.contains(token.getType()){
-                self.moveToken(token.getType())
-                let factorValue = self.factor()
+                moveToken(token.getType())
+                let factorValue = factor()
 
                 switch token.getType() {
                 case .equal:
@@ -78,27 +79,27 @@ class Calculate {
 
 
     private func term() -> Int {
-        var result = self.factor()
+        var result = factor()
         let possibleTokens: [TokenType] = [
             TokenType.modulo,
             TokenType.multiply,
             TokenType.divide,
         ]
-        if self.currentToken == nil {
+        if currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
             switch token.getType() {
             case .modulo:
-                self.moveToken(.modulo)
-                result %= self.factor()
+                moveToken(.modulo)
+                result %= factor()
             case .multiply:
-                self.moveToken(.multiply)
-                result *= self.factor()
+                moveToken(.multiply)
+                result *= factor()
 
             case .divide:
-                self.moveToken(.divide)
-                result /= self.factor()
+                moveToken(.divide)
+                result /= factor()
             
             default:
                 fatalError("Invalid token type")
@@ -108,20 +109,24 @@ class Calculate {
     }
 
     private func factor() -> Int {
-        let token = self.currentToken!
+        let token = currentToken!
 
         switch token.getType() {
             case .integer:
-                self.moveToken(.integer)
+                moveToken(.integer)
                 guard let value = token.getValue(), let intValue =
                         Int(value) else { fatalError("Error parsing input")
                 }
                 return intValue
+            case .minus:
+                moveToken(.minus)
+                return -factor()
             case .leftBrace:
-                self.moveToken(.leftBrace)
-                let result = self.compare()
-                self.moveToken(.rightBrace)
+                moveToken(.leftBrace)
+                let result = compare()
+                moveToken(.rightBrace)
                 return result
+
             case .eof:
                 return 0
             default:
@@ -132,41 +137,39 @@ class Calculate {
     }
  
 
-    private func getNextToken() -> Token? {
-        guard self.position < self.text.count else {
+    private func getNextToken() -> Token? { 
+        guard position < text.count else {
             return Token(.eof, nil)
         }
  
-        let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
-        if self.isSpace(currentChar) {
-            self.position += 1
-            return self.getNextToken()
-        }
- 
-        if self.isNumber(currentChar) {
+        let currentChar = text[text.index(text.startIndex, offsetBy: position)]
+        if isSpace(currentChar) {
+            position += 1
+            return getNextToken()
+        } else if isNumber(currentChar) {
             var integerString = String(currentChar)
-            self.position += 1
+            position += 1
  
-            while self.position < self.text.count {
-                let nextChar =
-                self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
-                if self.isNumber(nextChar) {
+            while position < text.count {
+                let nextChar = text[text.index(text.startIndex, offsetBy: position)]
+                if isNumber(nextChar) {
                     integerString += String(nextChar)
-                    self.position += 1
+                    position += 1
                 } else {
                     break
                 }
             }
 
             return Token(.integer, integerString)
-        }
+        } 
 
-        self.position += 1
+
+        position += 1
         return getToken(currentChar)
         
     }
 
-    private func getToken(_ currentChar: Character) -> Token{
+    private func getToken(_ currentChar: Character) -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
         switch currentChar {
             case "+":
                 return Token(.plus, "+")            
@@ -225,6 +228,7 @@ class Calculate {
                     }
                 }
             default:
+                print(currentChar)
                 fatalError("Invalid character")
         }
     }
@@ -241,6 +245,7 @@ class Calculate {
     private func isNumber(_ char: Character) -> Bool {
         return char >= "0" && char <= "9"
     }
+
 
     private func isSpace(_ char: Character) -> Bool {
         return char == " "
