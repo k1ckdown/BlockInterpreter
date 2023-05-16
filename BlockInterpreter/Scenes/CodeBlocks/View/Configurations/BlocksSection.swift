@@ -6,7 +6,7 @@
 import Foundation
 
 enum BlocksSection: Int, CaseIterable {
-    case output, flow, variables, conditions, loops, arrays, functions
+    case output, flow, variables, conditions, loops, functions
     
     var heightForRow: CGFloat {
         return 90
@@ -24,8 +24,6 @@ enum BlocksSection: Int, CaseIterable {
             return "Conditions"
         case .loops:
             return "Loops"
-        case .arrays:
-            return "Arrays"
         case .functions:
             return "Functions"
         }

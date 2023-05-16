@@ -22,6 +22,7 @@ extension UIColor {
     static let beginBlock = UIColor(named: "begin-block")
     static let outputBlock = UIColor(named: "output-block")
     static let variableBlock = UIColor(named: "variable-block")
+    static let functionBlock = UIColor(named: "function-block")
     static let conditionBlock = UIColor(named: "condition-block")
     
     static let variableType = UIColor(named: "variable-type")

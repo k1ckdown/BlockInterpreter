@@ -11,6 +11,7 @@ enum BlockType {
     case variable
     case condition
     case loop(LoopType)
+    case function
     
     func isEqualTo(_ otherType: BlockType) -> Bool {
         switch (self, otherType) {

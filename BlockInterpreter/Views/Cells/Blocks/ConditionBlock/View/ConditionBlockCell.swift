@@ -33,11 +33,11 @@ final class ConditionBlockCell: BlockCell {
         
     }
     
-    private let conditionStatementLabel = UILabel()
+    private let blockTitleLabel = BlockTitleLabel()
     
     private let conditionFieldView = UIView()
     private(set) var conditionTextField = BlockTextField()
-    private let thenLabel = UILabel()
+    private let thenLabel = BlockTitleLabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -59,7 +59,7 @@ final class ConditionBlockCell: BlockCell {
         super.configure(with: viewModel)
         
         conditionTextField.text = viewModel.conditionText
-        conditionStatementLabel.text = viewModel.conditionStatement
+        blockTitleLabel.text = viewModel.conditionStatement
         conditionTextField.placeholder = viewModel.conditionTextPlaceholder
         conditionFieldView.isHidden = !viewModel.shouldShowConditionField
     }
@@ -77,13 +77,9 @@ final class ConditionBlockCell: BlockCell {
     }
     
     private func setupConditionStatementLabel() {
-        containerView.addSubview(conditionStatementLabel)
+        containerView.addSubview(blockTitleLabel)
         
-        conditionStatementLabel.textColor = .appBlack
-        conditionStatementLabel.textAlignment = .left
-        conditionStatementLabel.font = .blockTitle
-        
-        conditionStatementLabel.snp.makeConstraints { make in
+        blockTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(Constants.ConditionStatementLabel.insetLeading)
             make.top.bottom.equalToSuperview()
         }
@@ -93,7 +89,7 @@ final class ConditionBlockCell: BlockCell {
         containerView.addSubview(conditionFieldView)
         
         conditionFieldView.snp.makeConstraints { make in
-            make.leading.equalTo(conditionStatementLabel.snp.trailing).offset(Constants.ConditionFieldView.insetLeading)
+            make.leading.equalTo(blockTitleLabel.snp.trailing).offset(Constants.ConditionFieldView.insetLeading)
             make.trailing.top.bottom.equalToSuperview()
         }
     }
@@ -115,9 +111,6 @@ final class ConditionBlockCell: BlockCell {
         conditionFieldView.addSubview(thenLabel)
         
         thenLabel.text = "then"
-        thenLabel.textColor = .appBlack
-        thenLabel.textAlignment = .center
-        thenLabel.font = .blockTitle
         
         thenLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

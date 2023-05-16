@@ -12,16 +12,40 @@ final class ForLoopBlockCell: BlockCell {
     
     var subscriptions = Set<AnyCancellable>()
     
+    private enum Constants {
+        
+            enum BlockTitleLabel {
+                static let insetLeading: CGFloat = 17
+            }
+            
+            enum OpenBracketLabel {
+                static let insetLeading: CGFloat = 10
+            }
+            
+            enum FullConditionStackView {
+                static let spacing: CGFloat = 7
+                static let insetLeading: CGFloat = 2
+                static let insetTrailing: CGFloat = 17
+                static let insetTopBottom: CGFloat = 15
+            }
+            
+            enum InputTextField {
+                static let multiplierWidth: CGFloat = 0.88
+            }
+            
+            enum SeparatorLabel {
+                static let insetLeading: CGFloat = 2
+            }
+        
+    }
+    
     private(set) var initValueTextField = BlockTextField()
     private(set) var conditionValueTextField = BlockTextField()
     private(set) var stepValueTextField = BlockTextField()
     
     private let blockTitleLabel = UILabel()
     private let fullConditionStackView = UIStackView()
-    private lazy var openBracketLabel: UILabel = {
-        let label = makeSeparatorLabel(separatorType: .bracket(.open))
-        return label
-    }()
+    private lazy var openBracketLabel = BlockSeparatorLabel(separatorType: .bracket(.open))
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -69,7 +93,7 @@ final class ForLoopBlockCell: BlockCell {
         blockTitleLabel.textAlignment = .center
 
         blockTitleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(17)
+            make.leading.equalToSuperview().offset(Constants.BlockTitleLabel.insetLeading)
             make.centerY.equalToSuperview()
         }
     }
@@ -78,7 +102,7 @@ final class ForLoopBlockCell: BlockCell {
         containerView.addSubview(openBracketLabel)
 
         openBracketLabel.snp.makeConstraints { make in
-            make.leading.equalTo(blockTitleLabel.snp.trailing).offset(10)
+            make.leading.equalTo(blockTitleLabel.snp.trailing).offset(Constants.OpenBracketLabel.insetLeading)
             make.centerY.equalToSuperview()
         }
     }
@@ -86,7 +110,7 @@ final class ForLoopBlockCell: BlockCell {
     private func setupFullConditionStackView() {
         containerView.addSubview(fullConditionStackView)
         
-        fullConditionStackView.spacing = 7
+        fullConditionStackView.spacing = Constants.FullConditionStackView.spacing
         fullConditionStackView.axis = .horizontal
         fullConditionStackView.distribution = .fillEqually
         fullConditionStackView.backgroundColor = .clear
@@ -111,39 +135,29 @@ final class ForLoopBlockCell: BlockCell {
         )
         
         fullConditionStackView.snp.makeConstraints { make in
-            make.leading.equalTo(openBracketLabel.snp.trailing).offset(2)
-            make.top.bottom.equalToSuperview().inset(15)
-            make.trailing.equalToSuperview().inset(17)
+            make.leading.equalTo(openBracketLabel.snp.trailing).offset(Constants.FullConditionStackView.insetLeading)
+            make.top.bottom.equalToSuperview().inset(Constants.FullConditionStackView.insetTopBottom)
+            make.trailing.equalToSuperview().inset(Constants.FullConditionStackView.insetTrailing)
         }
     }
     
-    private func makeSeparatorLabel(separatorType: ConditionSeparatorType) -> UILabel {
-        let label = UILabel()
-        
-        label.text = separatorType.title
-        label.font = .blockTitle
-        label.textColor = .appBlack
-        label.textAlignment = .center
-        
-        return label
-    }
-    
-    private func makePartConditionView(inputTextField: BlockTextField, separatorType: ConditionSeparatorType) -> UIView {
+    private func makePartConditionView(inputTextField: BlockTextField, separatorType: SeparatorType) -> UIView {
         let view = UIView()
         
         view.addSubview(inputTextField)
+        inputTextField.tintColor = .loopBlock
         
-        let separatorLabel = makeSeparatorLabel(separatorType: separatorType)
+        let separatorLabel = BlockSeparatorLabel(separatorType: separatorType)
         view.addSubview(separatorLabel)
         
         inputTextField.snp.makeConstraints { make in
-            make.width.equalToSuperview().multipliedBy(0.88)
+            make.width.equalToSuperview().multipliedBy(Constants.InputTextField.multiplierWidth)
             make.leading.equalToSuperview()
             make.top.bottom.equalToSuperview()
         }
         
         separatorLabel.snp.makeConstraints { make in
-            make.leading.equalTo(inputTextField.snp.trailing).offset(2)
+            make.leading.equalTo(inputTextField.snp.trailing).offset(Constants.SeparatorLabel.insetLeading)
             make.top.bottom.equalToSuperview()
         }
         

@@ -20,8 +20,8 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     
     private let interpreterManager: InterpreterManager
     
-    init() {
-        interpreterManager = .init()
+    init(interpreterManager: InterpreterManager) {
+        self.interpreterManager = interpreterManager
         bind()
     }
     
@@ -38,21 +38,28 @@ extension WorkspaceViewModel  {
                                        type: variableBlockViewModel.variableType ?? .int,
                                        name: variableBlockViewModel.variableName ?? "",
                                        value: variableBlockViewModel.variableValue ?? ""))
-            }
-            
-            if let conditionBlockViewModel = blockViewModel as? ConditionBlockCellViewModel {
+                
+            } else if let conditionBlockViewModel = blockViewModel as? ConditionBlockCellViewModel {
                 blocks.append(Condition(id: index,
                                         type: conditionBlockViewModel.conditionType,
                                         value: conditionBlockViewModel.conditionText ?? ""))
-            }
-            
-            if let flowBlockViewModel = blockViewModel as? FlowBlockCellViewModel {
+                
+            } else if let flowBlockViewModel = blockViewModel as? FlowBlockCellViewModel {
                 blocks.append(Flow(type: flowBlockViewModel.flowType))
-            }
-            
-            if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
+                
+            } else if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
                 blocks.append(Output(id: index,
                                        value: outputBlockViewModel.text ?? ""))
+                
+            } else if let whileLoopViewModel = blockViewModel as? WhileLoopBlockCellViewModel {
+                blocks.append(Loop(id: index,
+                                   type: .whileLoop,
+                                   value: whileLoopViewModel.text ?? ""))
+                
+            } else if let forLoopViewModel = blockViewModel as? ForLoopBlockCellViewModel {
+                blocks.append(Loop(id: index,
+                                   type: .forLoop,
+                                   value: forLoopViewModel.loopValue))
             }
             
         }

@@ -15,7 +15,7 @@ final class FlowBlockCell: BlockCell {
             }
     }
 
-    private let blockTitleLabel = UILabel()
+    private let blockTitleLabel = BlockTitleLabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -51,10 +51,6 @@ final class FlowBlockCell: BlockCell {
     
     private func setupBlockTitleLabelLabel() {
         containerView.addSubview(blockTitleLabel)
-        
-        blockTitleLabel.font = .blockTitle
-        blockTitleLabel.textColor = .appBlack
-        blockTitleLabel.textAlignment = .center
         
         blockTitleLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()

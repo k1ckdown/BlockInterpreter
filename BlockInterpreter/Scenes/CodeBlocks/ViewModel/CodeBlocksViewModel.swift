@@ -85,6 +85,8 @@ extension CodeBlocksViewModel {
             WhileLoopBlockCellViewModel(style: .presentation),
             ForLoopBlockCellViewModel(style: .presentation)
         ]
+        
+        cellViewModels[BlocksSection.functions.rawValue] = [FunctionBlockCellViewModel(style: .presentation)]
     }
     
     private func bind() {

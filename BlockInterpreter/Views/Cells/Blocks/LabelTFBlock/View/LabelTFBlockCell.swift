@@ -21,7 +21,7 @@ class LabelTFBlockCell: BlockCell {
         
     }
     
-    private let label = UILabel()
+    private let label = BlockTitleLabel()
     private(set) var textField = BlockTextField()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -65,10 +65,6 @@ class LabelTFBlockCell: BlockCell {
     
     private func setupLabel() {
         containerView.addSubview(label)
-        
-        label.font = .blockTitle
-        label.textColor = .appBlack
-        label.textAlignment = .center
         
         label.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()

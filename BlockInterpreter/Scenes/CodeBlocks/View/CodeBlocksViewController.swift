@@ -100,6 +100,7 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         blocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
         blocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
+        blocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
@@ -288,10 +289,30 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 return .init()
             }
             
-        case .arrays:
-            return .init()
         case .functions:
-            return .init()
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
+                let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
+            else { return .init() }
+            
+            cell.functionNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.functionName = text
+                }
+                .store(in: &subscriptions)
+            
+            cell.argumentsTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.argumentsString = text
+                }
+                .store(in: &subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
         }
     }
     

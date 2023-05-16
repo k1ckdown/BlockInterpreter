@@ -75,6 +75,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
+        workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         workBlocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
@@ -240,6 +241,31 @@ extension WorkspaceViewController: UITableViewDataSource {
                     cellViewModel?.stepValue = text
                 }
                 .store(in: &cell.subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .function:
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
+                let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
+            else { return .init() }
+                        
+            cell.functionNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.functionName = text
+                }
+                .store(in: &subscriptions)
+            
+            cell.argumentsTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.argumentsString = text
+                }
+                .store(in: &subscriptions)
             
             cell.configure(with: cellViewModel)
             return cell

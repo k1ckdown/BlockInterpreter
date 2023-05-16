@@ -11,7 +11,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
     private let mainTabBarController: UITabBarController
     
     override init(navigationController: UINavigationController) {
-        workspaceViewModel = WorkspaceViewModel()
+        workspaceViewModel = WorkspaceViewModel(interpreterManager: InterpreterManager())
         mainTabBarController = MainTabBarViewController()
         super.init(navigationController: navigationController)
     }

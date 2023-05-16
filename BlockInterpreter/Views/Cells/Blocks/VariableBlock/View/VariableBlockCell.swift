@@ -43,7 +43,7 @@ final class VariableBlockCell: BlockCell {
         
     }
     
-    private let variableTypeLabel = UILabel()
+    private let variableTypeLabel = BlockTitleLabel()
     private let equalSignImageView = UIImageView()
     
     private let assignmentStackView = UIStackView()

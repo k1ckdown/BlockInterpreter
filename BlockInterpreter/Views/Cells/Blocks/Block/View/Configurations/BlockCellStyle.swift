@@ -48,6 +48,8 @@ enum BlockCellStyle {
             return 0.9
         case .loop:
             return 0.85
+        case .function:
+            return 0.97
         }
     }
 }

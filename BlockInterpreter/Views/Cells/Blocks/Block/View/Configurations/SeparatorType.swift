@@ -11,7 +11,7 @@ enum BracketType {
     case open, close
 }
 
-enum ConditionSeparatorType {
+enum SeparatorType {
     case bracket(BracketType)
     case semicolon
     
