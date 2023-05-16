@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "84751A5B2A061A62003096DA"
+               BlueprintIdentifier = "490668C42A13B23D00CCE425"
                BuildableName = "ConsoleInterpreter"
                BlueprintName = "ConsoleInterpreter"
                ReferencedContainer = "container:BlockInterpreter.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "84751A5B2A061A62003096DA"
+            BlueprintIdentifier = "490668C42A13B23D00CCE425"
             BuildableName = "ConsoleInterpreter"
             BlueprintName = "ConsoleInterpreter"
             ReferencedContainer = "container:BlockInterpreter.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "84751A5B2A061A62003096DA"
+            BlueprintIdentifier = "490668C42A13B23D00CCE425"
             BuildableName = "ConsoleInterpreter"
             BlueprintName = "ConsoleInterpreter"
             ReferencedContainer = "container:BlockInterpreter.xcodeproj">

@@ -15,6 +15,7 @@ enum AllTypes {
     case root
 }
 
+
 class Node {
     private(set) var value: String
     private(set) var type: AllTypes
