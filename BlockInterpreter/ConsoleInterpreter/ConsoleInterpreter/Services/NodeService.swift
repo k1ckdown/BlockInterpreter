@@ -16,6 +16,7 @@ enum AllTypes {
     case root
     case breakBlock
     case continueBlock
+    case cin
 }
 
 

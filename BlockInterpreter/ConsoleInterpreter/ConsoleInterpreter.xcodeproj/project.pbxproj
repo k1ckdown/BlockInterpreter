@@ -11,6 +11,7 @@
 		586030AF87ECF1915C6E8D35 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586031E5A8505E6B205B823E /* Variable.swift */; };
 		5860316BE87AB6D10D0F83C8 /* NodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586035925409F98972CBAB63 /* NodeService.swift */; };
 		5860334031A95B52A1D0693A /* BlockProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55633BF5CEC59CFFC6 /* BlockProtocol.swift */; };
+		5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586030B8D020FD8312F37247 /* ReadingData.swift */; };
 		586035A8030399C355559DEF /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603355C5E7B64F1DA5C64C /* Loop.swift */; };
 		586035D0BACE931ECE34A079 /* TokenAST.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586035C5A1F4018C673E076A /* TokenAST.swift */; };
 		5860364EBDBFB1EAF11A3396 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603770F49236CAA8FF6CB1 /* main.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		586030B8D020FD8312F37247 /* ReadingData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingData.swift; sourceTree = "<group>"; };
 		5860316432F5DBB1303AEEDE /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		586031E5A8505E6B205B823E /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		5860331942F26DA8348A0D78 /* Break.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Break.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				586033B9137E810B10B7FE60 /* Output.swift */,
 				58603C570D3B4FBD07B9770C /* Continue.swift */,
 				5860331942F26DA8348A0D78 /* Break.swift */,
+				586030B8D020FD8312F37247 /* ReadingData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 				58603BD6B60BC26DF901967D /* Output.swift in Sources */,
 				58603CF3FC66B6CC412A9D84 /* Continue.swift in Sources */,
 				58603E1DA2B655F20A0CFFB7 /* Break.swift in Sources */,
+				5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
