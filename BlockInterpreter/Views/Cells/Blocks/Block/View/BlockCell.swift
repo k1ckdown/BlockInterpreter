@@ -59,7 +59,7 @@ class BlockCell: UITableViewCell {
             make.width.equalToSuperview().multipliedBy(viewModel.style.multiplierWidth(for: viewModel.type))
         }
         
-        if viewModel.style == .presentation, viewModel.type != .flow {
+        if viewModel.style == .presentation, !viewModel.type.isEqualTo(.flow) {
             containerView.snp.makeConstraints { make in
                 make.leading.equalToSuperview()
             }

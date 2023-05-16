@@ -2,8 +2,16 @@ import Foundation
 
 
 enum LoopType {
-    case forLoop
-    case whileLoop
+    case forLoop, whileLoop
+    
+    var name: String {
+        switch self {
+        case .forLoop:
+            return "for"
+        case .whileLoop:
+            return "while"
+        }
+    }
 }
 
 

@@ -98,7 +98,8 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.showsVerticalScrollIndicator = false
         
         blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
-        blocksTableView.register(LoopBlockCell.self, forCellReuseIdentifier: LoopBlockCell.identifier)
+        blocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
+        blocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
@@ -228,21 +229,64 @@ extension CodeBlocksViewController: UITableViewDataSource {
             return cell
             
         case .loops:
-            guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: LoopBlockCell.identifier, for: indexPath) as? LoopBlockCell,
-                let cellViewModel = cellViewModel as? LoopBlockCellViewModel
-            else { return .init() }
             
-            cell.textField.textPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] text in
-                    guard let text = text else { return }
-                    cellViewModel?.text = text
-                }
-                .store(in: &cell.subscriptions)
-            
-            cell.configure(with: cellViewModel)
-            return cell
+            if cellViewModel.type.isEqualTo(.loop(.whileLoop)) {
+                guard
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: WhileLoopBlockCell.identifier,
+                        for: indexPath
+                    ) as? WhileLoopBlockCell,
+                    let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
+                else { return .init() }
+                
+                cell.textField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.text = text
+                    }
+                    .store(in: &cell.subscriptions)
+                
+                cell.configure(with: cellViewModel)
+                return cell
+            } else if cellViewModel.type.isEqualTo(.loop(.forLoop)) {
+                guard
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: ForLoopBlockCell.identifier,
+                        for: indexPath
+                    ) as? ForLoopBlockCell,
+                    let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
+                else { return .init() }
+                
+                cell.initValueTextField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.initValue = text
+                    }
+                    .store(in: &cell.subscriptions)
+                
+                cell.conditionValueTextField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.conditionValue = text
+                    }
+                    .store(in: &cell.subscriptions)
+                
+                cell.stepValueTextField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.stepValue = text
+                    }
+                    .store(in: &cell.subscriptions)
+                
+                cell.configure(with: cellViewModel)
+                return cell
+            } else {
+                return .init()
+            }
             
         case .arrays:
             return .init()

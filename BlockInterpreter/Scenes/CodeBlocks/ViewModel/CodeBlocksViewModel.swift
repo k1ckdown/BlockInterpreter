@@ -81,7 +81,10 @@ extension CodeBlocksViewModel {
             ConditionBlockCellViewModel(conditionType: $0, style: .presentation)
         }
         
-        cellViewModels[BlocksSection.loops.rawValue] = [LoopBlockCellViewModel(style: .presentation)]
+        cellViewModels[BlocksSection.loops.rawValue] = [
+            WhileLoopBlockCellViewModel(style: .presentation),
+            ForLoopBlockCellViewModel(style: .presentation)
+        ]
     }
     
     private func bind() {

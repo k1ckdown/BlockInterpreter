@@ -16,13 +16,13 @@ final class VariableBlockCell: BlockCell {
     private enum Constants {
             
             enum VariableTypeLabel {
-                static let insetLeading: CGFloat = 15
+                static let insetLeading: CGFloat = 20
             }
             
             enum AssignmentStackView {
                 static let spacing: CGFloat = 5
                 static let muiltiplierWidth: CGFloat = 0.75
-                static let insetLeading: CGFloat = 20
+                static let insetLeading: CGFloat = 15
             }
             
             enum VariableNameTextField {

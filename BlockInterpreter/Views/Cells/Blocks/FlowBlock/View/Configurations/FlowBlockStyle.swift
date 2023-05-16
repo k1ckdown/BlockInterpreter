@@ -2,8 +2,6 @@
 //  FlowBlockStyle.swift
 //  BlockInterpreter
 //
-//  Created by Ivan Semenov on 13.05.2023.
-//
 
 import UIKit
 

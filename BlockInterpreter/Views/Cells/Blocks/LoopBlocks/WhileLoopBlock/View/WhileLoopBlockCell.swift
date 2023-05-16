@@ -1,12 +1,12 @@
 //
-//  LoopBlockCell.swift
+//  WhileLoopBlockCell.swift
 //  BlockInterpreter
 //
 
 import UIKit
 import Combine
 
-final class LoopBlockCell: LabelTFBlockCell {
+final class WhileLoopBlockCell: LabelTFBlockCell {
     
     static let identifier = "LoopBlockCell"
     
@@ -26,7 +26,7 @@ final class LoopBlockCell: LabelTFBlockCell {
         subscriptions.removeAll()
     }
     
-    func configure(with viewModel: LoopBlockCellViewModel) {
+    func configure(with viewModel: WhileLoopBlockCellViewModel) {
         super.configure(with: viewModel)
     }
     

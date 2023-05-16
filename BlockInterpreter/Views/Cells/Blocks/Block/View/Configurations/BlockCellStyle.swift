@@ -30,7 +30,7 @@ enum BlockCellStyle {
         guard
             self == .work
         else {
-            if blockType == .flow {
+            if blockType.isEqualTo(.flow) {
                 return 0.6
             } else {
                 return 1

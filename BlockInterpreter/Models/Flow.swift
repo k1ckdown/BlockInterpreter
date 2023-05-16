@@ -2,8 +2,7 @@ import Foundation
 
 
 enum FlowType: CaseIterable {
-    case begin
-    case end
+    case begin, end
 }
 
 

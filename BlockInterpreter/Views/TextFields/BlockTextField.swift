@@ -26,6 +26,6 @@ final class BlockTextField: UITextField {
         layer.cornerRadius = 10
         font = .blockTextField
         adjustsFontSizeToFitWidth = true
-        minimumFontSize = 0.1
+        minimumFontSize = 0.3
     }
 }

@@ -75,9 +75,10 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
-        workBlocksTableView.register(LoopBlockCell.self, forCellReuseIdentifier: LoopBlockCell.identifier)
         workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
+        workBlocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
+        workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         
@@ -193,10 +194,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             cell.configure(with: cellViewModel)
             return cell
             
-        case .loop:
+        case .loop(.whileLoop):
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: LoopBlockCell.identifier, for: indexPath) as? LoopBlockCell,
-                let cellViewModel = cellViewModel as? LoopBlockCellViewModel
+                let cell = tableView.dequeueReusableCell(withIdentifier: WhileLoopBlockCell.identifier, for: indexPath) as? WhileLoopBlockCell,
+                let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
             else { return .init() }
             
             cell.textField.textPublisher
@@ -204,6 +205,39 @@ extension WorkspaceViewController: UITableViewDataSource {
                 .sink { [weak cellViewModel] text in
                     guard let text = text else { return }
                     cellViewModel?.text = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.configure(with: cellViewModel)
+            return cell
+            
+        case .loop(.forLoop):
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: ForLoopBlockCell.identifier, for: indexPath) as? ForLoopBlockCell,
+                let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
+            else { return .init() }
+            
+            cell.initValueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.initValue = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.conditionValueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.conditionValue = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.stepValueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.stepValue = text
                 }
                 .store(in: &cell.subscriptions)
             

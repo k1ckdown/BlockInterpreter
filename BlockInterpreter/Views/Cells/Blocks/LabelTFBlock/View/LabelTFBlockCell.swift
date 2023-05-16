@@ -10,13 +10,13 @@ class LabelTFBlockCell: BlockCell {
     private enum Constants {
         
             enum Label {
-                static let insetLeading: CGFloat = 22
+                static let insetLeading: CGFloat = 19
             }
         
             enum TextField {
                 static let insetTrailing: CGFloat = 22
                 static let insetTopBottom: CGFloat = 12
-                static let multiplierWidth: CGFloat = 0.6
+                static let multiplierWidth: CGFloat = 0.63
             }
         
     }
