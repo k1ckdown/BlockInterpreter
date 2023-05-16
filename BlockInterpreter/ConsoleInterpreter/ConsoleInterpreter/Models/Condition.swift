@@ -17,6 +17,7 @@ enum ConditionType: String, CaseIterable {
 
 
 struct Condition: IBlock {
+    let isDebug: Bool
     let id: Int
     let type: ConditionType
     let value: String

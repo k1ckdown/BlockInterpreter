@@ -6,7 +6,8 @@ enum AllTypes {
     case ifBlock
     case elifBlock
     case elseBlock
-    case loop
+    case forLoop
+    case whileLoop
     case function
     case returnFunction
     case variable

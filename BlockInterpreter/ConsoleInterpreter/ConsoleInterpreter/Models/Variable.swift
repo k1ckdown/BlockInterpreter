@@ -16,4 +16,5 @@ struct Variable: IBlock {
     let type: VariableType
     let name: String
     let value: String
+    let isDebug: Bool
 }
