@@ -16,7 +16,18 @@ final class FlowBlockCellViewModel: BlockCellViewModel {
     
     init(flowType: FlowType, style: BlockCellStyle) {
         self.flowType = flowType
-        flowBlockStyle = flowType == .begin ? .begin : .end
+        
+        switch flowType {
+        case .begin:
+            flowBlockStyle = .begin
+        case .end:
+            flowBlockStyle = .end
+        case .continueCondition:
+            flowBlockStyle = .continueСondition
+        case .breakCondition:
+            flowBlockStyle = .breakCondition
+        }
+        
         super.init(type: .flow, style: style)
     }
     

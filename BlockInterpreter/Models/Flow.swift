@@ -1,10 +1,11 @@
 import Foundation
 
-
 enum FlowType: CaseIterable {
-    case begin, end
+    case begin
+    case end
+    case continueCondition
+    case breakCondition
 }
-
 
 struct Flow: IBlock {
     let type: FlowType
