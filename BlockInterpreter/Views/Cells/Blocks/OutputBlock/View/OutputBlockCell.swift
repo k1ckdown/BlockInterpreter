@@ -28,6 +28,10 @@ final class OutputBlockCell: LabelTFBlockCell {
     
     func configure(with viewModel: OutputBlockCellViewModel) {
         super.configure(with: viewModel)
+        
+        labelTitle = viewModel.title
+        textFieldText = viewModel.outputValue
+        textFieldPlaceholder = viewModel.placeholder
     }
     
     private func setup() {

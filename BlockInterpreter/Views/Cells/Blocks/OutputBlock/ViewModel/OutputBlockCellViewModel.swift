@@ -5,15 +5,22 @@
 
 import Foundation
 
-final class OutputBlockCellViewModel: LabelTFBlockCellViewModel {
+final class OutputBlockCellViewModel: BlockCellViewModel {
+    
+    var outputValue: String?
+    
+    private(set) var title: String
+    private(set) var placeholder: String
     
     init(style: BlockCellStyle) {
-        super.init(title: "print", placeholder: "output", type: .output, style: style)
+        title = "PRINT"
+        placeholder = "output"
+        super.init(type: .output, style: style)
     }
     
     override func copyToWork() -> OutputBlockCellViewModel {
         let copy = OutputBlockCellViewModel(style: .work)
-        copy.text = text
+        copy.outputValue = outputValue
         
         return copy
     }

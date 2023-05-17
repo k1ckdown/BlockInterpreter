@@ -28,6 +28,10 @@ final class WhileLoopBlockCell: LabelTFBlockCell {
     
     func configure(with viewModel: WhileLoopBlockCellViewModel) {
         super.configure(with: viewModel)
+        
+        labelTitle = viewModel.title
+        textFieldText = viewModel.loopCondition
+        textFieldPlaceholder = viewModel.placeholder
     }
     
     private func setup() {

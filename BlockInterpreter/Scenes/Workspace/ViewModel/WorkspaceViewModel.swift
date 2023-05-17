@@ -49,12 +49,12 @@ extension WorkspaceViewModel  {
                 
             } else if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
                 blocks.append(Output(id: index,
-                                       value: outputBlockViewModel.text ?? ""))
+                                       value: outputBlockViewModel.outputValue ?? ""))
                 
             } else if let whileLoopViewModel = blockViewModel as? WhileLoopBlockCellViewModel {
                 blocks.append(Loop(id: index,
                                    type: .whileLoop,
-                                   value: whileLoopViewModel.text ?? ""))
+                                   value: whileLoopViewModel.loopCondition ?? ""))
                 
             } else if let forLoopViewModel = blockViewModel as? ForLoopBlockCellViewModel {
                 blocks.append(Loop(id: index,

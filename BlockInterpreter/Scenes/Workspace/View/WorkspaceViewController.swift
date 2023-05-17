@@ -131,7 +131,7 @@ extension WorkspaceViewController: UITableViewDataSource {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
                     guard let text = text else { return }
-                    cellViewModel?.text = text
+                    cellViewModel?.outputValue = text
                 }
                 .store(in: &cell.subscriptions)
             
@@ -205,7 +205,7 @@ extension WorkspaceViewController: UITableViewDataSource {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
                     guard let text = text else { return }
-                    cellViewModel?.text = text
+                    cellViewModel?.loopCondition = text
                 }
                 .store(in: &cell.subscriptions)
             

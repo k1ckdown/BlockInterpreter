@@ -72,7 +72,6 @@
 		49B67C5E2A0FEF6B00B70F25 /* WhileLoopBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C5D2A0FEF6B00B70F25 /* WhileLoopBlockCell.swift */; };
 		49B67C602A0FF24B00B70F25 /* WhileLoopBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C5F2A0FF24B00B70F25 /* WhileLoopBlockCellViewModel.swift */; };
 		49B67C652A0FFA4800B70F25 /* LabelTFBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */; };
-		49B67C672A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */; };
 		49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */; };
 		49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */; };
 		49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */; };
@@ -177,7 +176,6 @@
 		49B67C5D2A0FEF6B00B70F25 /* WhileLoopBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileLoopBlockCell.swift; sourceTree = "<group>"; };
 		49B67C5F2A0FF24B00B70F25 /* WhileLoopBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileLoopBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTFBlockCell.swift; sourceTree = "<group>"; };
-		49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTFBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49C661BF2A02DA4200439E2A /* VariableBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCell.swift; sourceTree = "<group>"; };
 		49C661C22A02DAA200439E2A /* VariableBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49D8A2B329FEB9B400DF5B8E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -617,26 +615,9 @@
 		49B67C612A0FF9F900B70F25 /* LabelTFBlock */ = {
 			isa = PBXGroup;
 			children = (
-				49B67C622A0FFA2E00B70F25 /* View */,
-				49B67C632A0FFA3500B70F25 /* ViewModel */,
-			);
-			path = LabelTFBlock;
-			sourceTree = "<group>";
-		};
-		49B67C622A0FFA2E00B70F25 /* View */ = {
-			isa = PBXGroup;
-			children = (
 				49B67C642A0FFA4800B70F25 /* LabelTFBlockCell.swift */,
 			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		49B67C632A0FFA3500B70F25 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				49B67C662A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift */,
-			);
-			path = ViewModel;
+			path = LabelTFBlock;
 			sourceTree = "<group>";
 		};
 		49C661B92A02D97A00439E2A /* Services */ = {
@@ -1068,7 +1049,6 @@
 				49D8A2B429FEB9B400DF5B8E /* AppCoordinator.swift in Sources */,
 				496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */,
 				49B67C572A0FC77E00B70F25 /* FlowBlockStyle.swift in Sources */,
-				49B67C672A0FFA5900B70F25 /* LabelTFBlockCellViewModel.swift in Sources */,
 				4916722F2A135BA900457A80 /* FunctionBlockCell.swift in Sources */,
 				491672372A13649C00457A80 /* BlockTitleLabel.swift in Sources */,
 				4952B0B52A12308E00F7FEFC /* ForLoopBlockCellViewModel.swift in Sources */,

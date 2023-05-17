@@ -21,6 +21,24 @@ class LabelTFBlockCell: BlockCell {
         
     }
     
+    var labelTitle: String? {
+        didSet {
+            label.text = labelTitle
+        }
+    }
+    
+    var textFieldText: String? {
+        didSet {
+            textField.text = textFieldText
+        }
+    }
+    
+    var textFieldPlaceholder: String? {
+        didSet {
+            textField.placeholder = textFieldPlaceholder
+        }
+    }
+    
     private let label = BlockTitleLabel()
     private(set) var textField = BlockTextField()
     
@@ -36,14 +54,6 @@ class LabelTFBlockCell: BlockCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         textField.text = nil
-    }
-    
-    func configure(with viewModel: LabelTFBlockCellViewModel) {
-        super.configure(with: viewModel)
-        
-        label.text = viewModel.title
-        textField.text = viewModel.text
-        textField.placeholder = viewModel.placeholder
     }
     
     private func setup() {

@@ -47,10 +47,7 @@ final class MainTabBarCoordinator: BaseCoordinator {
             coordinator = SettingsCoordinator(navigationController: navController)
         }
         
-        coordinator.parentCoordinator = parentCoordinator
-        parentCoordinator?.childCoordinators.append(coordinator)
-        coordinator.start()
-        
+        coordinate(to: coordinator)
         navController.tabBarItem = UITabBarItem(title: tabType.title,
                                                 image: tabType.image,
                                                 tag: tabType.orderNumber)
