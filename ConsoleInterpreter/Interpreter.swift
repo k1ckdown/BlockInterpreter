@@ -801,17 +801,16 @@ class Interpreter {
  
     private func getInitializationComponents(_ component: String) -> (name: String, value: String) {
         var isContain = 0
-        if ["string","int"].contains(component) {
+        if component.contains("int") || component.contains("string") {
             isContain = 1
         }
         let variable = component.split(whereSeparator: { $0 == " " }).map{ $0.trimmingCharacters(in: .whitespaces) }
-
         if variable.count != 3 + isContain || variable[1 + isContain] != "=" {
             fatalError("Invalid syntax")
         }
         let variableName = variable[isContain]
         let variableValue = variable[2 + isContain]
-
+        print(variableName, variableValue)
         return (variableName, variableValue)
     }
 
@@ -1173,8 +1172,8 @@ class Tree {
  
 var array: [IBlock] = []
 
-array.append(Variable(id: 0, type: .int, name: "b", value: "0"))
-array.append(Variable(id: 1, type: .String, name: "a", value: "13"))
+array.append(Variable(id: 0, type: .int, name: "b", value: "10"))
+array.append(Variable(id: 1, type: .int, name: "a", value: "15"))
 
 array.append(Loop(id: 3, type: .forLoop, value: "i = 0; i > -9; i = i - 1"))
 array.append(BlockDelimiter(type: .begin))
@@ -1184,7 +1183,7 @@ array.append(BlockDelimiter(type: .begin))
 array.append(Variable(id: 8, type: .int, name: "b", value: "b + 100"))
 array.append(Variable(id: 9, type: .int, name: "a", value: "a - 10"))
 
-array.append(Output(id: 10, value: "a"))
+array.append(Output(id: 10, value: "( a + 10000 ) * 3"))
 array.append(BlockDelimiter(type: .end))
 
 
