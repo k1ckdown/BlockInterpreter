@@ -6,13 +6,17 @@ enum AllTypes {
     case ifBlock
     case elifBlock
     case elseBlock
-    case loop
+    case forLoop
+    case whileLoop
     case function
     case returnFunction
     case variable
     case arithmetic
     case print
     case root
+    case breakBlock
+    case continueBlock
+    case cin
 }
 
 

@@ -11,4 +11,5 @@ struct Loop: IBlock {
     let id: Int
     let type: LoopType
     let value: String
+    let isDebug: Bool
 }

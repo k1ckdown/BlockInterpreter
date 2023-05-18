@@ -26,27 +26,67 @@ class Tree {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
+            case let readBlock as ReadingData:
+                let readingNode = buildReadingNode(reading: readBlock)
+                rootNode.addChild(readingNode)
+                index += 1
             case is Loop:
                 if let loopNode = buildNode(getBlockAndMoveIndex(),
-                        type: AllTypes.loop) {
+                        type: determineLoopBlock(block) ?? AllTypes.forLoop) {
                     rootNode.addChild(loopNode)
                 }
+
             case is Condition:
                 if let conditionNode = buildNode(getBlockAndMoveIndex(),
                         type: determineConditionBlock(block) ?? AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
+            case is BlockDelimiter:
+                index += 1
             case is Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
                         type: AllTypes.function) {
                     rootNode.addChild(functionNode)
                 }
-            case is BlockDelimiter:
+            case is Break:
+                if let breakNode = buildBreak(block) {
+                    rootNode.addChild(breakNode)
+                }
+                index += 1
+            case is Continue:
+                if let continueNode = buildContinue(block) {
+                    rootNode.addChild(continueNode)
+                }
                 index += 1
             default:
                 index += 1
+
             }
         }
+    }
+
+    private func buildReadingNode(reading: ReadingData) -> Node {
+        let node = Node(value: reading.value, type: AllTypes.cin,
+                id: reading.id, isDebug: reading.isDebug)
+        return node
+    }
+
+    private func buildBreak(_ block: IBlock) -> Node? {
+        if let breakBlock = block as? Break {
+            let node = Node(value: breakBlock.value, type: AllTypes.breakBlock,
+                    id: breakBlock.id, isDebug: breakBlock.isDebug)
+            return node
+        }
+        return nil
+    }
+
+    private func buildContinue(_ block: IBlock) -> Node? {
+        if let continueBlock = block as? Continue {
+            let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
+                    id: continueBlock.id, isDebug: continueBlock.isDebug)
+            return node
+        }
+        return nil
     }
 
     private func getMatchingDelimiterIndex() -> Int? {
@@ -94,7 +134,7 @@ class Tree {
 
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
-                id: variable.id)
+                id: variable.id, isDebug: variable.isDebug)
         let nameVariable = Node(value: variable.name, type: AllTypes.variable,
                 id: variable.id)
         let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
@@ -107,8 +147,19 @@ class Tree {
 
     private func buildPrintingNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
-                id: printing.id)
+                id: printing.id, isDebug: printing.isDebug)
         return node
+    }
+
+    private func determineLoopBlock(_ block: IBlock) -> AllTypes? {
+        if let loop = block as? Loop {
+            if loop.type == LoopType.forLoop {
+                return AllTypes.forLoop
+            } else if loop.type == LoopType.whileLoop {
+                return AllTypes.whileLoop
+            }
+        }
+        return nil
     }
 
     private func determineConditionBlock(_ block: IBlock) -> AllTypes? {
@@ -124,42 +175,51 @@ class Tree {
         return nil
     }
 
+    private func buildFirstNode(_ type: AllTypes,
+                                _ firstBlock: IBlock) -> Node? {
+        var node: Node?
+        if type == AllTypes.ifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: AllTypes.ifBlock,
+                    id: condition.id, isDebug: condition.isDebug)
+        } else if type == AllTypes.elifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: AllTypes.elifBlock,
+                    id: condition.id, isDebug: condition.isDebug)
+        } else if type == AllTypes.elseBlock {
+            guard let condtion = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condtion.value, type: AllTypes.elseBlock,
+                    id: condtion.id, isDebug: condtion.isDebug)
+        }
+        else if type == AllTypes.forLoop || type == AllTypes.whileLoop {
+            guard let loop = firstBlock as? Loop else {
+                return nil
+            }
+            node = Node(value: loop.value, type: type,
+                    id: loop.id, isDebug: loop.isDebug)
+        } else if type == AllTypes.function {
+            guard let function = firstBlock as? Function else {
+                return nil
+            }
+            node = Node(value: function.value, type: type,
+                    id: function.id, isDebug: function.isDebug)
+        }
+        return node
+    }
+
 
     private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
             return nil
         }
 
-        var node: Node?
-
-        if type == AllTypes.ifBlock {
-            guard let condition = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condition.value, type: AllTypes.ifBlock, id: condition.id)
-        } else if type == AllTypes.elifBlock {
-            guard let condition = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condition.value, type: AllTypes.elifBlock, id: condition.id)
-        } else if type == AllTypes.elseBlock {
-            guard let condtion = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condtion.value, type: AllTypes.elseBlock, id: condtion.id)
-        }
-        else if type == AllTypes.loop {
-            guard let loop = firstBlock as? Loop else {
-                return nil
-            }
-            node = Node(value: loop.value, type: type, id: loop.id)
-        } else if type == AllTypes.function {
-            guard let function = firstBlock as? Function else {
-                return nil
-            }
-            node = Node(value: function.value, type: type, id: function.id)
-        }
-
+        let node = buildFirstNode(type, firstBlock)
         var index = 1
 
         while index < block.count {
@@ -172,10 +232,26 @@ class Tree {
             } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
+            } else if let readingDataBlock = block[index] as? ReadingData {
+                let readingDataNode = Node(value: readingDataBlock.value,
+                        type: .cin, id: readingDataBlock.id,
+                        isDebug: readingDataBlock.isDebug)
+                node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
-                        type: .returnFunction, id: returnBlock.id)
+                        type: .returnFunction, id: returnBlock.id,
+                        isDebug: returnBlock.isDebug)
                 node?.addChild(returnNode)
+            } else if let continueBlock = block[index] as? Continue {
+                let continueNode = Node(value: continueBlock.value,
+                        type: .continueBlock, id: continueBlock.id,
+                        isDebug: continueBlock.isDebug)
+                node?.addChild(continueNode)
+            } else if let breakBlock = block[index] as? Break {
+                let breakNode = Node(value: breakBlock.value,
+                        type: .breakBlock, id: breakBlock.id,
+                        isDebug: breakBlock.isDebug)
+                node?.addChild(breakNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
@@ -213,9 +289,11 @@ class Tree {
                     nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildNode(nestedBlocks, type: .loop) {
-                    node?.addChild(nestedNode)
-                }
+                if let typeLoop = determineLoopBlock(nestedLoopBlock) {
+                    if let nestedNode = buildNode(nestedBlocks, type: typeLoop) {
+                        node?.addChild(nestedNode)
+                    }
+               }
                 index = additionIndex
             } else if let nestedFunctionBlock = block[index] as? Function {
                 var nestedBlocks: [IBlock] = []

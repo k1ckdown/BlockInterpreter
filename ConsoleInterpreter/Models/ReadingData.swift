@@ -1,8 +1,8 @@
-
 import Foundation
 
 
-struct Function: IBlock {
+struct ReadingData: IBlock {
+    let isDebug: Bool
     let id: Int
     let value: String
 }
