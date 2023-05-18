@@ -175,14 +175,9 @@ class Tree {
         return nil
     }
 
-
-    private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
-        guard let firstBlock = block.first else {
-            return nil
-        }
-
+    private func buildFirstNode(_ type: AllTypes,
+                                _ firstBlock: IBlock) -> Node? {
         var node: Node?
-
         if type == AllTypes.ifBlock {
             guard let condition = firstBlock as? Condition else {
                 return nil
@@ -215,7 +210,16 @@ class Tree {
             node = Node(value: function.value, type: type,
                     id: function.id, isDebug: function.isDebug)
         }
+        return node
+    }
 
+
+    private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
+        guard let firstBlock = block.first else {
+            return nil
+        }
+
+        let node = buildFirstNode(type, firstBlock)
         var index = 1
 
         while index < block.count {
