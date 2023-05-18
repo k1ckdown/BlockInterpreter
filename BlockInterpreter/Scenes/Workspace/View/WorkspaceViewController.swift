@@ -29,6 +29,9 @@ final class WorkspaceViewController: UIViewController {
     private let viewModel: WorkspaceViewModelType
     private var subscriptions = Set<AnyCancellable>()
     
+    private let workBlocksTapGesture = UITapGestureRecognizer()
+    private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
+    
     init(with viewModel: WorkspaceViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -43,6 +46,25 @@ final class WorkspaceViewController: UIViewController {
 
         setupUI()
         setupBindings()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        stopBlocksWiggle()
+    }
+    
+    private func startBlocksWiggle() {
+        workBlocksTableView.visibleCells.forEach {
+            guard let cell = $0 as? BlockCell else { return }
+            cell.isWiggleMode = true
+        }
+    }
+    
+    private func stopBlocksWiggle() {
+        workBlocksTableView.visibleCells.forEach {
+            guard let cell = $0 as? BlockCell else { return }
+            cell.isWiggleMode = false
+        }
     }
     
     private func move(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
@@ -72,6 +94,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.dropDelegate = self
         workBlocksTableView.separatorStyle = .none
         workBlocksTableView.backgroundColor = .clear
+        workBlocksTableView.contentInset.top = 10
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
@@ -82,6 +105,9 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
+        
+        workBlocksTableView.addGestureRecognizer(workBlocksTapGesture)
+        workBlocksTableView.addGestureRecognizer(workBlocksLongPressGesture)
         
         workBlocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(Constants.WorkBlocksTableView.insetTop)
@@ -111,11 +137,11 @@ final class WorkspaceViewController: UIViewController {
 
 extension WorkspaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellViewModels.value.count
+        return viewModel.cellViewModels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellViewModel = viewModel.cellViewModels.value[indexPath.row]
+        let cellViewModel = viewModel.cellViewModels[indexPath.row]
         
         switch cellViewModel.type {
         case .output:
@@ -135,6 +161,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -143,6 +175,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FlowBlockCell.identifier, for: indexPath) as? FlowBlockCell,
                 let cellViewModel = cellViewModel as? FlowBlockCellViewModel
             else { return .init() }
+            
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
             
             cell.configure(with: cellViewModel)
             return cell
@@ -172,6 +210,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -192,6 +236,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -206,6 +256,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 .sink { [weak cellViewModel] text in
                     guard let text = text else { return }
                     cellViewModel?.loopCondition = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
                 }
                 .store(in: &cell.subscriptions)
             
@@ -242,6 +298,12 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
             
@@ -267,17 +329,15 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &subscriptions)
             
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
             cell.configure(with: cellViewModel)
             return cell
         }
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-
     }
     
 }
@@ -286,7 +346,6 @@ extension WorkspaceViewController: UITableViewDataSource {
 
 extension WorkspaceViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected work cell")
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -301,6 +360,7 @@ extension WorkspaceViewController: UITableViewDragDelegate {
   func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
       let item = UIDragItem(itemProvider: NSItemProvider())
       item.localObject = indexPath
+      startBlocksWiggle()
       
       return [item]
   }
@@ -327,36 +387,35 @@ extension WorkspaceViewController: UITableViewDropDelegate {
     dropSessionDidUpdate session: UIDropSession,
     withDestinationIndexPath destinationIndexPath: IndexPath?
   ) -> UITableViewDropProposal {
+      guard
+          let item = session.items.first,
+          let fromIndexPath = item.localObject as? IndexPath,
+          let toIndexPath = destinationIndexPath
+      else { return UITableViewDropProposal(operation: .forbidden) }
+        
+      if fromIndexPath.section == toIndexPath.section {
+        return .init(operation: .move, intent: .automatic)
+      }
       
-    guard
-        let item = session.items.first,
-        let fromIndexPath = item.localObject as? IndexPath,
-        let toIndexPath = destinationIndexPath
-    else { return UITableViewDropProposal(operation: .forbidden) }
-      
-    if fromIndexPath.section == toIndexPath.section {
-      return .init(operation: .move, intent: .automatic)
-    }
-      
-    return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+      return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
   }
 
   func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
-    guard
-      let item = coordinator.session.items.first,
-      let sourceIndexPath = item.localObject as? IndexPath,
-      let destinationIndexPath = coordinator.destinationIndexPath
-    else { return }
+      guard
+        let item = coordinator.session.items.first,
+        let sourceIndexPath = item.localObject as? IndexPath,
+        let destinationIndexPath = coordinator.destinationIndexPath
+      else { return }
 
-    switch coordinator.proposal.intent {
-      case .insertAtDestinationIndexPath:
-        move(from: sourceIndexPath, to: destinationIndexPath)
-        coordinator.drop(item, toRowAt: destinationIndexPath)
+      switch coordinator.proposal.intent {
+        case .insertAtDestinationIndexPath:
+          move(from: sourceIndexPath, to: destinationIndexPath)
+          coordinator.drop(item, toRowAt: destinationIndexPath)
 
-      case .insertIntoDestinationIndexPath:
-        coordinator.drop(item, toRowAt: sourceIndexPath)
-      default: break
-    }
+        case .insertIntoDestinationIndexPath:
+          coordinator.drop(item, toRowAt: sourceIndexPath)
+        default: break
+      }
   }
     
     func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
@@ -370,6 +429,10 @@ extension WorkspaceViewController: UITableViewDropDelegate {
         return preview
     }
     
+    func tableView(_ tableView: UITableView, dropSessionDidEnd session: UIDropSession) {
+        startBlocksWiggle()
+    }
+    
 }
 
 // MARK: - Reactive Behavior
@@ -377,12 +440,38 @@ extension WorkspaceViewController: UITableViewDropDelegate {
 private extension WorkspaceViewController {
     func setupBindings() {
         runButton.tapPublisher
-            .sink { [weak self] in self?.viewModel.showConsole.send() }
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                stopBlocksWiggle()
+                viewModel.showConsole.send()
+            }
+            .store(in: &subscriptions)
+        
+        workBlocksTapGesture.tapPublisher
+            .sink { [weak self] _ in
+                self?.stopBlocksWiggle()
+            }
+            .store(in: &subscriptions)
+        
+        workBlocksLongPressGesture.longPressPublisher
+            .sink { [weak self] _ in
+                self?.startBlocksWiggle()
+            }
             .store(in: &subscriptions)
         
         viewModel.didUpdateBlocksTable
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in self?.workBlocksTableView.reloadData() }
+            .sink { [weak self] in
+                self?.workBlocksTableView.reloadData()
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.didDeleteRows
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.workBlocksTableView.deleteRows(at: $0, with: .fade)
+            }
             .store(in: &subscriptions)
     }
 }

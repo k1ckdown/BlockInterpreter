@@ -27,6 +27,7 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     
     override func copyToWork() -> BlockCellViewModel {
         let copy = VariableBlockCellViewModel(variableType: variableType, style: .work)
+        
         copy.variableName = variableName
         copy.variableValue = variableValue
         

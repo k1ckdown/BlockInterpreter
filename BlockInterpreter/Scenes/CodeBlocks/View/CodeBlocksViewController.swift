@@ -10,6 +10,7 @@ import CombineCocoa
 final class CodeBlocksViewController: UIViewController {
     
     private enum Constants {
+        
             enum BlocksTableView {
                 static let inset: CGFloat = 30
             }
@@ -19,6 +20,7 @@ final class CodeBlocksViewController: UIViewController {
                 static let cornerRadius: CGFloat = 10
                 static let multiplierWidth: Double = 0.6
             }
+        
     }
     
     private let blocksTableView = UITableView()
@@ -95,6 +97,7 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.dataSource = self
         blocksTableView.separatorStyle = .none
         blocksTableView.backgroundColor = .clear
+        blocksTableView.contentInset.bottom = 50
         blocksTableView.showsVerticalScrollIndicator = false
         
         blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)

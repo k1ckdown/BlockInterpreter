@@ -8,12 +8,15 @@ import Combine
 
 final class WorkspaceViewModel: WorkspaceViewModelType {
     
-    var showConsole = PassthroughSubject<Void, Never>()
     var didUpdateBlocksTable = PassthroughSubject<Void, Never>()
+    var didDeleteRows = PassthroughSubject<[IndexPath], Never>()
+    
+    var showConsole = PassthroughSubject<Void, Never>()
+    var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
     var addBlocks = PassthroughSubject<[BlockCellViewModel], Never>()
     var moveBlock = PassthroughSubject<(IndexPath, IndexPath), Never>()
     
-    var cellViewModels = CurrentValueSubject<[BlockCellViewModel], Never>([])
+    var cellViewModels = [BlockCellViewModel]()
     
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
@@ -31,7 +34,7 @@ extension WorkspaceViewModel  {
     private func getBlocks() -> [IBlock] {
         var blocks = [IBlock]()
         
-        for (index, blockViewModel) in cellViewModels.value.enumerated() {
+        for (index, blockViewModel) in cellViewModels.enumerated() {
             
             if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
                 blocks.append(Variable(id: index,
@@ -85,20 +88,29 @@ extension WorkspaceViewModel  {
         moveBlock
             .sink { [weak self] in
                 guard let self = self else { return }
-                cellViewModels.value.insert(cellViewModels.value.remove(at: $0.0.row), at: $0.1.row)
+                cellViewModels.insert(cellViewModels.remove(at: $0.0.row), at: $0.1.row)
             }
             .store(in: &subscriptions)
         
         addBlocks
             .map { $0.map { $0.copyToWork() } }
             .sink { [weak self] in
-                self?.cellViewModels.value.append(contentsOf: $0 )
+                guard let self = self else { return }
+                
+                cellViewModels.append(contentsOf: $0 )
+                didUpdateBlocksTable.send()
             }
             .store(in: &subscriptions)
         
-        cellViewModels
-            .sink { [weak self] _ in
-                self?.didUpdateBlocksTable.send()
+        removeBlock
+            .sink { [weak self] cellViewModel in
+                guard
+                    let self = self,
+                    let index = cellViewModels.firstIndex(where: { cellViewModel === $0 })
+                else { return }
+                
+                cellViewModels.remove(at: index)
+                didDeleteRows.send([IndexPath(row: index, section: 0)])
             }
             .store(in: &subscriptions)
     }
