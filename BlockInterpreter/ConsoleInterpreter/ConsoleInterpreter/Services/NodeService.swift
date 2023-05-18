@@ -42,4 +42,9 @@ class Node {
         children.append(child)
         child.parent = self
     }
+
+    func setCountWasHere(_ count: Int) {
+        countWasHere = count
+    }
 }
+

@@ -84,6 +84,7 @@ class Tree {
         if let continueBlock = block as? Continue {
             let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
                     id: continueBlock.id, isDebug: continueBlock.isDebug)
+            node.countWasHere
             return node
         }
         return nil
