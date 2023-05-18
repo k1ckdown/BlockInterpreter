@@ -37,6 +37,7 @@ extension WorkspaceViewModel  {
         for (index, blockViewModel) in cellViewModels.enumerated() {
             
             if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
+                print("Data from UI: name - \(variableBlockViewModel.variableName ?? "") value - \(variableBlockViewModel.variableValue ?? "")")
                 blocks.append(Variable(id: index,
                                        type: variableBlockViewModel.variableType ?? .int,
                                        name: variableBlockViewModel.variableName ?? "",

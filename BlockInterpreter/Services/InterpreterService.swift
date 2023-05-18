@@ -14,6 +14,8 @@ class Interpreter {
     func setTreeAST(_ treeAST: Node){
         printResult = ""
         self.treeAST = treeAST
+        assignmentVariableInstance = .init([:])
+        mapOfVariableStack.removeAll()
         let _ = traverseTree(treeAST)
     }
     
@@ -56,7 +58,7 @@ class Interpreter {
                 mapOfVariableStack.removeLast()
             }
         } 
-        print(mapOfVariableStack, "mapOfVariableStack")
+//        print(mapOfVariableStack, "mapOfVariableStack")
     }
 
     private func processPrintNode(_ node: Node){
@@ -211,7 +213,7 @@ class Interpreter {
             updateMapOfStackFromLastDictionary(lastDictionary)
         }
 
-        print("mapOfVariableStack = \(mapOfVariableStack)")
+//        print("mapOfVariableStack = \(mapOfVariableStack)")
     }
  
 
@@ -286,7 +288,7 @@ class Interpreter {
     private func getStepComponentsWithSign(_ component: String, _ sign: String) -> (name: String, value: String)? {
         var components = component.split(separator: sign.first!).map { $0.trimmingCharacters(in: .whitespaces) }
         components[1].removeFirst()
-        print("components = \(components)")
+//        print("components = \(components)")
         guard components.count == 2 else {
             return nil
         }

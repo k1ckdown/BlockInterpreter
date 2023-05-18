@@ -11,7 +11,9 @@ class Tree {
     }
 
     func setBlocks(_ blocks: [IBlock]) {
+        index = 0
         self.blocks = blocks
+        rootNode = Node(value: "", type: AllTypes.root, id: 0)
     }
 
     func buildTree() {
