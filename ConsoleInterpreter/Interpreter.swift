@@ -1,7 +1,6 @@
 import Foundation
 
 protocol IBlock {
-
 }
 
 struct BlockDelimiter: IBlock {
@@ -9,6 +8,7 @@ struct BlockDelimiter: IBlock {
 }
 
 struct Condition: IBlock {
+    let isDebug: Bool
     let id: Int
     let type: ConditionType
     let value: String
@@ -17,29 +17,50 @@ struct Condition: IBlock {
 struct Output: IBlock {
     let id: Int
     let value: String
+    let isDebug: Bool
 }
 
 struct Function: IBlock {
     let id: Int
     let value: String
+    let isDebug: Bool
 }
 
 struct Loop: IBlock {
     let id: Int
     let type: LoopType
     let value: String
+    let isDebug: Bool
 }
 
 struct Returning: IBlock {
     let id: Int
     let value: String
+    let isDebug: Bool
 }
+
+struct ReadingData: IBlock {
+    let isDebug: Bool
+    let id: Int
+    let value: String
+}
+
+enum VariableType: String {
+    case int
+    case double
+    case String
+    case bool
+    case another
+    case array
+}
+
 
 struct Variable: IBlock {
     let id: Int
     let type: VariableType
     let name: String
     let value: String
+    let isDebug: Bool
 }
 
 enum TokenType {
@@ -60,15 +81,6 @@ enum TokenType {
     case lessEqual
     case logicalAnd
     case logicalOr
-}
-
-enum VariableType: String {
-    case int
-    case double
-    case String
-    case bool
-    case another
-    case array
 }
 
 enum DelimiterType {
@@ -95,19 +107,32 @@ enum ConditionType: String, CaseIterable {
         }
     }
 }
-
+struct Break: IBlock {
+    let isDebug: Bool
+    let id: Int
+    let value: String
+}
+struct Continue: IBlock {
+    let id: Int
+    let value: String
+    let isDebug: Bool
+}
 enum AllTypes {
     case assign
     case ifBlock
     case elifBlock
     case elseBlock
-    case loop
+    case forLoop
+    case whileLoop
     case function
     case returnFunction
     case variable
     case arithmetic
     case print
     case root
+    case breakBlock
+    case continueBlock
+    case cin
 }
 
 class Token {
@@ -593,8 +618,10 @@ class Interpreter {
             processElifBlockNode(node)
         case .elseBlock:
             processElseBlockNode(node)
-        case .loop:
-            processLoopNode(node)
+        case .whileLoop:
+            processWhileLoopNode(node)
+        case .forLoop:
+            processForLoopNode(node)
         case .print:
             processPrintNode(node)
         default:
@@ -658,10 +685,10 @@ class Interpreter {
     private func processIfBlockNode(_ node: Node){
         
         let calculatedValue = calculateArithmetic(node.value)
-
         guard let value = Int(calculatedValue) else {
             fatalError("Invalid syntax")
         }
+        print("node.value = \(node.value)")
         if (value != 0 && node.getCountWasHere() == 0){
             handleIfBlockNode(node) 
             node.setCountWasHere(1)
@@ -675,13 +702,13 @@ class Interpreter {
 
         for child in node.children{
             let _ = traverseTree(child)
-            
 
             if child.type == .ifBlock {
                 mapOfVariableStack.append([:])
             }
 
             if let lastDictionary = mapOfVariableStack.last {
+                print("lastDictionary = \(lastDictionary)")
                 mapOfVariableStack.removeLast()
                 updateMapOfStackFromLastDictionary(lastDictionary)
             }
@@ -710,23 +737,57 @@ class Interpreter {
             handleIfBlockNode(node) 
         }
     }
+    private func processWhileLoopNode(_ node: Node){
 
-    private func processLoopNode(_ node: Node) {
+        let condition = node.value
+
+        if condition == "" {
+            fatalError("Invalid syntax")
+        }
+
+        print("condition = \(condition)")
+        mapOfVariableStack.append([:])
+        print("mapOfVariableStack = \(mapOfVariableStack)")
+        while Calculate(calculateArithmetic(condition)).compare() == 1 {
+            print(Calculate(calculateArithmetic(condition)).compare())
+            print("mapOfVariableStack = \(mapOfVariableStack)")
+            for child in node.children {
+                if child.type == .ifBlock {
+                    child.setCountWasHere(0)
+                    let _ = traverseTree(child)
+
+                } else{
+                    let _ = traverseTree(child)
+                }  
+            }
+            print("mapOfVariableStack = \(mapOfVariableStack)")
+        }
+        
+        if let lastDictionary = mapOfVariableStack.last {
+            mapOfVariableStack.removeLast()
+            updateMapOfStackFromLastDictionary(lastDictionary)
+        }
+
+        print("mapOfVariableStack = \(mapOfVariableStack)")
+    }
+
+    private func processForLoopNode(_ node: Node) {
         // "i = 0; i < 10; i = i + 1"
-        guard let components = getLoopComponents(node.value) else {
+        guard let components = getForLoopComponents(node.value) else {
             fatalError("Invalid syntax")
         }
         mapOfVariableStack.append([:])
         
         if components[0] != "" {
-            let variableComponents = getInitializationComponents(components[0])
+            let variableComponents = getForLoopInitializationComponents(components[0])
 
             let normalizedVariableValue = assignmentVariableInstance.normalize(
                 Variable(
                     id: 1,
                     type: .int,
                     name: "loopValue",
-                    value: variableComponents.value
+                    value: variableComponents.value,
+                    isDebug: false
                 )
             )
             mapOfVariableStack[mapOfVariableStack.count - 1][variableComponents.name] = normalizedVariableValue
@@ -772,17 +833,20 @@ class Interpreter {
  
 
     private func updateMapOfStackFromLastDictionary(_ lastDictionary: [String: String]){
-
-        for (key, value) in lastDictionary {
-            for index in (0..<mapOfVariableStack.count).reversed() {
-                var dictionary = mapOfVariableStack[index]
-                if dictionary[key] != nil {
-                    dictionary[key] = String(value)
-                    mapOfVariableStack[index][key] = value       
-                    break
-                } else if index == 0{
-                    mapOfVariableStack.append([:])
-                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
+        if mapOfVariableStack.count == 0 {
+            mapOfVariableStack.append(lastDictionary)
+        } else{
+            for (key, value) in lastDictionary {
+                for index in (0..<mapOfVariableStack.count).reversed() {
+                    var dictionary = mapOfVariableStack[index]
+                    if dictionary[key] != nil {
+                        dictionary[key] = String(value)
+                        mapOfVariableStack[index][key] = value       
+                        break
+                    } else if index == 0{
+                        mapOfVariableStack.append([:])
+                        mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
+                    }
                 }
             }
         }
@@ -791,7 +855,7 @@ class Interpreter {
 
 
 
-    private func getLoopComponents(_ value: String) -> [String]? {
+    private func getForLoopComponents(_ value: String) -> [String]? {
         let components = value.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
         guard components.count == 3 else {
             return nil
@@ -799,7 +863,7 @@ class Interpreter {
         return components
     }
  
-    private func getInitializationComponents(_ component: String) -> (name: String, value: String) {
+    private func getForLoopInitializationComponents(_ component: String) -> (name: String, value: String) {
         var isContain = 0
         if component.contains("int") || component.contains("string") {
             isContain = 1
@@ -838,6 +902,7 @@ class Interpreter {
         
         return (variableName, variableValue)
     }
+
     private func getStepComponentsWithSign(_ component: String, _ sign: String) -> (name: String, value: String)? {
         var components = component.split(separator: sign.first!).map { $0.trimmingCharacters(in: .whitespaces) }
         components[1].removeFirst()
@@ -850,6 +915,7 @@ class Interpreter {
         
         return (variableName, variableValue)
     }
+
     private func calculateArithmetic(_ expression: String) -> String {
         var lastDictionary: [String: String] = [:]
         for dictionary in mapOfVariableStack {
@@ -863,7 +929,8 @@ class Interpreter {
                 id: 1,
                 type: VariableType.int,
                 name: "temp",
-                value: String(intValue)
+                value: String(intValue),
+                isDebug: false
             )
         } else {
             if isCondition(expression) != false {
@@ -871,14 +938,16 @@ class Interpreter {
                     id: 1,
                     type: VariableType.int,
                     name: "temp",
-                    value: expression
+                    value: expression,
+                    isDebug: false
                 )
             } else {
                 variableForNormalize = Variable(
                     id: 1,
                     type: VariableType.String,
                     name: "temp",
-                    value: expression
+                    value: expression,
+                    isDebug: false
                 )
             }
         } 
@@ -935,27 +1004,67 @@ class Tree {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
+            case let readBlock as ReadingData:
+                let readingNode = buildReadingNode(reading: readBlock)
+                rootNode.addChild(readingNode)
+                index += 1
             case is Loop:
                 if let loopNode = buildNode(getBlockAndMoveIndex(),
-                        type: AllTypes.loop) {
+                        type: determineLoopBlock(block) ?? AllTypes.forLoop) {
                     rootNode.addChild(loopNode)
                 }
+
             case is Condition:
                 if let conditionNode = buildNode(getBlockAndMoveIndex(),
                         type: determineConditionBlock(block) ?? AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
+            case is BlockDelimiter:
+                index += 1
             case is Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
                         type: AllTypes.function) {
                     rootNode.addChild(functionNode)
                 }
-            case is BlockDelimiter:
+            case is Break:
+                if let breakNode = buildBreak(block) {
+                    rootNode.addChild(breakNode)
+                }
+                index += 1
+            case is Continue:
+                if let continueNode = buildContinue(block) {
+                    rootNode.addChild(continueNode)
+                }
                 index += 1
             default:
                 index += 1
+
             }
         }
+    }
+
+    private func buildReadingNode(reading: ReadingData) -> Node {
+        let node = Node(value: reading.value, type: AllTypes.cin,
+                id: reading.id, isDebug: reading.isDebug)
+        return node
+    }
+
+    private func buildBreak(_ block: IBlock) -> Node? {
+        if let breakBlock = block as? Break {
+            let node = Node(value: breakBlock.value, type: AllTypes.breakBlock,
+                    id: breakBlock.id, isDebug: breakBlock.isDebug)
+            return node
+        }
+        return nil
+    }
+
+    private func buildContinue(_ block: IBlock) -> Node? {
+        if let continueBlock = block as? Continue {
+            let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
+                    id: continueBlock.id, isDebug: continueBlock.isDebug)
+            return node
+        }
+        return nil
     }
 
     private func getMatchingDelimiterIndex() -> Int? {
@@ -1003,7 +1112,7 @@ class Tree {
 
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
-                id: variable.id)
+                id: variable.id, isDebug: variable.isDebug)
         let nameVariable = Node(value: variable.name, type: AllTypes.variable,
                 id: variable.id)
         let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
@@ -1016,8 +1125,19 @@ class Tree {
 
     private func buildPrintingNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
-                id: printing.id)
+                id: printing.id, isDebug: printing.isDebug)
         return node
+    }
+
+    private func determineLoopBlock(_ block: IBlock) -> AllTypes? {
+        if let loop = block as? Loop {
+            if loop.type == LoopType.forLoop {
+                return AllTypes.forLoop
+            } else if loop.type == LoopType.whileLoop {
+                return AllTypes.whileLoop
+            }
+        }
+        return nil
     }
 
     private func determineConditionBlock(_ block: IBlock) -> AllTypes? {
@@ -1033,42 +1153,51 @@ class Tree {
         return nil
     }
 
+    private func buildFirstNode(_ type: AllTypes,
+                                _ firstBlock: IBlock) -> Node? {
+        var node: Node?
+        if type == AllTypes.ifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: AllTypes.ifBlock,
+                    id: condition.id, isDebug: condition.isDebug)
+        } else if type == AllTypes.elifBlock {
+            guard let condition = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condition.value, type: AllTypes.elifBlock,
+                    id: condition.id, isDebug: condition.isDebug)
+        } else if type == AllTypes.elseBlock {
+            guard let condtion = firstBlock as? Condition else {
+                return nil
+            }
+            node = Node(value: condtion.value, type: AllTypes.elseBlock,
+                    id: condtion.id, isDebug: condtion.isDebug)
+        }
+        else if type == AllTypes.forLoop || type == AllTypes.whileLoop {
+            guard let loop = firstBlock as? Loop else {
+                return nil
+            }
+            node = Node(value: loop.value, type: type,
+                    id: loop.id, isDebug: loop.isDebug)
+        } else if type == AllTypes.function {
+            guard let function = firstBlock as? Function else {
+                return nil
+            }
+            node = Node(value: function.value, type: type,
+                    id: function.id, isDebug: function.isDebug)
+        }
+        return node
+    }
+
 
     private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
             return nil
         }
 
-        var node: Node?
-
-        if type == AllTypes.ifBlock {
-            guard let condition = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condition.value, type: AllTypes.ifBlock, id: condition.id)
-        } else if type == AllTypes.elifBlock {
-            guard let condition = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condition.value, type: AllTypes.elifBlock, id: condition.id)
-        } else if type == AllTypes.elseBlock {
-            guard let condtion = firstBlock as? Condition else {
-                return nil
-            }
-            node = Node(value: condtion.value, type: AllTypes.elseBlock, id: condtion.id)
-        }
-        else if type == AllTypes.loop {
-            guard let loop = firstBlock as? Loop else {
-                return nil
-            }
-            node = Node(value: loop.value, type: type, id: loop.id)
-        } else if type == AllTypes.function {
-            guard let function = firstBlock as? Function else {
-                return nil
-            }
-            node = Node(value: function.value, type: type, id: function.id)
-        }
-
+        let node = buildFirstNode(type, firstBlock)
         var index = 1
 
         while index < block.count {
@@ -1081,10 +1210,26 @@ class Tree {
             } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
+            } else if let readingDataBlock = block[index] as? ReadingData {
+                let readingDataNode = Node(value: readingDataBlock.value,
+                        type: .cin, id: readingDataBlock.id,
+                        isDebug: readingDataBlock.isDebug)
+                node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
-                        type: .returnFunction, id: returnBlock.id)
+                        type: .returnFunction, id: returnBlock.id,
+                        isDebug: returnBlock.isDebug)
                 node?.addChild(returnNode)
+            } else if let continueBlock = block[index] as? Continue {
+                let continueNode = Node(value: continueBlock.value,
+                        type: .continueBlock, id: continueBlock.id,
+                        isDebug: continueBlock.isDebug)
+                node?.addChild(continueNode)
+            } else if let breakBlock = block[index] as? Break {
+                let breakNode = Node(value: breakBlock.value,
+                        type: .breakBlock, id: breakBlock.id,
+                        isDebug: breakBlock.isDebug)
+                node?.addChild(breakNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
@@ -1122,9 +1267,11 @@ class Tree {
                     nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildNode(nestedBlocks, type: .loop) {
-                    node?.addChild(nestedNode)
-                }
+                if let typeLoop = determineLoopBlock(nestedLoopBlock) {
+                    if let nestedNode = buildNode(nestedBlocks, type: typeLoop) {
+                        node?.addChild(nestedNode)
+                    }
+               }
                 index = additionIndex
             } else if let nestedFunctionBlock = block[index] as? Function {
                 var nestedBlocks: [IBlock] = []
@@ -1152,6 +1299,7 @@ class Tree {
     }
 }
 
+
 // {
 //    b = 10
 //    a = 7 + b + 2 = 19
@@ -1172,18 +1320,18 @@ class Tree {
  
 var array: [IBlock] = []
 
-array.append(Variable(id: 0, type: .int, name: "b", value: "10"))
-array.append(Variable(id: 1, type: .int, name: "a", value: "15"))
+array.append(Variable(id: 0, type: .int, name: "b", value: "10", isDebug: false))
+array.append(Variable(id: 1, type: .int, name: "a", value: "15", isDebug: false))
 
-array.append(Loop(id: 3, type: .forLoop, value: "i = 0; i > -9; i = i - 1"))
+array.append(Loop(id: 3, type: .whileLoop, value: "a >= -34", isDebug: false))
 array.append(BlockDelimiter(type: .begin))
 
-array.append(Condition(id: 6,type: .ifBlock, value: "a >= -30"))
-array.append(BlockDelimiter(type: .begin))
-array.append(Variable(id: 8, type: .int, name: "b", value: "b + 100"))
-array.append(Variable(id: 9, type: .int, name: "a", value: "a - 10"))
+array.append(Condition(isDebug: false, id: 6, type: .ifBlock, value: "a >= -30"))
 
-array.append(Output(id: 10, value: "( a + 10000 ) * 3"))
+array.append(BlockDelimiter(type: .begin))
+array.append(Variable(id: 9, type: .int, name: "a", value: "a - 10", isDebug: false))
+array.append(Variable(id: 8, type: .int, name: "b", value: "b + 100", isDebug: false))
+array.append(Output(id: 10, value: "( a + 10000 ) * 3", isDebug: false))
 array.append(BlockDelimiter(type: .end))
 
 
