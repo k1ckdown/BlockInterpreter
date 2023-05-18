@@ -17,4 +17,12 @@ struct Variable: IBlock {
     let name: String
     let value: String
     let isDebug: Bool
+
+    init(id: Int, type: VariableType, name: String, value: String, isDebug: Bool = false) {
+        self.id = id
+        self.type = type
+        self.name = name
+        self.value = value
+        self.isDebug = isDebug
+    }
 }

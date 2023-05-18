@@ -1,7 +1,7 @@
 import Foundation
 
 
-enum AllTypes {
+enum AllTypes: Equatable {
     case assign
     case ifBlock
     case elifBlock
@@ -10,7 +10,7 @@ enum AllTypes {
     case whileLoop
     case function
     case returnFunction
-    case variable
+    case variable(type: VariableType)
     case arithmetic
     case print
     case root

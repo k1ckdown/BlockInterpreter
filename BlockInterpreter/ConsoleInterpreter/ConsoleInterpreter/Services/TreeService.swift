@@ -84,7 +84,6 @@ class Tree {
         if let continueBlock = block as? Continue {
             let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
                     id: continueBlock.id, isDebug: continueBlock.isDebug)
-            node.countWasHere
             return node
         }
         return nil
@@ -136,7 +135,7 @@ class Tree {
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
                 id: variable.id, isDebug: variable.isDebug)
-        let nameVariable = Node(value: variable.name, type: AllTypes.variable,
+        let nameVariable = Node(value: variable.name, type: .variable(type: variable.type),
                 id: variable.id)
         let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
                 id: variable.id)
@@ -179,37 +178,29 @@ class Tree {
     private func buildFirstNode(_ type: AllTypes,
                                 _ firstBlock: IBlock) -> Node? {
         var node: Node?
-        if type == AllTypes.ifBlock {
-            guard let condition = firstBlock as? Condition else {
+        if let condition = firstBlock as? Condition {
+            switch type {
+            case .ifBlock:
+                node = Node(value: condition.value, type: .ifBlock, id: condition.id, isDebug: condition.isDebug)
+            case .elifBlock:
+                node = Node(value: condition.value, type: .elifBlock, id: condition.id, isDebug: condition.isDebug)
+            case .elseBlock:
+                node = Node(value: condition.value, type: .elseBlock, id: condition.id, isDebug: condition.isDebug)
+            default:
                 return nil
             }
-            node = Node(value: condition.value, type: AllTypes.ifBlock,
-                    id: condition.id, isDebug: condition.isDebug)
-        } else if type == AllTypes.elifBlock {
-            guard let condition = firstBlock as? Condition else {
+        } else if let loop = firstBlock as? Loop {
+            if type == .forLoop || type == .whileLoop {
+                node = Node(value: loop.value, type: type, id: loop.id, isDebug: loop.isDebug)
+            } else {
                 return nil
             }
-            node = Node(value: condition.value, type: AllTypes.elifBlock,
-                    id: condition.id, isDebug: condition.isDebug)
-        } else if type == AllTypes.elseBlock {
-            guard let condtion = firstBlock as? Condition else {
+        } else if let function = firstBlock as? Function {
+            if type == .function {
+                node = Node(value: function.value, type: type, id: function.id, isDebug: function.isDebug)
+            } else {
                 return nil
             }
-            node = Node(value: condtion.value, type: AllTypes.elseBlock,
-                    id: condtion.id, isDebug: condtion.isDebug)
-        }
-        else if type == AllTypes.forLoop || type == AllTypes.whileLoop {
-            guard let loop = firstBlock as? Loop else {
-                return nil
-            }
-            node = Node(value: loop.value, type: type,
-                    id: loop.id, isDebug: loop.isDebug)
-        } else if type == AllTypes.function {
-            guard let function = firstBlock as? Function else {
-                return nil
-            }
-            node = Node(value: function.value, type: type,
-                    id: function.id, isDebug: function.isDebug)
         }
         return node
     }
