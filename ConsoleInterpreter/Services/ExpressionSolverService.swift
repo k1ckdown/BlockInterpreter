@@ -25,9 +25,10 @@ class ExpressionSolver{
                 self.solvedExpression = calculatedValue
             }
         } else {
-            calculate.setText(text: expression)
+            let updatedExpression = expression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
+            calculate.setText(text: updatedExpression)
             let calculatedValue = calculate.compare()
-
+            
             if type == .int {
                 self.solvedExpression =  String(calculatedValue)
             } else if type == .double {

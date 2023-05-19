@@ -10,8 +10,8 @@ enum AllTypes: Equatable {
     case whileLoop
     case function
     case returnFunction
-    case variable
-    case arithmetic(type: VariableType)
+    case variable(type: VariableType)
+    case arithmetic
     case print
     case root
     case breakBlock
@@ -36,9 +36,9 @@ enum AllTypes: Equatable {
             return true
         case (.returnFunction, .returnFunction):
             return true
-        case (.variable, .variable):
+        case (.variable(_), .variable(_)):
             return  true
-        case (.arithmetic(_), .arithmetic(_)):
+        case (.arithmetic, .arithmetic):
             return true
         case (.print, .print):
             return true

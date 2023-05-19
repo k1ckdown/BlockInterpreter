@@ -120,8 +120,8 @@ enum AllTypes: Equatable {
     case whileLoop
     case function
     case returnFunction
-    case variable
-    case arithmetic(type: VariableType)
+    case variable(type: VariableType)
+    case arithmetic
     case print
     case root
     case breakBlock
@@ -146,9 +146,9 @@ enum AllTypes: Equatable {
             return true
         case (.returnFunction, .returnFunction):
             return true
-        case (.variable, .variable):
+        case (.variable(_), .variable(_)):
             return  true
-        case (.arithmetic(_), .arithmetic(_)):
+        case (.arithmetic, .arithmetic):
             return true
         case (.print, .print):
             return true
@@ -745,9 +745,10 @@ class ExpressionSolver{
                 self.solvedExpression = calculatedValue
             }
         } else {
-            calculate.setText(text: expression)
+            let updatedExpression = expression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
+            calculate.setText(text: updatedExpression)
             let calculatedValue = calculate.compare()
-
+            
             if type == .int {
                 self.solvedExpression =  String(calculatedValue)
             } else if type == .double {
@@ -785,12 +786,8 @@ class Interpreter {
         return printResult
     }
     
-    func traverseTree(_ node: Node) -> String { 
+    func traverseTree(_ node: Node) -> String{ 
         switch node.type{
-        case .variable:
-            return processVariableNode(node)
-        case .arithmetic:
-            return processArithmeticNode(node)
         case .assign:
             processAssignNode(node)
         case .root:
@@ -810,7 +807,6 @@ class Interpreter {
         default:
             return ""
         }
-         
         return ""
     }
     
@@ -865,35 +861,84 @@ class Interpreter {
         return result
     }
 
-    private func processVariableNode(_ node: Node) -> String{
-        return node.value
+
+    private func processArithmeticNode(_ node: Node, _ type: VariableType) -> String {
+        let value = calculateArithmetic(node.value, type)
+        return value
     }
 
-    private func processArithmeticNode(_ node: Node) -> String {
-        switch node.type {
-        case .arithmetic(let type):
-            let value = calculateArithmetic(node.value, type)
-
-            if let intValue = Int(value) {
-                return String(intValue)
-            } else {
-                return value
+    private func processAssignNode(_ node: Node){ 
+        
+        let varName = node.children[0].value
+        let variableFromStack = getValueFromStack(varName)
+        var variableType: VariableType
+        if variableFromStack != nil {
+            variableType = getType(variableFromStack!)
+        } else {
+            switch node.children[0].type {
+            case .variable(let type):
+                variableType = type
+            default:
+                fatalError("Invalid syntax")
             }
-        default:
-            return node.value
         }
-    }
+         
+        let assignValue = processArithmeticNode(node.children[1], variableType)
 
-    private func processAssignNode(_ node: Node){
-
-        let varName = traverseTree(node.children[0])
-        let assignValue = traverseTree(node.children[1])
+        let isCorrectType = checkType(varName, assignValue)
+        if !isCorrectType {
+            fatalError("Invalid type")
+        }
         if var lastDictionary = mapOfVariableStack.last {
             lastDictionary[varName] = assignValue
             mapOfVariableStack[mapOfVariableStack.count - 1] = lastDictionary
         }
     }
 
+    private func checkType(_ name: String, _ value: String) -> Bool{ 
+        for dictionary in mapOfVariableStack{
+            if dictionary[name] != nil {
+                let type = getType(dictionary[name]!)
+                if type == .int {
+                    return Int(value) != nil
+                } else if type == .double {
+                    return Double(value) != nil
+                } else if type == .bool {
+                    return value == "true" || value == "false"
+                } else if type == .String {
+                    return value.contains("“") && value.contains("”")
+                } else if type == .array {
+                    return value.contains("[") && value.contains("]")
+                } else {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    private func getType(_ value: String) -> VariableType{
+        if Int(value) != nil {
+            return .int
+        } else if Double(value) != nil {
+            return .double
+        } else if value == "true" || value == "false" {
+            return .bool
+        } else if value.contains("“") && value.contains("”") {
+            return .String
+        } else if value.contains("[") && value.contains("]") {
+            return .array
+        } else {
+            return .another
+        }
+    }
+    private func getValueFromStack(_ name: String) -> String? {
+        for dictionary in mapOfVariableStack.reversed(){
+            if dictionary[name] != nil {
+                return dictionary[name]!
+            }
+        }
+        return nil
+    }
     private func processIfBlockNode(_ node: Node){ 
         
         let calculatedValue = calculateArithmetic(node.value, .bool)
@@ -1142,6 +1187,7 @@ class Interpreter {
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
 
         let mapElement = assignmentVariableInstance.normalize(expression)
+
         let calcValue = ExpressionSolver(mapElement, type).solvedExpression
 
         return calcValue
@@ -1299,9 +1345,9 @@ class Tree {
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
                 id: variable.id, isDebug: variable.isDebug)
-        let nameVariable = Node(value: variable.name, type: AllTypes.variable,
+        let nameVariable = Node(value: variable.name, type: .variable(type: variable.type),
                 id: variable.id)
-        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic(type: variable.type),
+        let valueVariable = Node(value: variable.value, type: AllTypes.arithmetic,
                 id: variable.id)
         node.addChild(nameVariable)
         node.addChild(valueVariable)
@@ -1342,37 +1388,29 @@ class Tree {
     private func buildFirstNode(_ type: AllTypes,
                                 _ firstBlock: IBlock) -> Node? {
         var node: Node?
-        if type == AllTypes.ifBlock {
-            guard let condition = firstBlock as? Condition else {
+        if let condition = firstBlock as? Condition {
+            switch type {
+            case .ifBlock:
+                node = Node(value: condition.value, type: .ifBlock, id: condition.id, isDebug: condition.isDebug)
+            case .elifBlock:
+                node = Node(value: condition.value, type: .elifBlock, id: condition.id, isDebug: condition.isDebug)
+            case .elseBlock:
+                node = Node(value: condition.value, type: .elseBlock, id: condition.id, isDebug: condition.isDebug)
+            default:
                 return nil
             }
-            node = Node(value: condition.value, type: AllTypes.ifBlock,
-                    id: condition.id, isDebug: condition.isDebug)
-        } else if type == AllTypes.elifBlock {
-            guard let condition = firstBlock as? Condition else {
+        } else if let loop = firstBlock as? Loop {
+            if type == .forLoop || type == .whileLoop {
+                node = Node(value: loop.value, type: type, id: loop.id, isDebug: loop.isDebug)
+            } else {
                 return nil
             }
-            node = Node(value: condition.value, type: AllTypes.elifBlock,
-                    id: condition.id, isDebug: condition.isDebug)
-        } else if type == AllTypes.elseBlock {
-            guard let condtion = firstBlock as? Condition else {
+        } else if let function = firstBlock as? Function {
+            if type == .function {
+                node = Node(value: function.value, type: type, id: function.id, isDebug: function.isDebug)
+            } else {
                 return nil
             }
-            node = Node(value: condtion.value, type: AllTypes.elseBlock,
-                    id: condtion.id, isDebug: condtion.isDebug)
-        }
-        else if type == AllTypes.forLoop || type == AllTypes.whileLoop {
-            guard let loop = firstBlock as? Loop else {
-                return nil
-            }
-            node = Node(value: loop.value, type: type,
-                    id: loop.id, isDebug: loop.isDebug)
-        } else if type == AllTypes.function {
-            guard let function = firstBlock as? Function else {
-                return nil
-            }
-            node = Node(value: function.value, type: type,
-                    id: function.id, isDebug: function.isDebug)
         }
         return node
     }
@@ -1492,13 +1530,12 @@ class Tree {
 var array: [IBlock] = []
 
 array.append(Variable(id: 0, type: .int, name: "b", value: "10", isDebug: false))
-array.append(Variable(id: 1, type: .String, name: "a", value: "“abc”", isDebug: false))
-// array.append(Variable(id: 9, type: .String, name: "a", value: "a + “abc”", isDebug: false))
+array.append(Variable(id: 1, type: .String, name: "a", value: "false", isDebug: false))
 
 array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 10; i += 3", isDebug: false))
 array.append(BlockDelimiter(type: .begin))
-// array.append(Variable(id: 9, type: .String, name: "a", value: "a + “abc”", isDebug: false))
-array.append(Output(id: 10, value: "a == “abc”", isDebug: false))
+array.append(Output(id: 10, value: "a", isDebug: false))
+array.append(Variable(id: 9, type: .String, name: "a", value: "a + true", isDebug: false))
 
 
 array.append(BlockDelimiter(type: .end))

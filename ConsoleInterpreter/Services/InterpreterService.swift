@@ -25,12 +25,8 @@ class Interpreter {
         return printResult
     }
     
-    func traverseTree(_ node: Node) -> String { 
+    func traverseTree(_ node: Node) -> String{ 
         switch node.type{
-        case .variable:
-            return processVariableNode(node)
-        case .arithmetic:
-            return processArithmeticNode(node)
         case .assign:
             processAssignNode(node)
         case .root:
@@ -50,7 +46,6 @@ class Interpreter {
         default:
             return ""
         }
-         
         return ""
     }
     
@@ -105,35 +100,84 @@ class Interpreter {
         return result
     }
 
-    private func processVariableNode(_ node: Node) -> String{
-        return node.value
+
+    private func processArithmeticNode(_ node: Node, _ type: VariableType) -> String {
+        let value = calculateArithmetic(node.value, type)
+        return value
     }
 
-    private func processArithmeticNode(_ node: Node) -> String {
-        switch node.type {
-        case .arithmetic(let type):
-            let value = calculateArithmetic(node.value, type)
-
-            if let intValue = Int(value) {
-                return String(intValue)
-            } else {
-                return value
+    private func processAssignNode(_ node: Node){ 
+        
+        let varName = node.children[0].value
+        let variableFromStack = getValueFromStack(varName)
+        var variableType: VariableType
+        if variableFromStack != nil {
+            variableType = getType(variableFromStack!)
+        } else {
+            switch node.children[0].type {
+            case .variable(let type):
+                variableType = type
+            default:
+                fatalError("Invalid syntax")
             }
-        default:
-            return node.value
         }
-    }
+         
+        let assignValue = processArithmeticNode(node.children[1], variableType)
 
-    private func processAssignNode(_ node: Node){
-
-        let varName = traverseTree(node.children[0])
-        let assignValue = traverseTree(node.children[1])
+        let isCorrectType = checkType(varName, assignValue)
+        if !isCorrectType {
+            fatalError("Invalid type")
+        }
         if var lastDictionary = mapOfVariableStack.last {
             lastDictionary[varName] = assignValue
             mapOfVariableStack[mapOfVariableStack.count - 1] = lastDictionary
         }
     }
 
+    private func checkType(_ name: String, _ value: String) -> Bool{ 
+        for dictionary in mapOfVariableStack{
+            if dictionary[name] != nil {
+                let type = getType(dictionary[name]!)
+                if type == .int {
+                    return Int(value) != nil
+                } else if type == .double {
+                    return Double(value) != nil
+                } else if type == .bool {
+                    return value == "true" || value == "false"
+                } else if type == .String {
+                    return value.contains("“") && value.contains("”")
+                } else if type == .array {
+                    return value.contains("[") && value.contains("]")
+                } else {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    private func getType(_ value: String) -> VariableType{
+        if Int(value) != nil {
+            return .int
+        } else if Double(value) != nil {
+            return .double
+        } else if value == "true" || value == "false" {
+            return .bool
+        } else if value.contains("“") && value.contains("”") {
+            return .String
+        } else if value.contains("[") && value.contains("]") {
+            return .array
+        } else {
+            return .another
+        }
+    }
+    private func getValueFromStack(_ name: String) -> String? {
+        for dictionary in mapOfVariableStack.reversed(){
+            if dictionary[name] != nil {
+                return dictionary[name]!
+            }
+        }
+        return nil
+    }
     private func processIfBlockNode(_ node: Node){ 
         
         let calculatedValue = calculateArithmetic(node.value, .bool)
@@ -382,6 +426,7 @@ class Interpreter {
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
 
         let mapElement = assignmentVariableInstance.normalize(expression)
+
         let calcValue = ExpressionSolver(mapElement, type).solvedExpression
 
         return calcValue
