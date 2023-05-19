@@ -1,12 +1,13 @@
 import Foundation
 
 
-enum AllTypes {
+enum AllTypes: Equatable {
     case assign
     case ifBlock
     case loop
     case function
-    case variable
+    case returnFunction
+    case variable(type: VariableType)
     case arithmetic
     case print
     case root
@@ -33,4 +34,9 @@ class Node {
         children.append(child)
         child.parent = self
     }
+
+    func setCountWasHere(_ count: Int) {
+        countWasHere = count
+    }
 }
+
