@@ -38,8 +38,7 @@ final class CodeBlocksViewController: UIViewController {
 
     private lazy var addBlockLabel: UILabel = {
         let label = UILabel()
-
-        label.text = "To workspace"
+        
         label.textColor = .appWhite
         label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         
@@ -76,8 +75,42 @@ final class CodeBlocksViewController: UIViewController {
         viewModel.viewDidLoad.send()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        hideOptionsMenu()
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
+    }
+    
+    private func hideOptionsMenu() {
+        UIView.animate(withDuration: 0.5) {
+            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height + self.optionsMenuToolbar.frame.height
+        }
+        
+    }
+    
+    private func showOptionsMenu() {
+        UIView.animate(withDuration: 0.5) {
+            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 40
+        }
+    }
+    
+    private func hideTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height + (frame.height)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.tabBarController?.tabBar.frame = frame
+        })
+    }
+
+    private func showTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height - (frame.height)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.tabBarController?.tabBar.frame = frame
+        })
     }
     
     private func setupUI() {
@@ -118,7 +151,6 @@ final class CodeBlocksViewController: UIViewController {
     private func setupOptionsMenuToolbar() {
         view.addSubview(optionsMenuToolbar)
         
-        optionsMenuToolbar.isHidden = true
         optionsMenuToolbar.barStyle = .black
         optionsMenuToolbar.layer.masksToBounds = true
         optionsMenuToolbar.layer.cornerRadius = Constants.OptionsMenuToolbar.cornerRadius
@@ -355,6 +387,13 @@ private extension CodeBlocksViewController {
             }
             .store(in: &subscriptions)
         
+        viewModel.didUpdateMenuTitle
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.addBlockLabel.text = $0
+            }
+            .store(in: &subscriptions)
+        
         viewModel.didUpdateTable
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -364,9 +403,16 @@ private extension CodeBlocksViewController {
         
         viewModel.isOptionsMenuVisible
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.optionsMenuToolbar.isHidden = !$0
-                self?.tabBarController?.tabBar.isHidden = $0
+            .sink { [weak self] isVisible in
+                guard let self = self else { return }
+                
+                if isVisible {
+                    hideTabBar()
+                    showOptionsMenu()
+                } else {
+                    showTabBar()
+                    hideOptionsMenu()
+                }
             }
             .store(in: &subscriptions)
     }

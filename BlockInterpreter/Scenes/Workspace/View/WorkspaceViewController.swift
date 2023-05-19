@@ -10,7 +10,9 @@ import Combine
 final class WorkspaceViewController: UIViewController {
     
     private enum Constants {
+        
             enum WorkBlocksTableView {
+                static let rowHeight: CGFloat = 70
                 static let insetTop: CGFloat = 10
                 static let insetSide: CGFloat = 20
             }
@@ -21,16 +23,17 @@ final class WorkspaceViewController: UIViewController {
                 static let insetRight: CGFloat = 40
                 static let insetBotton: CGFloat = 130
             }
+        
     }
     
     private let workBlocksTableView = UITableView()
     private let runButton = UIButton(type: .system)
     
-    private let viewModel: WorkspaceViewModelType
-    private var subscriptions = Set<AnyCancellable>()
-    
     private let workBlocksTapGesture = UITapGestureRecognizer()
     private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
+    
+    private let viewModel: WorkspaceViewModelType
+    private var subscriptions = Set<AnyCancellable>()
     
     init(with viewModel: WorkspaceViewModelType) {
         self.viewModel = viewModel
@@ -50,17 +53,22 @@ final class WorkspaceViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        stopBlocksWiggle()
     }
     
-    private func startBlocksWiggle() {
+    private func enableEditingMode() {
+        hideTabBar()
+        hideRunButton()
+        
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
             cell.isWiggleMode = true
         }
     }
     
-    private func stopBlocksWiggle() {
+    private func disableEditMode() {
+        showTabBar()
+        showRunButton()
+        
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
             cell.isWiggleMode = false
@@ -73,6 +81,34 @@ final class WorkspaceViewController: UIViewController {
       }) { [weak self] _ in
           self?.viewModel.moveBlock.send((sourceIndexPath, destinationIndexPath))
       }
+    }
+    
+    private func hideTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height + (frame.height)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBarController?.tabBar.frame = frame
+        }
+    }
+
+    private func showTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height - (frame.height)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBarController?.tabBar.frame = frame
+        }
+    }
+    
+    private func hideRunButton() {
+        UIView.transition(with: runButton, duration: 0.3) {
+            self.runButton.layer.opacity = 0
+        }
+    }
+    
+    private func showRunButton() {
+        UIView.transition(with: runButton, duration: 0.3) {
+            self.runButton.layer.opacity = 1
+        }
     }
     
     private func setupUI() {
@@ -88,13 +124,13 @@ final class WorkspaceViewController: UIViewController {
     private func setupWorkBlocksTableView() {
         view.addSubview(workBlocksTableView)
         
-        workBlocksTableView.delegate = self
         workBlocksTableView.dataSource = self
         workBlocksTableView.dragDelegate = self
         workBlocksTableView.dropDelegate = self
         workBlocksTableView.separatorStyle = .none
         workBlocksTableView.backgroundColor = .clear
-        workBlocksTableView.contentInset.top = 10
+        workBlocksTableView.rowHeight = 70
+        workBlocksTableView.contentInset.top = Constants.WorkBlocksTableView.insetTop
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
         
@@ -110,7 +146,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.addGestureRecognizer(workBlocksLongPressGesture)
         
         workBlocksTableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(Constants.WorkBlocksTableView.insetTop)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview().inset(Constants.WorkBlocksTableView.insetSide)
             make.bottom.equalToSuperview()
         }
@@ -342,17 +378,6 @@ extension WorkspaceViewController: UITableViewDataSource {
     
 }
 
-// MARK: - UITableViewDelegate
-
-extension WorkspaceViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
-    }
-}
-
 // MARK: - UITableViewDragDelegate
 
 extension WorkspaceViewController: UITableViewDragDelegate {
@@ -360,7 +385,7 @@ extension WorkspaceViewController: UITableViewDragDelegate {
   func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
       let item = UIDragItem(itemProvider: NSItemProvider())
       item.localObject = indexPath
-      startBlocksWiggle()
+      viewModel.isWiggleMode.send(true)
       
       return [item]
   }
@@ -429,10 +454,6 @@ extension WorkspaceViewController: UITableViewDropDelegate {
         return preview
     }
     
-    func tableView(_ tableView: UITableView, dropSessionDidEnd session: UIDropSession) {
-        startBlocksWiggle()
-    }
-    
 }
 
 // MARK: - Reactive Behavior
@@ -441,22 +462,27 @@ private extension WorkspaceViewController {
     func setupBindings() {
         runButton.tapPublisher
             .sink { [weak self] in
-                guard let self = self else { return }
-                
-                stopBlocksWiggle()
-                viewModel.showConsole.send()
+                self?.viewModel.showConsole.send()
             }
             .store(in: &subscriptions)
         
         workBlocksTapGesture.tapPublisher
             .sink { [weak self] _ in
-                self?.stopBlocksWiggle()
+                self?.viewModel.isWiggleMode.send(false)
             }
             .store(in: &subscriptions)
         
         workBlocksLongPressGesture.longPressPublisher
             .sink { [weak self] _ in
-                self?.startBlocksWiggle()
+                self?.viewModel.didBeginEditingBlocks.send()
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.isWiggleMode
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self = self else { return }
+                $0 == true ? enableEditingMode() : disableEditMode()
             }
             .store(in: &subscriptions)
         

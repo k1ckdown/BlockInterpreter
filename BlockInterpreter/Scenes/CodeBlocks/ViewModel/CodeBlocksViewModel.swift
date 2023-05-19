@@ -14,6 +14,7 @@ final class CodeBlocksViewModel: CodeBlocksViewModelType  {
     
     var isOptionsMenuVisible = CurrentValueSubject<Bool, Never>(false)
     var didUpdateTable = PassthroughSubject<Void, Never>()
+    var didUpdateMenuTitle = PassthroughSubject<String, Never>()
     
     var cellViewModels: [[BlockCellViewModel]]
     
@@ -98,6 +99,7 @@ extension CodeBlocksViewModel {
         
         selectedBlocks
             .sink { [weak self] in
+                self?.didUpdateMenuTitle.send("To workspace (\($0.count))")
                 self?.isOptionsMenuVisible.value = $0.count != 0
             }
             .store(in: &subscriptions)

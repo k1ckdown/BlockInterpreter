@@ -11,6 +11,7 @@ protocol CodeBlocksViewModelType {
     
     var isOptionsMenuVisible: CurrentValueSubject<Bool, Never> { get }
     var didUpdateTable: PassthroughSubject<Void, Never> { get }
+    var didUpdateMenuTitle: PassthroughSubject<String, Never> { get }
 
     var viewDidLoad: PassthroughSubject<Void, Never> { get }
     var moveToWorkspace: PassthroughSubject<Void, Never> { get }

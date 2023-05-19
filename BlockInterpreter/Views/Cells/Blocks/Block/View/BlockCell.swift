@@ -16,15 +16,23 @@ class BlockCell: UITableViewCell {
     
     var isWiggleMode: Bool = false {
         didSet {
-            applyWiggleModeAppearance()
+            updateWiggleModeAppearance()
         }
     }
     
     private enum Constants {
+        
             enum ContainerView {
-                static let borderWidth: CGFloat = 2.5
                 static let insetLeading: CGFloat = 8
+                static let borderWidth: CGFloat = 2.5
             }
+        
+            enum DeleteButton {
+                static let inset: CGFloat = 23
+                static let size: CGFloat = 27
+                static let cornerRadius: CGFloat = size / 2
+            }
+        
     }
     
     private(set) var deleteButton = UIButton()
@@ -41,7 +49,7 @@ class BlockCell: UITableViewCell {
         super.prepareForReuse()
         
         containerView.snp.removeConstraints()
-        containerView.layer.borderColor = .none
+        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
     }
     
     required init?(coder: NSCoder) {
@@ -53,7 +61,14 @@ class BlockCell: UITableViewCell {
     }
     
     private func updateAppearance() {
-        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
+        UIView.transition(
+            with: containerView,
+            duration: 0.4,
+            options: [.transitionFlipFromBottom]
+        ) {
+            self.containerView.layer.opacity = self.isSelectedState == true ? 0.77 : 1
+            self.containerView.layer.borderColor = self.isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
+        }
     }
     
     private func showDeleteButton() {
@@ -66,18 +81,21 @@ class BlockCell: UITableViewCell {
         containerView.layer.borderColor = UIColor.blockBorder?.cgColor
     }
     
-    private func applyWiggleModeAppearance() {
-        if isWiggleMode {
-            startWiggle()
-            showDeleteButton()
-        } else {
-            stopWiggle()
-            hideDeleteButton()
-        }
+    private func updateWiggleModeAppearance() {
+        isWiggleMode == true ? activateWiggleMode() : deactivateWiggleMode()
+    }
+    
+    private func activateWiggleMode() {
+        startWiggle()
+        showDeleteButton()
+    }
+    
+    private func deactivateWiggleMode() {
+        stopWiggle()
+        hideDeleteButton()
     }
     
     func configure(with viewModel: BlockCellViewModel) {
-        isSelectedState = viewModel.isSelect
         containerView.layer.cornerRadius = viewModel.style.cornerRadius
         
         containerView.snp.makeConstraints { make in
@@ -91,12 +109,14 @@ class BlockCell: UITableViewCell {
                 make.leading.equalToSuperview()
             }
         } else if viewModel.style == .work {
+            isWiggleMode = viewModel.isWiggleMode
             containerView.snp.makeConstraints { make in
                 make.leading.equalToSuperview().offset(Constants.ContainerView.insetLeading)
             }
-            
-            applyWiggleModeAppearance()
         }
+        
+        guard viewModel.isSelect != isSelectedState else { return }
+        isSelectedState = viewModel.isSelect
     }
     
     private func setup() {
@@ -113,25 +133,25 @@ class BlockCell: UITableViewCell {
         contentView.addSubview(containerView)
         
         containerView.backgroundColor = .clear
-        containerView.layer.borderColor = UIColor.clear.cgColor
+        containerView.layer.borderColor = UIColor.blockBorder?.cgColor
         containerView.layer.borderWidth = Constants.ContainerView.borderWidth
     }
     
     private func setupDeleteButton() {
         containerView.addSubview(deleteButton)
         
-        deleteButton.setTitle("-", for: .normal)
-        deleteButton.setTitleColor(.blockBorder, for: .normal)
-        deleteButton.backgroundColor = .darkGray
-        deleteButton.layer.cornerRadius = 12.5
+        deleteButton.setImage(UIImage(systemName: "minus"), for: .normal)
+        deleteButton.imageView?.tintColor = .appWhite
+        deleteButton.backgroundColor = .blockBorder
+        deleteButton.layer.cornerRadius = Constants.DeleteButton.cornerRadius
         deleteButton.isHidden = true
         
         contentView.sendSubviewToBack(containerView)
         
         deleteButton.snp.makeConstraints { make in
-            make.trailing.equalTo(containerView.snp.leading).offset(22)
-            make.bottom.equalTo(containerView.snp.top).offset(22)
-            make.width.height.equalTo(25)
+            make.trailing.equalTo(containerView.snp.leading).offset(Constants.DeleteButton.inset)
+            make.bottom.equalTo(containerView.snp.top).offset(Constants.DeleteButton.inset)
+            make.width.height.equalTo(Constants.DeleteButton.size)
         }
     }
     

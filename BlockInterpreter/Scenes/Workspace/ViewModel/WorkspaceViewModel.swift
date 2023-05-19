@@ -8,10 +8,14 @@ import Combine
 
 final class WorkspaceViewModel: WorkspaceViewModelType {
     
-    var didUpdateBlocksTable = PassthroughSubject<Void, Never>()
+    var didEnableEditingMode = PassthroughSubject<Void, Never>()
     var didDeleteRows = PassthroughSubject<[IndexPath], Never>()
+    var didUpdateBlocksTable = PassthroughSubject<Void, Never>()
+    var didFinishEditingBlocks = PassthroughSubject<Void, Never>()
     
     var showConsole = PassthroughSubject<Void, Never>()
+    var isWiggleMode = CurrentValueSubject<Bool, Never>(false)
+    var didBeginEditingBlocks = PassthroughSubject<Void, Never>()
     var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
     var addBlocks = PassthroughSubject<[BlockCellViewModel], Never>()
     var moveBlock = PassthroughSubject<(IndexPath, IndexPath), Never>()
@@ -35,9 +39,7 @@ extension WorkspaceViewModel  {
         var blocks = [IBlock]()
         
         for (index, blockViewModel) in cellViewModels.enumerated() {
-            
             if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
-                print("Data from UI: name - \(variableBlockViewModel.variableName ?? "") value - \(variableBlockViewModel.variableValue ?? "")")
                 blocks.append(Variable(id: index,
                                        type: variableBlockViewModel.variableType ?? .int,
                                        name: variableBlockViewModel.variableName ?? "",
@@ -112,6 +114,25 @@ extension WorkspaceViewModel  {
                 
                 cellViewModels.remove(at: index)
                 didDeleteRows.send([IndexPath(row: index, section: 0)])
+                
+                if cellViewModels.count == 0 {
+                    isWiggleMode.send(false)
+                }
+            }
+            .store(in: &subscriptions)
+        
+        isWiggleMode
+            .sink { [weak self] value in
+                self?.cellViewModels.forEach { $0.isWiggleMode = value }
+            }
+            .store(in: &subscriptions)
+        
+        didBeginEditingBlocks
+            .sink { [weak self] in
+                guard let self = self else { return }
+                guard cellViewModels.isEmpty == false else { return }
+                
+                isWiggleMode.send(true)
             }
             .store(in: &subscriptions)
     }

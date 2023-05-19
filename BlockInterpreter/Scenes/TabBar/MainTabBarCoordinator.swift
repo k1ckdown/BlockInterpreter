@@ -22,6 +22,8 @@ final class MainTabBarCoordinator: BaseCoordinator {
         navigationController.navigationBar.isHidden = true
         mainTabBarController.setViewControllers(viewControllers, animated: true)
         navigationController.setViewControllers([mainTabBarController], animated: true)
+        
+        selectTab(with: .workspace)
     }
     
     private func selectTab(with type: TabType) {

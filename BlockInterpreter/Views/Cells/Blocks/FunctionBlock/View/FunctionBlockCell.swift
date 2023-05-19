@@ -154,7 +154,7 @@ final class FunctionBlockCell: BlockCell {
         
         arrowImageView.snp.makeConstraints { make in
             make.leading.equalTo(closeBracketLabel.snp.trailing).offset(Constants.ArrowImageView.insetLeading)
-            make.height.equalToSuperview()
+            make.top.bottom.equalToSuperview()
         }
     }
     
