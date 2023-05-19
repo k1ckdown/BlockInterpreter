@@ -1,7 +1,7 @@
 import Foundation
 
 
-enum AllTypes {
+enum AllTypes: Equatable {
     case assign
     case ifBlock
     case elifBlock
@@ -11,12 +11,49 @@ enum AllTypes {
     case function
     case returnFunction
     case variable
-    case arithmetic
+    case arithmetic(type: VariableType)
     case print
     case root
     case breakBlock
     case continueBlock
     case cin
+
+    static func ==(lhs: AllTypes, rhs: AllTypes) -> Bool {
+        switch (lhs, rhs) {
+        case (.assign, .assign):
+            return true
+        case (.ifBlock, .ifBlock):
+            return true
+        case (.elifBlock, .elifBlock):
+            return true
+        case (.elseBlock, .elseBlock):
+            return true
+        case (.forLoop, .forLoop):
+            return true
+        case (.whileLoop, .whileLoop):
+            return true
+        case (.function, .function):
+            return true
+        case (.returnFunction, .returnFunction):
+            return true
+        case (.variable, .variable):
+            return  true
+        case (.arithmetic(_), .arithmetic(_)):
+            return true
+        case (.print, .print):
+            return true
+        case (.root, .root):
+            return true
+        case (.breakBlock, .breakBlock):
+            return true
+        case (.continueBlock, .continueBlock):
+            return true
+        case (.cin, .cin):
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 

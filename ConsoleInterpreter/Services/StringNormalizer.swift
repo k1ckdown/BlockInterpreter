@@ -11,43 +11,14 @@ class StringNormalizer {
     public func setMapOfVariable(_ mapOfVariable: [String: String]) {
         self.variableMap.merge(mapOfVariable){(_, new) in new}
     }
+
  
-    public func normalize(_ variable: Variable) -> String {
-        if variable.type == .int {
-            return normalizeIntVariable(variable.value)
-        } else if variable.type == .String {
-            return normalizeStringVariable(variable.value)
-        } else {
-            fatalError("Invalid variable type")
-        }
+    public func normalize(_ expression: String) -> String {
+        return normalizeString(expression)
     }
 
-    private func normalizeIntVariable(_ variable: String) -> String {
-
-        let normalizedString = normalizeInt(variable)
-        let computedString = String(Calculate(normalizedString).compare())
-        return computedString
-    }
-
-    private func normalizeStringVariable(_ variable: String) -> String {
-        let normalizedString = normalizeString(variable)
-        return normalizedString
-    }
 
     private func normalizeString(_ expression: String) -> String {
-        var result = "" 
-        let components = expression.split(whereSeparator: { $0 == " " })
-        for component in components {
-            if let value = variableMap[String(component)] {
-                result += "\(value)"
-            } else {
-                result += "\(component)"
-            }
-        }
-        return result
-    }
-
-    private func normalizeInt(_ expression: String) -> String {
         var result = "" 
         let updatedExpression = getFixedString(expression)
         let components = updatedExpression.split(whereSeparator: { $0 == " " })

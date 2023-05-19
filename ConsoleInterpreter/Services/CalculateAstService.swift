@@ -20,6 +20,7 @@ class Calculate {
         self.position = 0
     }
 
+    
     public func compare() -> Int {
         currentToken = getNextToken() 
         
@@ -108,6 +109,7 @@ class Calculate {
         return result
     }
 
+
     private func factor() -> Int {
         let token = currentToken!
 
@@ -133,7 +135,107 @@ class Calculate {
                 print(token.getType())
                 fatalError("Invalid syntax")
         }
+    }
 
+    public func compareString() -> String{
+        currentToken = getNextToken() 
+        var result = ""
+        result += termString()
+        let possibleTokens: [TokenType] = [
+            .plus,
+            .equal,
+            .less,  
+            .greater,
+            .notEqual,
+            .lessEqual,
+            .greaterEqual,
+            .logicalAnd,
+            .logicalOr
+        ]
+        if currentToken == nil {
+            return result
+        }
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
+            
+            if token.getType() == .plus {
+                moveToken(.plus)
+                result += termString()
+            } else if possibleTokens.contains(token.getType()){
+                moveToken(token.getType())
+                let factorValue = factorString()
+
+                switch token.getType() {
+                case .equal:
+                    result = result == factorValue ? "true" : "false"
+                case .notEqual:
+                    result = result != factorValue ? "true" : "false"
+                case .greater:
+                    result = result > factorValue ? "true" : "false"
+                case .less:
+                    result = result < factorValue ? "true" : "false"
+                case .greaterEqual:
+                    result = result >= factorValue ? "true" : "false"
+                case .lessEqual:
+                    result = result <= factorValue ? "true" : "false"
+                case .logicalAnd:
+                    result = result != ""  && factorValue != ""  ? "true" : "false"
+                case .logicalOr:
+                    result = result != "" || factorValue != ""  ? "true" : "false"
+                default:
+                    fatalError("Invalid token type")
+                }
+            }
+        }
+        return result
+    }
+
+    private func termString() -> String {
+        var result = factorString()
+
+        let possibleTokens: [TokenType] = [
+            TokenType.multiply,
+        ]
+        if currentToken == nil {
+            return result
+        }
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
+            switch token.getType() {
+            case .multiply:
+                moveToken(.multiply)
+                let factorValue = factorString()
+                if !isNumber(factorValue.first!){
+                    fatalError("Invalid syntax")
+                }
+                let oldResult = result
+                for _ in 0..<Int(factorValue)! - 1{
+                    result += oldResult
+                }
+            default:
+                fatalError("Invalid token type")
+            }
+        }
+        return result
+    }
+
+    private func factorString() -> String {
+        let token = currentToken!
+
+        switch token.getType() {
+        case .integer:
+            moveToken(.integer)
+            return token.getValue() ?? ""
+        case .string:
+            moveToken(.string)
+            return token.getValue() ?? ""
+        case .leftBrace:
+            moveToken(.leftBrace)
+            let result = compareString()
+            moveToken(.rightBrace)
+            return result
+        default:
+            print(token.getType())
+            fatalError("Invalid syntax")
+        } 
     }
  
 
@@ -161,7 +263,26 @@ class Calculate {
             }
 
             return Token(.integer, integerString)
-        } 
+        } else if isChar(currentChar) {
+            var string = String(currentChar)
+            position += 1
+            
+            while position < text.count {
+                let nextChar = text[text.index(text.startIndex, offsetBy: position)]
+
+
+                if nextChar != "*" && nextChar != "+" { //* добавить операторы сравнения
+                    string += String(nextChar)
+                    position += 1
+                } else {
+                    break
+                }
+            }
+
+            
+            return Token(.string, string)
+
+        }
 
 
         position += 1
@@ -178,7 +299,7 @@ class Calculate {
             case "*":
                 return Token(.multiply, "*")
             case "/":
-                return Token(.divide, "/")
+                return Token(.divide, "/") 
             case "%":
                 return Token(.modulo, "%")
             case "(":
@@ -244,6 +365,10 @@ class Calculate {
 
     private func isNumber(_ char: Character) -> Bool {
         return char >= "0" && char <= "9"
+    }
+
+    private func isChar(_ char: Character) -> Bool {
+        return char >= "a" && char <= "z" || char >= "A" && char <= "Z"
     }
 
 
