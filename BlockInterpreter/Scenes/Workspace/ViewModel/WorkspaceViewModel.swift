@@ -15,13 +15,15 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     
     var showConsole = PassthroughSubject<Void, Never>()
     var isWiggleMode = CurrentValueSubject<Bool, Never>(false)
+    var isIntroHidden = CurrentValueSubject<Bool, Never>(false)
     var didBeginEditingBlocks = PassthroughSubject<Void, Never>()
     var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
     var addBlocks = PassthroughSubject<[BlockCellViewModel], Never>()
     var moveBlock = PassthroughSubject<(IndexPath, IndexPath), Never>()
     
-    var cellViewModels = [BlockCellViewModel]()
+    var cellViewModels = CurrentValueSubject<[BlockCellViewModel], Never>([])
     
+    var introTitle = "Create your first code block!"
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     
@@ -38,7 +40,7 @@ extension WorkspaceViewModel  {
     private func getBlocks() -> [IBlock] {
         var blocks = [IBlock]()
         
-        for (index, blockViewModel) in cellViewModels.enumerated() {
+        for (index, blockViewModel) in cellViewModels.value.enumerated() {
             if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
                 blocks.append(Variable(id: index,
                                        type: variableBlockViewModel.variableType ?? .int,
@@ -91,7 +93,7 @@ extension WorkspaceViewModel  {
         moveBlock
             .sink { [weak self] in
                 guard let self = self else { return }
-                cellViewModels.insert(cellViewModels.remove(at: $0.0.row), at: $0.1.row)
+                cellViewModels.value.insert(cellViewModels.value.remove(at: $0.0.row), at: $0.1.row)
             }
             .store(in: &subscriptions)
         
@@ -100,7 +102,7 @@ extension WorkspaceViewModel  {
             .sink { [weak self] in
                 guard let self = self else { return }
                 
-                cellViewModels.append(contentsOf: $0 )
+                cellViewModels.value.append(contentsOf: $0 )
                 didUpdateBlocksTable.send()
             }
             .store(in: &subscriptions)
@@ -109,28 +111,37 @@ extension WorkspaceViewModel  {
             .sink { [weak self] cellViewModel in
                 guard
                     let self = self,
-                    let index = cellViewModels.firstIndex(where: { cellViewModel === $0 })
+                    let index = cellViewModels.value.firstIndex(where: { cellViewModel === $0 })
                 else { return }
                 
-                cellViewModels.remove(at: index)
+                cellViewModels.value.remove(at: index)
                 didDeleteRows.send([IndexPath(row: index, section: 0)])
-                
-                if cellViewModels.count == 0 {
-                    isWiggleMode.send(false)
-                }
             }
             .store(in: &subscriptions)
         
         isWiggleMode
             .sink { [weak self] value in
-                self?.cellViewModels.forEach { $0.isWiggleMode = value }
+                self?.cellViewModels.value.forEach { $0.isWiggleMode = value }
+            }
+            .store(in: &subscriptions)
+        
+        cellViewModels
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                if $0.count == 0 {
+                    isWiggleMode.send(false)
+                    isIntroHidden.send(false)
+                } else if !isIntroHidden.value {
+                    isIntroHidden.send(true)
+                }
             }
             .store(in: &subscriptions)
         
         didBeginEditingBlocks
             .sink { [weak self] in
                 guard let self = self else { return }
-                guard cellViewModels.isEmpty == false else { return }
+                guard cellViewModels.value.isEmpty == false else { return }
                 
                 isWiggleMode.send(true)
             }

@@ -169,7 +169,7 @@ extension BlockCell {
     }
     
     private func startWiggle() {
-        let duration: Double = 0.25
+        let duration: Double = 0.3
         let displacement: CGFloat = 1.0
         let degreesRotation: CGFloat = 2.0
         let negativeDisplacement = -1.0 * displacement

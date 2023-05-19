@@ -7,9 +7,12 @@ import Foundation
 import Combine
 
 protocol WorkspaceViewModelType {
-    var cellViewModels: [BlockCellViewModel] { get }
+    var introTitle: String { get }
     
     var isWiggleMode: CurrentValueSubject<Bool, Never> { get }
+    var isIntroHidden: CurrentValueSubject<Bool, Never> { get }
+    var cellViewModels: CurrentValueSubject<[BlockCellViewModel], Never> { get }
+    
     var showConsole: PassthroughSubject<Void, Never> { get }
     var removeBlock: PassthroughSubject<BlockCellViewModel, Never> { get }
     var moveBlock: PassthroughSubject<(IndexPath, IndexPath), Never> { get }

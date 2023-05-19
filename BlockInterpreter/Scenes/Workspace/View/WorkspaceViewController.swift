@@ -24,6 +24,16 @@ final class WorkspaceViewController: UIViewController {
                 static let insetBotton: CGFloat = 130
             }
         
+            enum IntroImageView {
+                static let insetTop: CGFloat = 200
+                static let multiplierWidth: CGFloat = 0.8
+                static let multiplierHeight: CGFloat = 0.38
+            }
+            
+            enum IntroLabel {
+                static let insetTop: CGFloat = 22
+            }
+        
     }
     
     private let workBlocksTableView = UITableView()
@@ -31,6 +41,10 @@ final class WorkspaceViewController: UIViewController {
     
     private let workBlocksTapGesture = UITapGestureRecognizer()
     private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
+    
+    private let introView = UIView()
+    private let introImageView = UIImageView()
+    private let introLabel = UILabel()
     
     private let viewModel: WorkspaceViewModelType
     private var subscriptions = Set<AnyCancellable>()
@@ -51,14 +65,48 @@ final class WorkspaceViewController: UIViewController {
         setupBindings()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    private func hideRunButton() {
+        UIView.transition(with: runButton, duration: 0.3) {
+            self.runButton.layer.opacity = 0
+        }
+    }
+    
+    private func showRunButton() {
+        UIView.transition(with: runButton, duration: 0.3) {
+            self.runButton.layer.opacity = 1
+        }
+    }
+    
+    private func hideIntro() {
+        introView.isHidden = true
+        runButton.layer.opacity = 1
+    }
+    
+    private func showIntro() {
+        introView.isHidden = false
+        runButton.layer.opacity = 0
+    }
+    
+    private func hideTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height + (frame.height)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBarController?.tabBar.frame = frame
+        }
+    }
+
+    private func showTabBar() {
+        guard var frame = tabBarController?.tabBar.frame else { return }
+        frame.origin.y = view.frame.height - (frame.height)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBarController?.tabBar.frame = frame
+        }
     }
     
     private func enableEditingMode() {
         hideTabBar()
         hideRunButton()
-        
+      
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
             cell.isWiggleMode = true
@@ -83,38 +131,13 @@ final class WorkspaceViewController: UIViewController {
       }
     }
     
-    private func hideTabBar() {
-        guard var frame = tabBarController?.tabBar.frame else { return }
-        frame.origin.y = view.frame.height + (frame.height)
-        UIView.animate(withDuration: 0.3) {
-            self.tabBarController?.tabBar.frame = frame
-        }
-    }
-
-    private func showTabBar() {
-        guard var frame = tabBarController?.tabBar.frame else { return }
-        frame.origin.y = view.frame.height - (frame.height)
-        UIView.animate(withDuration: 0.3) {
-            self.tabBarController?.tabBar.frame = frame
-        }
-    }
-    
-    private func hideRunButton() {
-        UIView.transition(with: runButton, duration: 0.3) {
-            self.runButton.layer.opacity = 0
-        }
-    }
-    
-    private func showRunButton() {
-        UIView.transition(with: runButton, duration: 0.3) {
-            self.runButton.layer.opacity = 1
-        }
-    }
-    
     private func setupUI() {
         setupSuperView()
         setupWorkBlocksTableView()
         setupRunButton()
+        setupIntroView()
+        setupIntroImageView()
+        setupIntroLabel()
     }
     
     private func setupSuperView() {
@@ -167,17 +190,54 @@ final class WorkspaceViewController: UIViewController {
         }
     }
     
+    private func setupIntroView() {
+        view.addSubview(introView)
+    
+        introView.backgroundColor = .clear
+        
+        introView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func setupIntroImageView() {
+        introView.addSubview(introImageView)
+        
+        introImageView.image = UIImage(named: "intro-blocks")
+        introImageView.contentMode = .scaleToFill
+        
+        introImageView.snp.makeConstraints { make in
+            make.height.equalToSuperview().multipliedBy(Constants.IntroImageView.multiplierHeight)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(Constants.IntroImageView.multiplierWidth)
+            make.top.equalToSuperview().offset(Constants.IntroImageView.insetTop)
+        }
+    }
+    
+    private func setupIntroLabel() {
+        introView.addSubview(introLabel)
+        
+        introLabel.textColor = .appWhite
+        introLabel.text = viewModel.introTitle
+        introLabel.font = .workspaceIntroTitle
+        
+        introLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(introImageView.snp.bottom).offset(Constants.IntroLabel.insetTop)
+        }
+    }
+    
 }
 
 // MARK: - UITableViewDataSource
 
 extension WorkspaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellViewModels.count
+        return viewModel.cellViewModels.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellViewModel = viewModel.cellViewModels[indexPath.row]
+        let cellViewModel = viewModel.cellViewModels.value[indexPath.row]
         
         switch cellViewModel.type {
         case .output:
@@ -483,6 +543,14 @@ private extension WorkspaceViewController {
             .sink { [weak self] in
                 guard let self = self else { return }
                 $0 == true ? enableEditingMode() : disableEditMode()
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.isIntroHidden
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self = self else { return }
+                $0 == true ? hideIntro() : showIntro()
             }
             .store(in: &subscriptions)
         

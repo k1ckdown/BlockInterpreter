@@ -76,7 +76,7 @@ final class VariableBlockCell: BlockCell {
         
         variableNameTextField.text = viewModel.variableName
         variableValueTextField.text = viewModel.variableValue
-        variableTypeLabel.text = viewModel.variableType?.rawValue.capitalized
+        variableTypeLabel.text = viewModel.typeTitle
 
         variableNameTextField.placeholder = viewModel.variableNamePlaceHolder
         variableValueTextField.placeholder = viewModel.variableValuePlaceholder

@@ -93,7 +93,7 @@ final class CodeBlocksViewController: UIViewController {
     
     private func showOptionsMenu() {
         UIView.animate(withDuration: 0.5) {
-            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 40
+            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 50
         }
     }
     
@@ -152,12 +152,13 @@ final class CodeBlocksViewController: UIViewController {
         view.addSubview(optionsMenuToolbar)
         
         optionsMenuToolbar.barStyle = .black
+        optionsMenuToolbar.layer.borderColor = UIColor.blockBorder?.cgColor
         optionsMenuToolbar.layer.masksToBounds = true
         optionsMenuToolbar.layer.cornerRadius = Constants.OptionsMenuToolbar.cornerRadius
         
         let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
         optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
-                                          y: view.bounds.height * 0.85,
+                                          y: view.bounds.height,
                                           width: width,
                                           height: Constants.OptionsMenuToolbar.height)
 
@@ -375,6 +376,12 @@ extension CodeBlocksViewController: UITableViewDelegate {
         cell.select()
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+          UIView.animate(withDuration: 0.4) {
+              cell.transform = CGAffineTransform.identity
+          }
+    }
 }
 
 // MARK: - Reactive Behavior
