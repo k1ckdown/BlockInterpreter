@@ -113,6 +113,23 @@ final class CodeBlocksViewController: UIViewController {
         })
     }
     
+    private func animateTextField(textField: UITextField, up: Bool) {
+        
+        let movementDistance: CGFloat = -300
+        let movementDuration: Double = 0.3
+        
+        var movement:CGFloat = 0
+        if up {
+            movement = movementDistance
+        } else {
+            movement = -movementDistance
+        }
+        
+        UIView.animate(withDuration: movementDuration, delay: 0, options: [.beginFromCurrentState]) {
+            self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement)
+        }
+    }
+    
     private func setupUI() {
         setupSuperView()
         setupBlocksTableView()
@@ -339,6 +356,13 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &subscriptions)
             
+            cell.functionNameTextField.delegate = self
+//            cell.functionNameTextField.didBeginEditingPublisher
+//                .receive(subscriber: DispatchQueue.main)
+//                .sink { [weak self] _ in
+//                    self.text
+//                }
+            
             cell.argumentsTextField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -352,6 +376,16 @@ extension CodeBlocksViewController: UITableViewDataSource {
         }
     }
     
+}
+
+extension CodeBlocksViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        animateTextField(textField: textField, up: true)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        animateTextField(textField: textField, up: false)
+    }
 }
 
 // MARK: - UITableViewDelegate

@@ -21,7 +21,6 @@ final class MainTabBarViewController: WaveTabBarController {
     private func setupTabBar() {
         tabBar.tintColor = .appMain
         tabBar.unselectedItemTintColor = .appWhite
-        back(.green)
         tabBar.overrideUserInterfaceStyle = .dark
     }
     

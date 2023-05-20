@@ -45,15 +45,15 @@ class BlockCell: UITableViewCell {
         selectionStyle = .none
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
         containerView.snp.removeConstraints()
         containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func select() {

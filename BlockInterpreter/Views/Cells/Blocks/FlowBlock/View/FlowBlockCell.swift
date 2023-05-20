@@ -29,6 +29,11 @@ final class FlowBlockCell: BlockCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        subscriptions.removeAll()
+    }
+    
     func configure(with viewModel: FlowBlockCellViewModel) {
         super.configure(with: viewModel)
         
