@@ -1,11 +1,11 @@
 //
-//  OptionsToolbarConfiguration.swift
+//  OptionsViewConfiguration.swift
 //  BlockInterpreter
 //
 
 import UIKit
 
-enum OptionsToolbarConfiguration {
+enum OptionsViewConfiguration {
     case optionAddBlock
     case optionDeleteAllBlocks
     

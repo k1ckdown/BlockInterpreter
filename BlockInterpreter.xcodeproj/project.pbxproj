@@ -57,8 +57,8 @@
 		495B417829FCEFD400DEF375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495B417629FCEFD400DEF375 /* LaunchScreen.storyboard */; };
 		495B9EB62A06781600A825E5 /* BlockTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B9EB52A06781600A825E5 /* BlockTextField.swift */; };
 		495B9EB82A06A92100A825E5 /* UIFont+AppFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495B9EB72A06A92100A825E5 /* UIFont+AppFonts.swift */; };
-		495EECD12A1A24EA00C90546 /* OptionsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EECD02A1A24EA00C90546 /* OptionsToolbar.swift */; };
-		495EECD42A1A277E00C90546 /* OptionsToolbarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EECD32A1A277E00C90546 /* OptionsToolbarConfiguration.swift */; };
+		495EECD12A1A24EA00C90546 /* OptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EECD02A1A24EA00C90546 /* OptionsView.swift */; };
+		495EECD42A1A277E00C90546 /* OptionsViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EECD32A1A277E00C90546 /* OptionsViewConfiguration.swift */; };
 		496A95B52A0151F3007F1C17 /* CodeBlocksCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */; };
 		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
@@ -163,8 +163,8 @@
 		495B417929FCEFD400DEF375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		495B9EB52A06781600A825E5 /* BlockTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTextField.swift; sourceTree = "<group>"; };
 		495B9EB72A06A92100A825E5 /* UIFont+AppFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+AppFonts.swift"; sourceTree = "<group>"; };
-		495EECD02A1A24EA00C90546 /* OptionsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsToolbar.swift; sourceTree = "<group>"; };
-		495EECD32A1A277E00C90546 /* OptionsToolbarConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsToolbarConfiguration.swift; sourceTree = "<group>"; };
+		495EECD02A1A24EA00C90546 /* OptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsView.swift; sourceTree = "<group>"; };
+		495EECD32A1A277E00C90546 /* OptionsViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsViewConfiguration.swift; sourceTree = "<group>"; };
 		496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksCoordinator.swift; sourceTree = "<group>"; };
 		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
@@ -490,23 +490,6 @@
 			path = TextFields;
 			sourceTree = "<group>";
 		};
-		495EECCF2A1A239800C90546 /* Toolbars */ = {
-			isa = PBXGroup;
-			children = (
-				495EECD22A1A276C00C90546 /* Options */,
-			);
-			path = Toolbars;
-			sourceTree = "<group>";
-		};
-		495EECD22A1A276C00C90546 /* Options */ = {
-			isa = PBXGroup;
-			children = (
-				495EECD02A1A24EA00C90546 /* OptionsToolbar.swift */,
-				495EECD32A1A277E00C90546 /* OptionsToolbarConfiguration.swift */,
-			);
-			path = Options;
-			sourceTree = "<group>";
-		};
 		49969FFC2A05598C00F86EFE /* BlockTypes */ = {
 			isa = PBXGroup;
 			children = (
@@ -553,6 +536,7 @@
 		49A3465E2A059153003BC2B9 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
+				49F2B3B42A1A557A003817C0 /* OptionsView */,
 				49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */,
 			);
 			path = CustomViews;
@@ -877,13 +861,21 @@
 		49D8A2F329FEDD4600DF5B8E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				495EECCF2A1A239800C90546 /* Toolbars */,
 				491672322A1361DC00457A80 /* Labels */,
 				495B9EB42A0677DC00A825E5 /* TextFields */,
 				49A3465E2A059153003BC2B9 /* CustomViews */,
 				49C661BC2A02D9A600439E2A /* Cells */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		49F2B3B42A1A557A003817C0 /* OptionsView */ = {
+			isa = PBXGroup;
+			children = (
+				495EECD02A1A24EA00C90546 /* OptionsView.swift */,
+				495EECD32A1A277E00C90546 /* OptionsViewConfiguration.swift */,
+			);
+			path = OptionsView;
 			sourceTree = "<group>";
 		};
 		668EBE5A9857539E292171E1 /* Pods */ = {
@@ -1055,7 +1047,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				492560E12A13B4180040BE51 /* Returning.swift in Sources */,
-				495EECD12A1A24EA00C90546 /* OptionsToolbar.swift in Sources */,
+				495EECD12A1A24EA00C90546 /* OptionsView.swift in Sources */,
 				492F71A22A13B665001532AB /* ReversePolishService.swift in Sources */,
 				49B67C652A0FFA4800B70F25 /* LabelTFBlockCell.swift in Sources */,
 				49D8A2DB29FEC75700DF5B8E /* ConsoleViewModel.swift in Sources */,
@@ -1066,7 +1058,7 @@
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
 				492BA4192A0AB83F0019EFBE /* BlockCellStyle.swift in Sources */,
 				495147812A08CF8B00FD13AB /* BlockCell.swift in Sources */,
-				495EECD42A1A277E00C90546 /* OptionsToolbarConfiguration.swift in Sources */,
+				495EECD42A1A277E00C90546 /* OptionsViewConfiguration.swift in Sources */,
 				49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */,
 				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
 				490351AF2A0D448900B3693B /* Variable.swift in Sources */,

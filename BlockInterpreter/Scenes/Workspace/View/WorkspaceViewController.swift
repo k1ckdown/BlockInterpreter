@@ -25,9 +25,9 @@ final class WorkspaceViewController: UIViewController {
                 static let insetBotton: CGFloat = 130
             }
         
-            enum OptionsMenuToolbar {
+            enum OptionsView {
                 static let height: Double = 50
-                static let multiplierWidth: Double = 0.6
+                static let width: Double = 220
             }
         
             enum IntroImageView {
@@ -44,7 +44,7 @@ final class WorkspaceViewController: UIViewController {
     
     private let workBlocksTableView = UITableView()
     private let runButton = UIButton(type: .system)
-    private let optionsMenuToolbar = OptionsToolbar(configuration: .optionDeleteAllBlocks)
+    private let optionsView = OptionsView(configuration: .optionDeleteAllBlocks)
     
     private let workBlocksTapGesture = UITapGestureRecognizer()
     private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
@@ -94,16 +94,16 @@ final class WorkspaceViewController: UIViewController {
         }
     }
     
-    private func hideOptionsToolbar() {
+    private func hideOptions() {
         UIView.animate(withDuration: 0.3) {
-            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height + self.optionsMenuToolbar.frame.height
+            self.optionsView.frame.origin.y = self.view.frame.height + self.optionsView.frame.height
         }
         
     }
     
-    private func showOptionsToolbar() {
+    private func showOptions() {
         UIView.animate(withDuration: 0.3) {
-            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 30
+            self.optionsView.frame.origin.y = self.view.frame.height - self.optionsView.frame.height - 35
         }
     }
     
@@ -126,7 +126,7 @@ final class WorkspaceViewController: UIViewController {
     private func enableEditingMode() {
         hideTabBar()
         hideRunButton()
-        showOptionsToolbar()
+        showOptions()
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -137,7 +137,7 @@ final class WorkspaceViewController: UIViewController {
     private func disableEditMode() {
         showTabBar()
         showRunButton()
-        hideOptionsToolbar()
+        hideOptions()
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -164,7 +164,7 @@ final class WorkspaceViewController: UIViewController {
         setupSuperView()
         setupWorkBlocksTableView()
         setupRunButton()
-        setupOptionsMenuToolbar()
+        setupOptionsView()
         setupIntroView()
         setupIntroImageView()
         setupIntroLabel()
@@ -221,15 +221,16 @@ final class WorkspaceViewController: UIViewController {
         }
     }
     
-    private func setupOptionsMenuToolbar() {
-        view.addSubview(optionsMenuToolbar)
+    private func setupOptionsView() {
+        view.addSubview(optionsView)
         
-        optionsMenuToolbar.titleText = viewModel.optionTitle
-        let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
-        optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
-                                          y: view.bounds.height,
-                                          width: width,
-                                          height: Constants.OptionsMenuToolbar.height)
+        
+        optionsView.titleText = viewModel.optionTitle
+        let width = Constants.OptionsView.width
+        optionsView.frame = CGRect(x: view.center.x - width / 2,
+                                   y: view.bounds.height,
+                                   width: width,
+                                   height: Constants.OptionsView.height)
     }
     
     private func setupIntroView() {
@@ -581,11 +582,11 @@ private extension WorkspaceViewController {
             }
             .store(in: &subscriptions)
         
-        optionsMenuToolbar.toolbarTapGesture.tapPublisher
+        optionsView.tapGesture.tapPublisher
             .sink { [weak self] _ in
                 self?.viewModel.deleteAllBlocks.send()
             }
-            .store(in: &optionsMenuToolbar.subscriptions)
+            .store(in: &optionsView.subscriptions)
         
         viewModel.isWiggleMode
             .receive(on: DispatchQueue.main)

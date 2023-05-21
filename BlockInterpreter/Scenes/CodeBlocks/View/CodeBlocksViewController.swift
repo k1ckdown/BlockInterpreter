@@ -15,15 +15,15 @@ final class CodeBlocksViewController: UIViewController {
                 static let inset: CGFloat = 30
             }
         
-            enum OptionsMenuToolbar {
+            enum OptionsView {
                 static let height: Double = 50
-                static let multiplierWidth: Double = 0.6
+                static let width: Double = 220
             }
         
     }
     
     private let blocksTableView = UITableView()
-    private let optionsMenuToolbar = OptionsToolbar(configuration: .optionAddBlock)
+    private let optionsView = OptionsView(configuration: .optionAddBlock)
     
     private let viewModel: CodeBlocksViewModelType
     private var subscriptions = Set<AnyCancellable>()
@@ -47,23 +47,23 @@ final class CodeBlocksViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        hideOptionsToolbar()
+        hideOptions()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
-    private func hideOptionsToolbar() {
+    private func hideOptions() {
         UIView.animate(withDuration: 0.5) {
-            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height + self.optionsMenuToolbar.frame.height
+            self.optionsView.frame.origin.y = self.view.frame.height + self.optionsView.frame.height
         }
         
     }
     
-    private func showOptionsToolbar() {
+    private func showOptions() {
         UIView.animate(withDuration: 0.5) {
-            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 50
+            self.optionsView.frame.origin.y = self.view.frame.height - self.optionsView.frame.height - 35
         }
     }
     
@@ -86,7 +86,7 @@ final class CodeBlocksViewController: UIViewController {
     private func setupUI() {
         setupSuperView()
         setupBlocksTableView()
-        setupOptionsMenuToolbar()
+        setupOptionsView()
     }
     
     private func setupSuperView() {
@@ -118,14 +118,13 @@ final class CodeBlocksViewController: UIViewController {
         }
     }
     
-    private func setupOptionsMenuToolbar() {
-        view.addSubview(optionsMenuToolbar)
+    private func setupOptionsView() {
+        view.addSubview(optionsView)
         
-        let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
-        optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
-                                          y: view.bounds.height,
-                                          width: width,
-                                          height: Constants.OptionsMenuToolbar.height)
+        optionsView.frame = CGRect(x: view.center.x -  Constants.OptionsView.width / 2,
+                                   y: view.bounds.height,
+                                   width:  Constants.OptionsView.width,
+                                   height: Constants.OptionsView.height)
     }
 }
 
@@ -350,16 +349,16 @@ extension CodeBlocksViewController: UITableViewDelegate {
 
 private extension CodeBlocksViewController {
     func setupBindings() {
-        optionsMenuToolbar.toolbarTapGesture.tapPublisher
+        optionsView.tapGesture.tapPublisher
             .sink { [weak self] _ in
                 self?.viewModel.moveToWorkspace.send()
             }
-            .store(in: &optionsMenuToolbar.subscriptions)
+            .store(in: &optionsView.subscriptions)
         
         viewModel.didUpdateMenuTitle
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.optionsMenuToolbar.titleText = $0
+                self?.optionsView.titleText = $0
             }
             .store(in: &subscriptions)
         
@@ -377,10 +376,10 @@ private extension CodeBlocksViewController {
                 
                 if isVisible {
                     hideTabBar()
-                    showOptionsToolbar()
+                    showOptions()
                 } else {
                     showTabBar()
-                    hideOptionsToolbar()
+                    hideOptions()
                 }
             }
             .store(in: &subscriptions)
