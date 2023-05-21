@@ -22,7 +22,7 @@ final class BlockTextField: UITextField {
         returnKeyType = .done
         clearButtonMode = .never
         textColor = .appWhite
-        backgroundColor = .blockBorder
+        backgroundColor = .appGray
         layer.cornerRadius = 10
         font = .blockTextField
         adjustsFontSizeToFitWidth = true

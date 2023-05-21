@@ -42,7 +42,7 @@ final class BlockHeaderView: UIView {
     }
     
     private func setupSuperView() {
-        backgroundColor = .blockBorder
+        backgroundColor = .appGray
         layer.cornerRadius = Constants.SuperView.cornerRadius
     }
     

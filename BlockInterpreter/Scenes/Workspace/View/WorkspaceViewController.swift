@@ -171,7 +171,7 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .appBackground
+        view.setGradientBackground()
     }
     
     private func setupWorkBlocksTableView() {
@@ -209,7 +209,7 @@ final class WorkspaceViewController: UIViewController {
     private func setupRunButton() {
         view.addSubview(runButton)
         
-        runButton.backgroundColor = .blockBorder
+        runButton.backgroundColor = .appGray
         runButton.tintColor = .systemGreen
         runButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         runButton.layer.cornerRadius = Constants.RunButton.cornerRadius

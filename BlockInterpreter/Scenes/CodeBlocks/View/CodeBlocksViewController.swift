@@ -90,7 +90,7 @@ final class CodeBlocksViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .appBackground
+        view.setGradientBackground()
     }
     
     private func setupBlocksTableView() {

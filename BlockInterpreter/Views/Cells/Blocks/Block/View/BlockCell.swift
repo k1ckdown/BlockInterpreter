@@ -53,7 +53,7 @@ class BlockCell: UITableViewCell {
         super.prepareForReuse()
         
         containerView.snp.removeConstraints()
-        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
+        containerView.layer.borderColor = isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.appGray?.cgColor
     }
     
     func select() {
@@ -67,7 +67,7 @@ class BlockCell: UITableViewCell {
             options: [.transitionFlipFromBottom]
         ) {
             self.containerView.layer.opacity = self.isSelectedState == true ? 0.77 : 1
-            self.containerView.layer.borderColor = self.isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.blockBorder?.cgColor
+            self.containerView.layer.borderColor = self.isSelectedState == true ? UIColor.appMain?.cgColor : UIColor.appGray?.cgColor
         }
     }
     
@@ -78,7 +78,7 @@ class BlockCell: UITableViewCell {
     
     private func hideDeleteButton() {
         deleteButton.isHidden = true
-        containerView.layer.borderColor = UIColor.blockBorder?.cgColor
+        containerView.layer.borderColor = UIColor.appGray?.cgColor
     }
     
     private func updateWiggleModeAppearance() {
@@ -133,7 +133,7 @@ class BlockCell: UITableViewCell {
         contentView.addSubview(containerView)
         
         containerView.backgroundColor = .clear
-        containerView.layer.borderColor = UIColor.blockBorder?.cgColor
+        containerView.layer.borderColor = UIColor.appGray?.cgColor
         containerView.layer.borderWidth = Constants.ContainerView.borderWidth
     }
     
@@ -142,7 +142,7 @@ class BlockCell: UITableViewCell {
         
         deleteButton.setImage(UIImage(systemName: "minus"), for: .normal)
         deleteButton.imageView?.tintColor = .appWhite
-        deleteButton.backgroundColor = .blockBorder
+        deleteButton.backgroundColor = .appGray
         deleteButton.layer.cornerRadius = Constants.DeleteButton.cornerRadius
         deleteButton.isHidden = true
         
