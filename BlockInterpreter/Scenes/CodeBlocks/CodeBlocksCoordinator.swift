@@ -24,6 +24,7 @@ final class CodeBlocksCoordinator: BaseCoordinator {
         let codeBlocksViewController = CodeBlocksViewController(with: codeBlocksViewModel)
         
         codeBlocksViewModel.didGoToWorkspaceScreen
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.delegate?.goToWorkspace(blocks: $0) }
             .store(in: &subscriptions)
         

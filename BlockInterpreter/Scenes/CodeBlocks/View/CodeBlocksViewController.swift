@@ -17,43 +17,13 @@ final class CodeBlocksViewController: UIViewController {
         
             enum OptionsMenuToolbar {
                 static let height: Double = 50
-                static let cornerRadius: CGFloat = 10
                 static let multiplierWidth: Double = 0.6
             }
         
     }
     
     private let blocksTableView = UITableView()
-    private let optionsMenuToolbar = UIToolbar()
-    private let addBlocksTapGesture = UITapGestureRecognizer()
-    
-    private lazy var plusImageView: UIImageView = {
-        let imageView = UIImageView()
-        
-        imageView.tintColor = .appMain
-        imageView.image = UIImage(systemName: "plus.circle.fill")
-        
-        return imageView
-    }()
-
-    private lazy var addBlockLabel: UILabel = {
-        let label = UILabel()
-        
-        label.textColor = .appWhite
-        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        
-        return label
-    }()
-
-    private lazy var addBlockStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [plusImageView, addBlockLabel])
-
-        stackView.spacing = 10
-        stackView.axis = .horizontal
-        stackView.addGestureRecognizer(addBlocksTapGesture)
-        
-        return stackView
-    }()
+    private let optionsMenuToolbar = OptionsToolbar(configuration: .optionAddBlock)
     
     private let viewModel: CodeBlocksViewModelType
     private var subscriptions = Set<AnyCancellable>()
@@ -77,21 +47,21 @@ final class CodeBlocksViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        hideOptionsMenu()
+        hideOptionsToolbar()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
-    private func hideOptionsMenu() {
+    private func hideOptionsToolbar() {
         UIView.animate(withDuration: 0.5) {
             self.optionsMenuToolbar.frame.origin.y = self.view.frame.height + self.optionsMenuToolbar.frame.height
         }
         
     }
     
-    private func showOptionsMenu() {
+    private func showOptionsToolbar() {
         UIView.animate(withDuration: 0.5) {
             self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 50
         }
@@ -111,23 +81,6 @@ final class CodeBlocksViewController: UIViewController {
         UIView.animate(withDuration: 0.5, animations: {
             self.tabBarController?.tabBar.frame = frame
         })
-    }
-    
-    private func animateTextField(textField: UITextField, up: Bool) {
-        
-        let movementDistance: CGFloat = -300
-        let movementDuration: Double = 0.3
-        
-        var movement:CGFloat = 0
-        if up {
-            movement = movementDistance
-        } else {
-            movement = -movementDistance
-        }
-        
-        UIView.animate(withDuration: movementDuration, delay: 0, options: [.beginFromCurrentState]) {
-            self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement)
-        }
     }
     
     private func setupUI() {
@@ -168,20 +121,11 @@ final class CodeBlocksViewController: UIViewController {
     private func setupOptionsMenuToolbar() {
         view.addSubview(optionsMenuToolbar)
         
-        optionsMenuToolbar.barStyle = .black
-        optionsMenuToolbar.layer.borderColor = UIColor.blockBorder?.cgColor
-        optionsMenuToolbar.layer.masksToBounds = true
-        optionsMenuToolbar.layer.cornerRadius = Constants.OptionsMenuToolbar.cornerRadius
-        
         let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
         optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
                                           y: view.bounds.height,
                                           width: width,
                                           height: Constants.OptionsMenuToolbar.height)
-
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let addBarButton = UIBarButtonItem(customView: addBlockStackView)
-        optionsMenuToolbar.items = [flexibleSpace, addBarButton, flexibleSpace]
     }
 }
 
@@ -356,13 +300,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &subscriptions)
             
-            cell.functionNameTextField.delegate = self
-//            cell.functionNameTextField.didBeginEditingPublisher
-//                .receive(subscriber: DispatchQueue.main)
-//                .sink { [weak self] _ in
-//                    self.text
-//                }
-            
             cell.argumentsTextField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -376,16 +313,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
         }
     }
     
-}
-
-extension CodeBlocksViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        animateTextField(textField: textField, up: true)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        animateTextField(textField: textField, up: false)
-    }
 }
 
 // MARK: - UITableViewDelegate
@@ -416,22 +343,23 @@ extension CodeBlocksViewController: UITableViewDelegate {
               cell.transform = CGAffineTransform.identity
           }
     }
+    
 }
 
 // MARK: - Reactive Behavior
 
 private extension CodeBlocksViewController {
     func setupBindings() {
-        addBlocksTapGesture.tapPublisher
+        optionsMenuToolbar.toolbarTapGesture.tapPublisher
             .sink { [weak self] _ in
                 self?.viewModel.moveToWorkspace.send()
             }
-            .store(in: &subscriptions)
+            .store(in: &optionsMenuToolbar.subscriptions)
         
         viewModel.didUpdateMenuTitle
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.addBlockLabel.text = $0
+                self?.optionsMenuToolbar.titleText = $0
             }
             .store(in: &subscriptions)
         
@@ -449,10 +377,10 @@ private extension CodeBlocksViewController {
                 
                 if isVisible {
                     hideTabBar()
-                    showOptionsMenu()
+                    showOptionsToolbar()
                 } else {
                     showTabBar()
-                    hideOptionsMenu()
+                    hideOptionsToolbar()
                 }
             }
             .store(in: &subscriptions)

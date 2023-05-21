@@ -14,15 +14,18 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     var didFinishEditingBlocks = PassthroughSubject<Void, Never>()
     
     var showConsole = PassthroughSubject<Void, Never>()
-    var isWiggleMode = CurrentValueSubject<Bool, Never>(false)
-    var isIntroHidden = CurrentValueSubject<Bool, Never>(false)
+    var deleteAllBlocks = PassthroughSubject<Void, Never>()
     var didBeginEditingBlocks = PassthroughSubject<Void, Never>()
     var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
     var addBlocks = PassthroughSubject<[BlockCellViewModel], Never>()
-    var moveBlock = PassthroughSubject<(IndexPath, IndexPath), Never>()
+    var moveBlock = PassthroughSubject<(from: IndexPath, to: IndexPath), Never>()
+    
+    var isWiggleMode = CurrentValueSubject<Bool, Never>(false)
+    var isIntroHidden = CurrentValueSubject<Bool, Never>(false)
     
     var cellViewModels = CurrentValueSubject<[BlockCellViewModel], Never>([])
     
+    var optionTitle = "Delete all blocks"
     var introTitle = "Create your first code block!"
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
@@ -41,36 +44,38 @@ extension WorkspaceViewModel  {
         var blocks = [IBlock]()
         
         for (index, blockViewModel) in cellViewModels.value.enumerated() {
-            if let variableBlockViewModel = blockViewModel as? VariableBlockCellViewModel {
+            switch blockViewModel {
+            case let variableBlockViewModel as VariableBlockCellViewModel:
                 blocks.append(Variable(id: index,
                                        type: variableBlockViewModel.variableType ?? .int,
                                        name: variableBlockViewModel.variableName ?? "",
                                        value: variableBlockViewModel.variableValue ?? ""))
                 
-            } else if let conditionBlockViewModel = blockViewModel as? ConditionBlockCellViewModel {
+            case let conditionBlockViewModel as ConditionBlockCellViewModel:
                 blocks.append(Condition(id: index,
                                         type: conditionBlockViewModel.conditionType,
                                         value: conditionBlockViewModel.conditionText ?? ""))
                 
-            } else if let flowBlockViewModel = blockViewModel as? FlowBlockCellViewModel {
+            case let flowBlockViewModel as FlowBlockCellViewModel:
                 blocks.append(Flow(type: flowBlockViewModel.flowType))
                 
-            } else if let outputBlockViewModel = blockViewModel as? OutputBlockCellViewModel {
+            case let outputBlockViewModel as OutputBlockCellViewModel:
                 blocks.append(Output(id: index,
-                                       value: outputBlockViewModel.outputValue ?? ""))
+                                     value: outputBlockViewModel.outputValue ?? ""))
                 
-            } else if let whileLoopViewModel = blockViewModel as? WhileLoopBlockCellViewModel {
+            case let whileLoopViewModel as WhileLoopBlockCellViewModel:
                 blocks.append(Loop(id: index,
                                    type: .whileLoop,
                                    value: whileLoopViewModel.loopCondition ?? ""))
                 
-            } else if let forLoopViewModel = blockViewModel as? ForLoopBlockCellViewModel {
+            case let forLoopViewModel as ForLoopBlockCellViewModel:
                 blocks.append(Loop(id: index,
                                    type: .forLoop,
                                    value: forLoopViewModel.loopValue))
+            default: break
             }
-            
         }
+
         
         return blocks
     }
@@ -93,7 +98,7 @@ extension WorkspaceViewModel  {
         moveBlock
             .sink { [weak self] in
                 guard let self = self else { return }
-                cellViewModels.value.insert(cellViewModels.value.remove(at: $0.0.row), at: $0.1.row)
+                cellViewModels.value.insert(cellViewModels.value.remove(at: $0.from.row), at: $0.to.row)
             }
             .store(in: &subscriptions)
         
@@ -103,6 +108,15 @@ extension WorkspaceViewModel  {
                 guard let self = self else { return }
                 
                 cellViewModels.value.append(contentsOf: $0 )
+                didUpdateBlocksTable.send()
+            }
+            .store(in: &subscriptions)
+        
+        deleteAllBlocks
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                cellViewModels.value.removeAll()
                 didUpdateBlocksTable.send()
             }
             .store(in: &subscriptions)

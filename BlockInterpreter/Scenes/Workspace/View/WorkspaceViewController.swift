@@ -15,6 +15,7 @@ final class WorkspaceViewController: UIViewController {
                 static let rowHeight: CGFloat = 70
                 static let insetTop: CGFloat = 10
                 static let insetSide: CGFloat = 20
+                static let insetBottom: CGFloat = 40
             }
         
             enum RunButton {
@@ -22,6 +23,11 @@ final class WorkspaceViewController: UIViewController {
                 static let cornerRadius: CGFloat = size / 2
                 static let insetRight: CGFloat = 40
                 static let insetBotton: CGFloat = 130
+            }
+        
+            enum OptionsMenuToolbar {
+                static let height: Double = 50
+                static let multiplierWidth: Double = 0.6
             }
         
             enum IntroImageView {
@@ -38,6 +44,7 @@ final class WorkspaceViewController: UIViewController {
     
     private let workBlocksTableView = UITableView()
     private let runButton = UIButton(type: .system)
+    private let optionsMenuToolbar = OptionsToolbar(configuration: .optionDeleteAllBlocks)
     
     private let workBlocksTapGesture = UITapGestureRecognizer()
     private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
@@ -65,6 +72,16 @@ final class WorkspaceViewController: UIViewController {
         setupBindings()
     }
     
+    private func hideIntro() {
+        introView.isHidden = true
+        runButton.layer.opacity = 1
+    }
+    
+    private func showIntro() {
+        introView.isHidden = false
+        runButton.layer.opacity = 0
+    }
+    
     private func hideRunButton() {
         UIView.transition(with: runButton, duration: 0.3) {
             self.runButton.layer.opacity = 0
@@ -77,14 +94,17 @@ final class WorkspaceViewController: UIViewController {
         }
     }
     
-    private func hideIntro() {
-        introView.isHidden = true
-        runButton.layer.opacity = 1
+    private func hideOptionsToolbar() {
+        UIView.animate(withDuration: 0.3) {
+            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height + self.optionsMenuToolbar.frame.height
+        }
+        
     }
     
-    private func showIntro() {
-        introView.isHidden = false
-        runButton.layer.opacity = 0
+    private func showOptionsToolbar() {
+        UIView.animate(withDuration: 0.3) {
+            self.optionsMenuToolbar.frame.origin.y = self.view.frame.height - self.optionsMenuToolbar.frame.height - 30
+        }
     }
     
     private func hideTabBar() {
@@ -106,7 +126,8 @@ final class WorkspaceViewController: UIViewController {
     private func enableEditingMode() {
         hideTabBar()
         hideRunButton()
-      
+        showOptionsToolbar()
+        
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
             cell.isWiggleMode = true
@@ -116,11 +137,19 @@ final class WorkspaceViewController: UIViewController {
     private func disableEditMode() {
         showTabBar()
         showRunButton()
+        hideOptionsToolbar()
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
             cell.isWiggleMode = false
         }
+    }
+    
+    private func animateCell(_ cell: UITableViewCell) {
+        cell.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+          UIView.animate(withDuration: 0.4) {
+              cell.transform = CGAffineTransform.identity
+          }
     }
     
     private func move(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
@@ -135,6 +164,7 @@ final class WorkspaceViewController: UIViewController {
         setupSuperView()
         setupWorkBlocksTableView()
         setupRunButton()
+        setupOptionsMenuToolbar()
         setupIntroView()
         setupIntroImageView()
         setupIntroLabel()
@@ -152,10 +182,11 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.dropDelegate = self
         workBlocksTableView.separatorStyle = .none
         workBlocksTableView.backgroundColor = .clear
-        workBlocksTableView.rowHeight = 70
-        workBlocksTableView.contentInset.top = Constants.WorkBlocksTableView.insetTop
         workBlocksTableView.showsVerticalScrollIndicator = false
         workBlocksTableView.showsHorizontalScrollIndicator = false
+        workBlocksTableView.rowHeight = Constants.WorkBlocksTableView.rowHeight
+        workBlocksTableView.contentInset.top = Constants.WorkBlocksTableView.insetTop
+        workBlocksTableView.contentInset.bottom = Constants.WorkBlocksTableView.insetBottom
         
         workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
@@ -188,6 +219,17 @@ final class WorkspaceViewController: UIViewController {
             make.right.equalToSuperview().inset(Constants.RunButton.insetRight)
             make.bottom.equalToSuperview().inset(Constants.RunButton.insetBotton)
         }
+    }
+    
+    private func setupOptionsMenuToolbar() {
+        view.addSubview(optionsMenuToolbar)
+        
+        optionsMenuToolbar.titleText = viewModel.optionTitle
+        let width = view.bounds.width * Constants.OptionsMenuToolbar.multiplierWidth
+        optionsMenuToolbar.frame = CGRect(x: view.center.x - width / 2,
+                                          y: view.bounds.height,
+                                          width: width,
+                                          height: Constants.OptionsMenuToolbar.height)
     }
     
     private func setupIntroView() {
@@ -519,6 +561,7 @@ extension WorkspaceViewController: UITableViewDropDelegate {
 // MARK: - Reactive Behavior
 
 private extension WorkspaceViewController {
+    
     func setupBindings() {
         runButton.tapPublisher
             .sink { [weak self] in
@@ -537,6 +580,12 @@ private extension WorkspaceViewController {
                 self?.viewModel.didBeginEditingBlocks.send()
             }
             .store(in: &subscriptions)
+        
+        optionsMenuToolbar.toolbarTapGesture.tapPublisher
+            .sink { [weak self] _ in
+                self?.viewModel.deleteAllBlocks.send()
+            }
+            .store(in: &optionsMenuToolbar.subscriptions)
         
         viewModel.isWiggleMode
             .receive(on: DispatchQueue.main)
@@ -568,4 +617,5 @@ private extension WorkspaceViewController {
             }
             .store(in: &subscriptions)
     }
+    
 }

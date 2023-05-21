@@ -6,11 +6,9 @@
 import UIKit
 
 extension UIColor {
+    static let appRed = UIColor(named: "app-red")
     static let appWhite = UIColor(named: "app-white")
     static let appBlack = UIColor(named: "app-black")
-    static let appBlue = UIColor(named: "app-blue")
-    static let appTeal = UIColor(named: "app-teal")
-    static let appPurple = UIColor(named: "app-purple")
     
     static let appMain = UIColor(named: "app-main")
     static let appBackground = UIColor(named: "app-background")

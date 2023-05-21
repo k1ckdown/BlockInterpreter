@@ -14,7 +14,7 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
         variableType != nil
     }
     
-    private(set) var typeTitle = "var"
+    private(set) var typeTitle = "Int"
     private(set) var variableType: VariableType?
     private(set) var variableNamePlaceHolder: String
     private(set) var variableValuePlaceholder: String
