@@ -292,6 +292,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
             else { return .init() }
             
+            cell.configure(with: cellViewModel)
+            
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -306,7 +308,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .flow:
@@ -315,13 +316,14 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? FlowBlockCellViewModel
             else { return .init() }
             
+            cell.configure(with: cellViewModel)
+            
             cell.deleteButton.tapPublisher
                 .sink { [weak self] in
                     self?.viewModel.removeBlock.send(cellViewModel)
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .variable:
@@ -332,6 +334,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 ) as? VariableBlockCell,
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
             
             cell.variableNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -355,7 +359,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .condition:
@@ -366,6 +369,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
             
             cell.conditionTextField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -381,7 +386,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .loop(.whileLoop):
@@ -389,6 +393,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: WhileLoopBlockCell.identifier, for: indexPath) as? WhileLoopBlockCell,
                 let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
             
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -404,7 +410,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .loop(.forLoop):
@@ -412,6 +417,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: ForLoopBlockCell.identifier, for: indexPath) as? ForLoopBlockCell,
                 let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
             
             cell.initValueTextField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -443,7 +450,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .function:
@@ -451,6 +457,8 @@ extension WorkspaceViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
                 let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
                         
             cell.functionNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -474,7 +482,6 @@ extension WorkspaceViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
         }
     }

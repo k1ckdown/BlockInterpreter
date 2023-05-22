@@ -154,6 +154,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
             else { return .init() }
             
+            cell.configure(with: cellViewModel)
+            
             cell.textField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -162,7 +164,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .flow:
@@ -186,6 +187,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
             else { return .init() }
             
+            cell.configure(with: cellViewModel)
+            
             cell.variableNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -202,7 +205,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
             
         case .conditions:
@@ -214,6 +216,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
             else { return .init() }
             
+            cell.configure(with: cellViewModel)
+            
             cell.conditionTextField.textPublisher
                 .receive(on: DispatchQueue.main)
                 .sink { [weak cellViewModel] text in
@@ -222,7 +226,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
 
-            cell.configure(with: cellViewModel)
             return cell
             
         case .loops:
@@ -236,6 +239,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
                 else { return .init() }
                 
+                cell.configure(with: cellViewModel)
+                
                 cell.textField.textPublisher
                     .receive(on: DispatchQueue.main)
                     .sink { [weak cellViewModel] text in
@@ -244,7 +249,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     }
                     .store(in: &cell.subscriptions)
                 
-                cell.configure(with: cellViewModel)
                 return cell
             } else if cellViewModel.type.isEqualTo(.loop(.forLoop)) {
                 guard
@@ -254,6 +258,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     ) as? ForLoopBlockCell,
                     let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
                 else { return .init() }
+                
+                cell.configure(with: cellViewModel)
                 
                 cell.initValueTextField.textPublisher
                     .receive(on: DispatchQueue.main)
@@ -279,7 +285,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     }
                     .store(in: &cell.subscriptions)
                 
-                cell.configure(with: cellViewModel)
                 return cell
             } else {
                 return .init()
@@ -290,6 +295,8 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
                 let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
             else { return .init() }
+            
+            cell.configure(with: cellViewModel)
             
             cell.functionNameTextField.textPublisher
                 .receive(on: DispatchQueue.main)
@@ -307,7 +314,6 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &subscriptions)
             
-            cell.configure(with: cellViewModel)
             return cell
         }
     }

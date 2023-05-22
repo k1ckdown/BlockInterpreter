@@ -10,13 +10,11 @@ final class FunctionBlockCellViewModel: BlockCellViewModel  {
     var functionName: String?
     var argumentsString: String?
     
-    var title: String {
-        "FUNC"
-    }
-    
     var loopValue: String {
         "\(functionName ?? "")(\(argumentsString ?? ""))"
     }
+    
+    private(set) var title = "FUNC"
     
     init(style: BlockCellStyle) {
         super.init(type: .function, style: style)
