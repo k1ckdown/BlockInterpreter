@@ -7,7 +7,10 @@ enum VariableType: String {
     case String
     case bool
     case another
-    case array
+    case arrayInt
+    case arrayDouble
+    case arrayString
+    case arrayBool
 }
 
 
