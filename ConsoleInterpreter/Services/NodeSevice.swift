@@ -17,6 +17,9 @@ enum AllTypes: Equatable {
     case breakBlock
     case continueBlock
     case cin
+    case append
+    case pop
+    case remove
 
     static func ==(lhs: AllTypes, rhs: AllTypes) -> Bool {
         switch (lhs, rhs) {
@@ -49,6 +52,12 @@ enum AllTypes: Equatable {
         case (.continueBlock, .continueBlock):
             return true
         case (.cin, .cin):
+            return true
+        case (.append, .append):
+            return true
+        case (.pop, .pop):
+            return true
+        case (.remove, .remove):
             return true
         default:
             return false

@@ -110,6 +110,8 @@ class StringNormalizer {
 
         var updatedExpression = ""
         var index = 0
+        print(expression, "expression",expression.contains("“") || expression.contains("”"))
+
         while index < expression.count{
             let char = expression[expression.index(expression.startIndex, offsetBy: index)]
             if char == "["{

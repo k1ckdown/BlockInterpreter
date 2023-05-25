@@ -152,7 +152,9 @@ class Interpreter {
 
 
     private func processAssignNode(_ node: Node) {
+        print(node.children[0].value, "node.children[0].value")
         let varName = assignmentVariableInstance.replaceArray(node.children[0].value)
+
         guard isVariable(varName) else { // проверяем, что мы пытается присвоить значение НЕ числу
             fatalError("Check your variable name")
         }
@@ -170,17 +172,18 @@ class Interpreter {
                 fatalError("Invalid syntax")
             }
         }
-        if (variableType == .another){
+        let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
+        if (variableType == .another && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = calculateArithmetic(node.children[1].value, variableType)
+            print(assignValue, "assignValue")
             assignValueToStack([varName: assignValue])   
             
-        } else if (varName.contains("[") && varName.contains("]")) || variableType != .array{
+        } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
             let assignValue = calculateArithmetic(node.children[1].value, variableType)
             guard isSameType(variableName: varName, value: assignValue) else {
                 fatalError("Invalid type")
             }
-            let lastDictionary = [varName: assignValue]
-            assignValueToStack(lastDictionary)
+            assignValueToStack([varName: assignValue])
 
         } else {
             let arrayBuilder = ArrayBuilder(node.children[1].value, variableType)
@@ -211,7 +214,7 @@ class Interpreter {
             return value == "true" || value == "false"
         } else if type == .String {
             return value.contains("“") && value.contains("”")
-        } else if type == .array {
+        } else if type == .arrayInt {
             return value.contains("[") && value.contains("]") 
         } else {
             return false
@@ -228,7 +231,7 @@ class Interpreter {
         } else if value.contains("“") && value.contains("”") {
             return .String
         } else if value.contains("[") && value.contains("]") {
-            return .array
+            return .arrayInt
         } else {
             return .another
         }
@@ -461,9 +464,7 @@ class Interpreter {
                 fatalError("Invalid syntax")
             }
             let assignValue = String(calculateArithmetic(variable.value, .int))
-            if let lastDictionary = mapOfVariableStack.last {
-                setValueFromStack([variable.name: assignValue])
-            }
+            setValueFromStack([variable.name: assignValue])
         }
 
         if let lastDictionary = mapOfVariableStack.last {

@@ -3,6 +3,7 @@ import Foundation
 
 enum TokenType {
     case integer
+    case string
     case plus
     case minus
     case multiply
@@ -19,6 +20,8 @@ enum TokenType {
     case lessEqual
     case logicalAnd
     case logicalOr
+    case leftQuote
+    case rightQuote
 }
 
 

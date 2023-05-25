@@ -7,21 +7,38 @@ import Foundation
 
 
 protocol IBlock {
+
 }
 
-struct BlockDelimiter: IBlock {
-    let type: DelimiterType
+struct Flow: IBlock {
+    let id: Int
+    let type: FlowType
+    let isDebug: Bool
 }
 
 struct Condition: IBlock {
-    let isDebug: Bool
     let id: Int
     let type: ConditionType
     let value: String
+    let isDebug: Bool
 }
 
 struct Output: IBlock {
     let id: Int
+    let value: String
+    let isDebug: Bool
+}
+
+enum MethodsOfListType {
+    case append
+    case remove
+    case pop
+}
+
+struct MethodsOfList: IBlock {
+    let id: Int
+    let type: MethodsOfListType
+    let name: String
     let value: String
     let isDebug: Bool
 }
@@ -57,6 +74,14 @@ struct Variable: IBlock {
     let name: String
     let value: String
     let isDebug: Bool
+
+    init(id: Int, type: VariableType, name: String, value: String, isDebug: Bool = false) {
+        self.id = id
+        self.type = type
+        self.name = name
+        self.value = value
+        self.isDebug = isDebug
+    }
 }
 
 struct Break: IBlock {
@@ -94,9 +119,11 @@ enum TokenType {
     case rightQuote
 }
 
-enum DelimiterType {
+enum FlowType {
     case begin
     case end
+    case continueFlow
+    case breakFlow
 }
 
 enum LoopType {
@@ -106,16 +133,15 @@ enum LoopType {
 
 enum ConditionType: String, CaseIterable {
     case ifBlock, elifBlock, elseBlock
-
     var name: String {
-    switch self {
-    case .ifBlock:
-        return "if"
-    case .elifBlock:
-        return "elif"
-    case .elseBlock:
-        return "else"
-    }
+        switch self {
+        case .ifBlock:
+            return "if"
+        case .elifBlock:
+            return "elif"
+        case .elseBlock:
+            return "else"
+        }
     }
 }
 
@@ -135,6 +161,9 @@ enum AllTypes: Equatable {
     case breakBlock
     case continueBlock
     case cin
+    case append
+    case pop
+    case remove
 
     static func ==(lhs: AllTypes, rhs: AllTypes) -> Bool {
         switch (lhs, rhs) {
@@ -168,6 +197,12 @@ enum AllTypes: Equatable {
             return true
         case (.cin, .cin):
             return true
+        case (.append, .append):
+            return true
+        case (.pop, .pop):
+            return true
+        case (.remove, .remove):
+            return true
         default:
             return false
         }
@@ -181,7 +216,10 @@ enum VariableType: String {
     case String
     case bool
     case another
-    case array
+    case arrayInt
+    case arrayDouble
+    case arrayString
+    case arrayBool
 }
 
 class Tree {
@@ -218,28 +256,30 @@ class Tree {
                         type: determineLoopBlock(block) ?? AllTypes.forLoop) {
                     rootNode.addChild(loopNode)
                 }
-
             case is Condition:
                 if let conditionNode = buildNode(getBlockAndMoveIndex(),
                         type: determineConditionBlock(block) ?? AllTypes.ifBlock) {
                     rootNode.addChild(conditionNode)
                 }
-            case is BlockDelimiter:
+            case let readBlock as Flow:
+                if readBlock.type == FlowType.continueFlow {
+                    if let continueNode = buildContinue(block) {
+                        rootNode.addChild(continueNode)
+                    }
+                } else if readBlock.type == FlowType.breakFlow {
+                    if let breakNode = buildBreak(block) {
+                        rootNode.addChild(breakNode)
+                    }
+                }
                 index += 1
             case is Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
                         type: AllTypes.function) {
                     rootNode.addChild(functionNode)
                 }
-            case is Break:
-                if let breakNode = buildBreak(block) {
-                    rootNode.addChild(breakNode)
-                }
-                index += 1
-            case is Continue:
-                if let continueNode = buildContinue(block) {
-                    rootNode.addChild(continueNode)
-                }
+            case let methodBlock as MethodsOfList:
+                let methodNode = buildMethodsOfList(method: methodBlock)
+                rootNode.addChild(methodNode)
                 index += 1
             default:
                 index += 1
@@ -254,9 +294,29 @@ class Tree {
         return node
     }
 
+    private func buildMethodsOfList(method: MethodsOfList) -> Node {
+        let node = Node(value: method.value, type: determineMethod(method: method) ?? AllTypes.append,
+                id: method.id, isDebug: method.isDebug)
+        return node
+    }
+
+    private func determineMethod(method: MethodsOfList) -> AllTypes? {
+        switch method.type {
+        case .append:
+            return AllTypes.append
+        case .remove:
+            return AllTypes.remove
+        case .pop:
+            return AllTypes.pop
+        }
+    }
+
     private func buildBreak(_ block: IBlock) -> Node? {
-        if let breakBlock = block as? Break {
-            let node = Node(value: breakBlock.value, type: AllTypes.breakBlock,
+        if let breakBlock = block as? Flow {
+            if (breakBlock.type != FlowType.breakFlow) {
+                return nil
+            }
+            let node = Node(value: "", type: AllTypes.breakBlock,
                     id: breakBlock.id, isDebug: breakBlock.isDebug)
             return node
         }
@@ -264,8 +324,11 @@ class Tree {
     }
 
     private func buildContinue(_ block: IBlock) -> Node? {
-        if let continueBlock = block as? Continue {
-            let node = Node(value: continueBlock.value, type: AllTypes.continueBlock,
+        if let continueBlock = block as? Flow {
+            if (continueBlock.type != FlowType.continueFlow) {
+                return nil
+            }
+            let node = Node(value: "", type: AllTypes.continueBlock,
                     id: continueBlock.id, isDebug: continueBlock.isDebug)
             return node
         }
@@ -275,7 +338,7 @@ class Tree {
     private func getMatchingDelimiterIndex() -> Int? {
         var countBegin = 0
         for i in (index + 1)..<blocks.count {
-            guard let block = blocks[i] as? BlockDelimiter else {
+            guard let block = blocks[i] as? Flow else {
                 continue
             }
             countBegin += countForMatchingDelimiter(block)
@@ -286,7 +349,7 @@ class Tree {
         return nil
     }
 
-    private func countForMatchingDelimiter(_ block: BlockDelimiter) -> Int {
+    private func countForMatchingDelimiter(_ block: Flow) -> Int {
         if isEndDelimiter(block) {
             return -1
         } else if isBeginDelimiter(block) {
@@ -295,12 +358,12 @@ class Tree {
         return 0
     }
 
-    private func isBeginDelimiter(_ block: BlockDelimiter) -> Bool {
-        block.type == DelimiterType.begin
+    private func isBeginDelimiter(_ block: Flow) -> Bool {
+        block.type == FlowType.begin
     }
 
-    private func isEndDelimiter(_ block: BlockDelimiter) -> Bool {
-        block.type == DelimiterType.end
+    private func isEndDelimiter(_ block: Flow) -> Bool {
+        block.type == FlowType.end
     }
 
 
@@ -358,8 +421,7 @@ class Tree {
         return nil
     }
 
-    private func buildFirstNode(_ type: AllTypes,
-                                _ firstBlock: IBlock) -> Node? {
+    private func buildFirstNode(_ type: AllTypes, _ firstBlock: IBlock) -> Node? {
         var node: Node?
         if let condition = firstBlock as? Condition {
             switch type {
@@ -398,7 +460,18 @@ class Tree {
         var index = 1
 
         while index < block.count {
-            if block[index] is BlockDelimiter {
+            if let flowBlock = block[index] as? Flow {
+                if flowBlock.type == FlowType.continueFlow {
+                    let continueNode = buildContinue(flowBlock) ?? Node(value: "",
+                            type: AllTypes.continueBlock, id: flowBlock.id,
+                            isDebug: flowBlock.isDebug)
+                    node?.addChild(continueNode)
+                } else if flowBlock.type == FlowType.breakFlow {
+                    let breakNode = buildBreak(flowBlock) ?? Node(value: "",
+                            type: AllTypes.breakBlock, id: flowBlock.id,
+                            isDebug: flowBlock.isDebug)
+                    node?.addChild(breakNode)
+                }
                 index += 1
                 continue
             } else if let variableBlock = block[index] as? Variable {
@@ -407,6 +480,9 @@ class Tree {
             } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
+            } else if let method = block[index] as? MethodsOfList {
+                let methodNode = buildMethodsOfList(method: method)
+                node?.addChild(methodNode)
             } else if let readingDataBlock = block[index] as? ReadingData {
                 let readingDataNode = Node(value: readingDataBlock.value,
                         type: .cin, id: readingDataBlock.id,
@@ -417,23 +493,18 @@ class Tree {
                         type: .returnFunction, id: returnBlock.id,
                         isDebug: returnBlock.isDebug)
                 node?.addChild(returnNode)
-            } else if let continueBlock = block[index] as? Continue {
-                let continueNode = Node(value: continueBlock.value,
-                        type: .continueBlock, id: continueBlock.id,
-                        isDebug: continueBlock.isDebug)
-                node?.addChild(continueNode)
-            } else if let breakBlock = block[index] as? Break {
-                let breakNode = Node(value: breakBlock.value,
-                        type: .breakBlock, id: breakBlock.id,
-                        isDebug: breakBlock.isDebug)
-                node?.addChild(breakNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedConditionBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
-                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                    if let blockEnd = block[additionIndex] as? Flow {
+                        if blockEnd.type == FlowType.continueFlow ||
+                                   blockEnd.type == FlowType.breakFlow {
+                            nestedBlocks.append(block[additionIndex])
+                        }
+
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break
@@ -449,13 +520,24 @@ class Tree {
                 }
 
                 index = additionIndex
+            } else if let nestedBlock = block[index] as? Flow {
+                if nestedBlock.type == FlowType.breakFlow {
+                    let breakNode = Node(value: "", type: .breakBlock,
+                            id: nestedBlock.id, isDebug: nestedBlock.isDebug)
+                    node?.addChild(breakNode)
+                } else if nestedBlock.type == FlowType.continueFlow {
+                    let continueNode = Node(value: "", type: .continueBlock,
+                            id: nestedBlock.id, isDebug: nestedBlock.isDebug)
+                    node?.addChild(continueNode)
+                }
+                index += 1
             } else if let nestedLoopBlock = block[index] as? Loop {
                 var nestedBlocks: [IBlock] = []
                 var additionIndex = index + 1
                 nestedBlocks.append(nestedLoopBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
-                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                    if let blockEnd = block[additionIndex] as? Flow {
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break
@@ -476,7 +558,7 @@ class Tree {
                 nestedBlocks.append(nestedFunctionBlock)
                 var countBegin: Int = 0
                 while additionIndex < block.count {
-                    if let blockEnd = block[additionIndex] as? BlockDelimiter {
+                    if let blockEnd = block[additionIndex] as? Flow {
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break
@@ -521,9 +603,6 @@ class Token {
         return value
     }
 }
-
-
-
 
 
 
@@ -644,9 +723,11 @@ class Calculate {
         switch token.getType() {
         case .integer:
             moveToken(.integer)
-            guard let value = token.getValue(), let intValue =
-                    Int(value) else { fatalError("Error parsing input")
-            }
+            guard let 
+                value = token.getValue(), 
+                let intValue = Int(value),
+                intValue <= Int.max 
+            else { fatalError("Error parsing input")}
             return intValue
         case .minus:
             moveToken(.minus)
@@ -730,6 +811,9 @@ class Calculate {
         if currentToken == nil {
             return result
         }
+        if currentToken?.getType() == .rightQuote {
+            moveToken(.rightQuote)
+        }
         while let token = currentToken, token.getType() == .multiply {
             switch token.getType() {
             case .multiply:
@@ -744,7 +828,7 @@ class Calculate {
                 let oldResult = result
                 if let factorValue = Int(String(firstChar)){
                     result = ""
-                    for _ in 0..<factorValue - 1{
+                    for _ in 0..<factorValue{
                         result += oldResult
                     }
                 } else {
@@ -780,6 +864,7 @@ class Calculate {
             return token.getValue() ?? ""
         default:
             print(token.getType())
+            print(text)
             fatalError("Invalid syntax")
         } 
     }
@@ -1071,6 +1156,8 @@ class StringNormalizer {
 
         var updatedExpression = ""
         var index = 0
+        print(expression, "expression",expression.contains("“") || expression.contains("”"))
+
         while index < expression.count{
             let char = expression[expression.index(expression.startIndex, offsetBy: index)]
             if char == "["{
@@ -1162,23 +1249,25 @@ class ExpressionSolver{
 
 class ArrayBuilder{
     private var expression: String
-    private var type: VariableType
-    private var solvedExpression: String
+    private var arrayType: VariableType
+    private var childrenType: VariableType
     private var result: String
     private var count: Int 
     private var children: [String]
     private var expressionSolver: ExpressionSolver = .init()
 
-    init(_ expression: String, _ type: VariableType) {
+    init(_ expression: String, _ arrayType: VariableType) {
         self.expression = expression
-        self.type = type
-        self.solvedExpression = ""
-        self.result = "["
+        self.arrayType = arrayType
+        self.childrenType = .int
         self.count = 0
         self.children = []
 
-        handleExpression()
+        self.result = ""
+        self.initializeValues()
     }
+
+
 
     public func getArrayElement(_ index: Int) -> String {
         if index >= children.count {
@@ -1186,6 +1275,7 @@ class ArrayBuilder{
         }
         return children[index]
     }
+
     public func getArray() -> String{
         // верни массив children в виде строки. То есть создай строку и в цикле добавь в нее все элементы массива children и верни эту строку
         var result = "["
@@ -1196,13 +1286,11 @@ class ArrayBuilder{
             }
         }
         result += "]"
-        return result
-        
-
-        
+        return result 
     }
-    public func getArrayType() -> VariableType {
-        return self.type
+
+    public func getChildrenType() -> VariableType {
+        return self.arrayType
     }
 
     public func getArrayCount() -> Int {
@@ -1212,6 +1300,7 @@ class ArrayBuilder{
     public func getArrayChildren() -> [String] {
         return self.children
     }
+    
     public func setArrayChildren(_ children: [String]) {
         self.children = children
     }
@@ -1220,79 +1309,101 @@ class ArrayBuilder{
         if index >= children.count || index < 0{
             fatalError("Invalid index")
         }
+        if value == "" {
+            fatalError("Invalid value")
+        }
         children[index] = value
         
     }
+    private func initializeValues(){
+        self.childrenType = self.updateChildrenType()
+        print(self.childrenType, "childrenType")
+        self.children = self.updateArrayChildren()
+        print(self.children, "children")
+        self.count = self.updateArrayCount()
+        print(self.count, "count")
+        self.result = self.handleExpression()
+        print("result", self.result)
+        
+    }
 
-    private func handleExpression(){
-        let components = getArrayComponents(expression)
-
-        self.count = components.count
-        self.children = components.children
-        self.type = components.type
+    private func handleExpression() -> String{
+        if expression.first != "[" || expression.last != "]" || !isCorrectBrackets(expression){
+            fatalError("Invalid array")
+        } 
 
         if count == 0 && children.count == 0 {
             result += "]"
-            return
-        } else if count == 0 || children.count == 0{
-            fatalError("Invalid array")
+            return result
         }
+        var result = "["
         for child in children {
-            expressionSolver.setExpressionAndType(child, components.type)
-
-            let solvedExpression = expressionSolver.getSolvedExpression()
-            let valueType = getTypeByStringValue(solvedExpression)
-
-            if valueType != components.type {
-                fatalError("Invalid type of element in array")
-            }
-            result += solvedExpression + ", "
+            result += child + ", "
         }
-        if components.count > 0{
+        if count > 0{
             result.removeLast()
             result.removeLast()
         }
         result += "]"
+        return result
     }
 
-
-    private func getArrayComponents(_ expression: String) ->(type: VariableType, count: Int, children: [String]){
-        return (getArrayType(expression), getArrayCount(expression), getArrayChildren(expression))
+    private func isCorrectBrackets(_ expression: String) -> Bool{
+        var count = 0
+        for char in expression{
+            if char == "["{
+                count += 1
+            } else if char == "]"{
+                count -= 1
+            }
+        }
+        return count == 0
     }
 
-    private func getArrayChildren(_ expression: String) -> [String]{
-        // let components = expression.split(separator: "[")[1].split(separator: "]")[0].split(separator: ",")
-        // получи компоненты массива через , и убери пробелы
-        let components = expression.split(separator: "[")[1].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+    private func updateArrayChildren() -> [String]{
+        let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
         var result = [String]()
         for component in components{
-            result.append(String(component))
+            if component.first == "[" {
+                fatalError("Invalid array, we can't use array in array:((")
+            }
+            print(childrenType, component,"childrenType, component")
+            expressionSolver.setExpressionAndType(String(component), childrenType)
+
+            let solvedExpression = expressionSolver.getSolvedExpression()
+            let valueType = getTypeByStringValue(solvedExpression)
+
+            if valueType != childrenType {
+                fatalError("Invalid type of element in array")
+            }
+            result.append(String(solvedExpression))
         }
 
         return result
     }
 
-    private func getArrayCount(_ expression: String) -> Int{
-        let component = expression.split(separator: "(")[1].split(separator: ")")
-        let count = String(component[0])
-        if let intValue = Int(count), intValue >= 0{
-            return intValue
-        } else {
-            fatalError("Invalid array count")
+    private func updateArrayCount() -> Int{
+        let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",")
+        var count = 0
+        for component in components{
+            if component.trimmingCharacters(in: .whitespaces) != ""{
+                count += 1
+            } else {
+                fatalError("Invalid array, empty element")
+            }
         }
+        return count
     }
 
-    private func getArrayType(_ expression: String) -> VariableType{
-        let component = expression.split(separator: ">")[0].split(separator: "<")
-        let type = String(component[0])
-        switch type {
-        case "String":
+    private func updateChildrenType() -> VariableType{
+        switch arrayType {
+        case .arrayString:
             return .String
-        case "int":
+        case .arrayInt:
             return .int
-        case "double":
+        case .arrayDouble:
             return .double
-        case "bool":
+        case .arrayBool:
             return .bool
         default:
             fatalError("Invalid type")
@@ -1308,8 +1419,6 @@ class ArrayBuilder{
             return .bool
         } else if expression.contains("“") && expression.contains("”") {
             return .String
-        } else if expression.contains("[") && expression.contains("]") {
-            return .array
         } else {
             return .another
         }
@@ -1467,7 +1576,9 @@ class Interpreter {
 
 
     private func processAssignNode(_ node: Node) {
+        print(node.children[0].value, "node.children[0].value")
         let varName = assignmentVariableInstance.replaceArray(node.children[0].value)
+
         guard isVariable(varName) else { // проверяем, что мы пытается присвоить значение НЕ числу
             fatalError("Check your variable name")
         }
@@ -1485,17 +1596,18 @@ class Interpreter {
                 fatalError("Invalid syntax")
             }
         }
-        if (variableType == .another){
+        let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
+        if (variableType == .another && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = calculateArithmetic(node.children[1].value, variableType)
+            print(assignValue, "assignValue")
             assignValueToStack([varName: assignValue])   
             
-        } else if (varName.contains("[") && varName.contains("]")) || variableType != .array{
+        } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
             let assignValue = calculateArithmetic(node.children[1].value, variableType)
             guard isSameType(variableName: varName, value: assignValue) else {
                 fatalError("Invalid type")
             }
-            let lastDictionary = [varName: assignValue]
-            assignValueToStack(lastDictionary)
+            assignValueToStack([varName: assignValue])
 
         } else {
             let arrayBuilder = ArrayBuilder(node.children[1].value, variableType)
@@ -1526,7 +1638,7 @@ class Interpreter {
             return value == "true" || value == "false"
         } else if type == .String {
             return value.contains("“") && value.contains("”")
-        } else if type == .array {
+        } else if type == .arrayInt {
             return value.contains("[") && value.contains("]") 
         } else {
             return false
@@ -1543,7 +1655,7 @@ class Interpreter {
         } else if value.contains("“") && value.contains("”") {
             return .String
         } else if value.contains("[") && value.contains("]") {
-            return .array
+            return .arrayInt
         } else {
             return .another
         }
@@ -1776,9 +1888,7 @@ class Interpreter {
                 fatalError("Invalid syntax")
             }
             let assignValue = String(calculateArithmetic(variable.value, .int))
-            if let lastDictionary = mapOfVariableStack.last {
-                setValueFromStack([variable.name: assignValue])
-            }
+            setValueFromStack([variable.name: assignValue])
         }
 
         if let lastDictionary = mapOfVariableStack.last {
@@ -1963,25 +2073,25 @@ class Interpreter {
  
 var array: [IBlock] = []
 
-array.append(Variable(id: 0, type: .int, name: "b", value: "10", isDebug: false))
+array.append(Variable(id: 0, type: .String, name: "b", value: "“fdf” + “fdf”", isDebug: false))
 
-array.append(Variable(id: 2, type: .array, name: "c", value: "<int>(10)[5, -1132,13, 10,-20,0,32,32,32,203]", isDebug: false))
+array.append(Variable(id: 2, type: .arrayString, name: "c", value: "[“10 + 25”,“94”,“3”, “-1132 ”,“13 ”]", isDebug: false))
 array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 10; i += 1", isDebug: false))
-array.append(BlockDelimiter(type: .begin))
+array.append(Flow(id: 1, type: .begin, isDebug: false))
 array.append(Loop(id: 3, type: .forLoop, value: "int j = i + 1; j < 10; j += 1", isDebug: false))
-array.append(BlockDelimiter(type: .begin))
-array.append(Condition(isDebug: false, id: 4, type: .ifBlock, value: "c[i] > c[j]"))
-array.append(BlockDelimiter(type: .begin))
+array.append(Flow(id: 1, type: .begin, isDebug: false))
+array.append(Condition(id: 4, type: .ifBlock, value: "c[i] > c[j]", isDebug: false))
+array.append(Flow(id: 1, type: .begin, isDebug: false))
 array.append(Variable(id: 5, type: .int, name: "temp", value: "c[i]", isDebug: false))
 array.append(Variable(id: 6, type: .another, name: "c[i]", value: "c[j]", isDebug: false))
 array.append(Variable(id: 7, type: .another, name: "c[j]", value: "temp", isDebug: false))
 
-array.append(BlockDelimiter(type: .end))
-array.append(BlockDelimiter(type: .end))
+array.append(Flow(id: 1, type: .end, isDebug: false))
+array.append(Flow(id: 1, type: .end, isDebug: false))
 array.append(Output(id: 8, value: "c", isDebug: false))
-array.append(BlockDelimiter(type: .end))
-array.append(BlockDelimiter(type: .end))
-array.append(Output(id: 8, value: "c", isDebug: false))
+array.append(Flow(id: 1,type: .end, isDebug: false))
+array.append(Flow(id: 1, type: .end, isDebug: false))
+array.append(Output(id: 8, value: "b", isDebug: false))
 
 
 let tree = Tree()

@@ -1,24 +1,27 @@
 import Foundation
 
+
 class ArrayBuilder{
     private var expression: String
-    private var type: VariableType
-    private var solvedExpression: String
+    private var arrayType: VariableType
+    private var childrenType: VariableType
     private var result: String
     private var count: Int 
     private var children: [String]
     private var expressionSolver: ExpressionSolver = .init()
 
-    init(_ expression: String, _ type: VariableType) {
+    init(_ expression: String, _ arrayType: VariableType) {
         self.expression = expression
-        self.type = type
-        self.solvedExpression = ""
-        self.result = "["
+        self.arrayType = arrayType
+        self.childrenType = .int
         self.count = 0
         self.children = []
 
-        handleExpression()
+        self.result = ""
+        self.initializeValues()
     }
+
+
 
     public func getArrayElement(_ index: Int) -> String {
         if index >= children.count {
@@ -26,6 +29,7 @@ class ArrayBuilder{
         }
         return children[index]
     }
+
     public func getArray() -> String{
         // верни массив children в виде строки. То есть создай строку и в цикле добавь в нее все элементы массива children и верни эту строку
         var result = "["
@@ -36,13 +40,11 @@ class ArrayBuilder{
             }
         }
         result += "]"
-        return result
-        
-
-        
+        return result 
     }
-    public func getArrayType() -> VariableType {
-        return self.type
+
+    public func getChildrenType() -> VariableType {
+        return self.arrayType
     }
 
     public func getArrayCount() -> Int {
@@ -52,6 +54,7 @@ class ArrayBuilder{
     public func getArrayChildren() -> [String] {
         return self.children
     }
+    
     public func setArrayChildren(_ children: [String]) {
         self.children = children
     }
@@ -60,79 +63,101 @@ class ArrayBuilder{
         if index >= children.count || index < 0{
             fatalError("Invalid index")
         }
+        if value == "" {
+            fatalError("Invalid value")
+        }
         children[index] = value
         
     }
+    private func initializeValues(){
+        self.childrenType = self.updateChildrenType()
+        print(self.childrenType, "childrenType")
+        self.children = self.updateArrayChildren()
+        print(self.children, "children")
+        self.count = self.updateArrayCount()
+        print(self.count, "count")
+        self.result = self.handleExpression()
+        print("result", self.result)
+        
+    }
 
-    private func handleExpression(){
-        let components = getArrayComponents(expression)
-
-        self.count = components.count
-        self.children = components.children
-        self.type = components.type
+    private func handleExpression() -> String{
+        if expression.first != "[" || expression.last != "]" || !isCorrectBrackets(expression){
+            fatalError("Invalid array")
+        } 
 
         if count == 0 && children.count == 0 {
             result += "]"
-            return
-        } else if count == 0 || children.count == 0{
-            fatalError("Invalid array")
+            return result
         }
+        var result = "["
         for child in children {
-            expressionSolver.setExpressionAndType(child, components.type)
-
-            let solvedExpression = expressionSolver.getSolvedExpression()
-            let valueType = getTypeByStringValue(solvedExpression)
-
-            if valueType != components.type {
-                fatalError("Invalid type of element in array")
-            }
-            result += solvedExpression + ", "
+            result += child + ", "
         }
-        if components.count > 0{
+        if count > 0{
             result.removeLast()
             result.removeLast()
         }
         result += "]"
+        return result
     }
 
-
-    private func getArrayComponents(_ expression: String) ->(type: VariableType, count: Int, children: [String]){
-        return (getArrayType(expression), getArrayCount(expression), getArrayChildren(expression))
+    private func isCorrectBrackets(_ expression: String) -> Bool{
+        var count = 0
+        for char in expression{
+            if char == "["{
+                count += 1
+            } else if char == "]"{
+                count -= 1
+            }
+        }
+        return count == 0
     }
 
-    private func getArrayChildren(_ expression: String) -> [String]{
-        // let components = expression.split(separator: "[")[1].split(separator: "]")[0].split(separator: ",")
-        // получи компоненты массива через , и убери пробелы
-        let components = expression.split(separator: "[")[1].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+    private func updateArrayChildren() -> [String]{
+        let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
         var result = [String]()
         for component in components{
-            result.append(String(component))
+            if component.first == "[" {
+                fatalError("Invalid array, we can't use array in array:((")
+            }
+            print(childrenType, component,"childrenType, component")
+            expressionSolver.setExpressionAndType(String(component), childrenType)
+
+            let solvedExpression = expressionSolver.getSolvedExpression()
+            let valueType = getTypeByStringValue(solvedExpression)
+
+            if valueType != childrenType {
+                fatalError("Invalid type of element in array")
+            }
+            result.append(String(solvedExpression))
         }
 
         return result
     }
 
-    private func getArrayCount(_ expression: String) -> Int{
-        let component = expression.split(separator: "(")[1].split(separator: ")")
-        let count = String(component[0])
-        if let intValue = Int(count), intValue >= 0{
-            return intValue
-        } else {
-            fatalError("Invalid array count")
+    private func updateArrayCount() -> Int{
+        let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",")
+        var count = 0
+        for component in components{
+            if component.trimmingCharacters(in: .whitespaces) != ""{
+                count += 1
+            } else {
+                fatalError("Invalid array, empty element")
+            }
         }
+        return count
     }
 
-    private func getArrayType(_ expression: String) -> VariableType{
-        let component = expression.split(separator: ">")[0].split(separator: "<")
-        let type = String(component[0])
-        switch type {
-        case "String":
+    private func updateChildrenType() -> VariableType{
+        switch arrayType {
+        case .arrayString:
             return .String
-        case "int":
+        case .arrayInt:
             return .int
-        case "double":
+        case .arrayDouble:
             return .double
-        case "bool":
+        case .arrayBool:
             return .bool
         default:
             fatalError("Invalid type")
@@ -148,8 +173,6 @@ class ArrayBuilder{
             return .bool
         } else if expression.contains("“") && expression.contains("”") {
             return .String
-        } else if expression.contains("[") && expression.contains("]") {
-            return .array
         } else {
             return .another
         }
