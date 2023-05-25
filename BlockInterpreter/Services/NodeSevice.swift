@@ -4,9 +4,12 @@ import Foundation
 enum AllTypes: Equatable {
     case assign
     case ifBlock
-    case loop
-    case function
-    case returnFunction
+    case elifBlock
+    case elseBlock
+    case forLoop
+    case whileLoop
+    case function(type: VariableType)
+    case returnFunction(type: VariableType)
     case variable(type: VariableType)
     case arithmetic
     case print
