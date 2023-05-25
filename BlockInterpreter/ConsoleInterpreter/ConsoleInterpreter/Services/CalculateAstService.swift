@@ -8,11 +8,11 @@ class Calculate {
 
     init(_ text: String) {
         self.text = text
-        position = 0
+        self.position = 0
     }
 
     public func getText() -> String {
-        return self.text
+        return text
     }
 
     public func setText(text: String) {
@@ -20,25 +20,27 @@ class Calculate {
         self.position = 0
     }
 
-    public func compare() -> Int {
-        self.currentToken = self.getNextToken()
-        var result = self.term()
+
+    public func compare() -> Double {
+        currentToken = getNextToken()
+
+        var result = term()
         let possibleTokens: [TokenType] = [
-            TokenType.plus,
-            TokenType.minus,
-            TokenType.equal,
-            TokenType.less,
-            TokenType.greater,
-            TokenType.notEqual,
-            TokenType.lessEqual,
-            TokenType.greaterEqual,
-            TokenType.logicalAnd,
-            TokenType.logicalOr
+            .plus,
+            .minus,
+            .equal,
+            .less,
+            .greater,
+            .notEqual,
+            .lessEqual,
+            .greaterEqual,
+            .logicalAnd,
+            .logicalOr
         ]
-        if self.currentToken == nil {
-            return result
+        if currentToken == nil {
+            return Double(result)
         }
-        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
 
             if token.getType() == .plus {
                 moveToken(.plus)
@@ -47,8 +49,8 @@ class Calculate {
                 moveToken(.minus)
                 result -= term()
             } else if possibleTokens.contains(token.getType()){
-                self.moveToken(token.getType())
-                let factorValue = self.factor()
+                moveToken(token.getType())
+                let factorValue = factor()
 
                 switch token.getType() {
                 case .equal:
@@ -72,33 +74,33 @@ class Calculate {
                 }
             }
         }
-        return result
+        return Double(result)
     }
 
 
 
-    private func term() -> Int {
-        var result = self.factor()
+    private func term() -> Double {
+        var result = factor()
         let possibleTokens: [TokenType] = [
             TokenType.modulo,
             TokenType.multiply,
             TokenType.divide,
         ]
-        if self.currentToken == nil {
+        if currentToken == nil {
             return result
         }
-        while let token = self.currentToken, possibleTokens.contains(token.getType()) {
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
             switch token.getType() {
             case .modulo:
-                self.moveToken(.modulo)
-                result %= self.factor()
+                moveToken(.modulo)
+                result = Double(Int(result) % Int(factor()))
             case .multiply:
-                self.moveToken(.multiply)
-                result *= self.factor()
+                moveToken(.multiply)
+                result *= factor()
 
             case .divide:
-                self.moveToken(.divide)
-                result /= self.factor()
+                moveToken(.divide)
+                result /= factor()
 
             default:
                 fatalError("Invalid token type")
@@ -107,67 +109,219 @@ class Calculate {
         return result
     }
 
-    private func factor() -> Int {
-        let token = self.currentToken!
+
+    private func factor() -> Double {
+        guard let token = currentToken else{
+            fatalError("Current token is nil")
+        }
 
         switch token.getType() {
         case .integer:
-            self.moveToken(.integer)
+            moveToken(.integer)
             guard let value = token.getValue(), let intValue =
             Int(value) else { fatalError("Error parsing input")
             }
-            return intValue
+            return Double(intValue)
+        case .double:
+            moveToken(.double)
+            guard let value = token.getValue(), let doubleValue =
+                Double(value) else {
+                fatalError("Error parsing input")
+            }
+            return Double(Int(doubleValue))
+        case .minus:
+            moveToken(.minus)
+            return -factor()
         case .leftBrace:
-            self.moveToken(.leftBrace)
-            let result = self.compare()
-            self.moveToken(.rightBrace)
-            return result
+            moveToken(.leftBrace)
+            let result = compare()
+            moveToken(.rightBrace)
+            return Double(result)
+
         case .eof:
             return 0
+        default:
+            print(token.getType(), text)
+            fatalError("Invalid syntax")
+        }
+    }
+
+    public func compareString() -> String{
+        currentToken = getNextToken()
+        var result = ""
+        result += termString()
+
+        let possibleTokens: [TokenType] = [
+            .leftQuote,
+            .rightQuote,
+            .plus,
+            .equal,
+            .less,
+            .greater,
+            .notEqual,
+            .lessEqual,
+            .greaterEqual,
+            .logicalAnd,
+            .logicalOr
+        ]
+        if currentToken == nil {
+            return result
+        }
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
+            if token.getType() == .leftQuote {
+                moveToken(.leftQuote)
+                result += termString()
+            } else if token.getType() == .rightQuote {
+                moveToken(.rightQuote)
+                result += termString()
+            } else if token.getType() == .plus {
+                moveToken(.plus)
+                result += termString()
+            } else if possibleTokens.contains(token.getType()){
+                moveToken(token.getType())
+                let factorValue = factorString()
+
+                switch token.getType() {
+                case .equal:
+                    result = result == factorValue ? "true" : "false"
+                case .notEqual:
+                    result = result != factorValue ? "true" : "false"
+                case .greater:
+                    result = result > factorValue ? "true" : "false"
+                case .less:
+                    result = result < factorValue ? "true" : "false"
+                case .greaterEqual:
+                    result = result >= factorValue ? "true" : "false"
+                case .lessEqual:
+                    result = result <= factorValue ? "true" : "false"
+                case .logicalAnd:
+                    result = result != ""  && factorValue != ""  ? "true" : "false"
+                case .logicalOr:
+                    result = result != "" || factorValue != ""  ? "true" : "false"
+                default:
+                    fatalError("Invalid token type")
+                }
+            }
+        }
+        return result
+    }
+
+    private func termString() -> String {
+        var result = factorString()
+        if currentToken == nil {
+            return result
+        }
+        while let token = currentToken, token.getType() == .multiply {
+            switch token.getType() {
+            case .multiply:
+                moveToken(.multiply)
+                let factorValue = factorString()
+                guard let firstChar = factorValue.first else{
+                    fatalError("Symbol after * is not found")
+                }
+                if !isNumber(firstChar){
+                    fatalError("Invalid syntax")
+                }
+                let oldResult = result
+                if let factorValue = Int(String(firstChar)){
+                    result = ""
+                    for _ in 0..<factorValue - 1{
+                        result += oldResult
+                    }
+                } else {
+                    fatalError("Value after * is not a number")
+                }
+
+            default:
+                fatalError("Invalid token type")
+            }
+        }
+        return result
+    }
+
+    private func factorString() -> String {
+        guard let token = currentToken else{
+            fatalError("Current token is nil")
+        }
+
+        switch token.getType() {
+        case .integer:
+            moveToken(.integer)
+            return token.getValue() ?? ""
+        case .string:
+            moveToken(.string)
+            return token.getValue() ?? ""
+        case .leftBrace:
+            moveToken(.leftBrace)
+            let result = compareString()
+            moveToken(.rightBrace)
+            return result
+        case .eof:
+            moveToken(.eof)
+            return token.getValue() ?? ""
         default:
             print(token.getType())
             fatalError("Invalid syntax")
         }
-
     }
 
 
     private func getNextToken() -> Token? {
-        guard self.position < self.text.count else {
+        guard position < text.count else {
             return Token(.eof, nil)
         }
 
-        let currentChar = self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
-        if self.isSpace(currentChar) {
-            self.position += 1
-            return self.getNextToken()
-        }
+        let currentChar = text[text.index(text.startIndex, offsetBy: position)]
 
-        if self.isNumber(currentChar) {
+        if isSpace(currentChar) {
+            var nextChar = text[text.index(text.startIndex, offsetBy: position)]
+            while isSpace(nextChar) {
+                position += 1
+                nextChar = text[text.index(text.startIndex, offsetBy: position)]
+            }
+            return getNextToken()
+        } else if isNumber(currentChar) {
             var integerString = String(currentChar)
-            self.position += 1
+            position += 1
 
-            while self.position < self.text.count {
-                let nextChar =
-                        self.text[self.text.index(self.text.startIndex, offsetBy: self.position)]
-                if self.isNumber(nextChar) {
+            while position < text.count {
+                let nextChar = text[text.index(text.startIndex, offsetBy: position)]
+                if isNumber(nextChar) {
                     integerString += String(nextChar)
-                    self.position += 1
+                    position += 1
                 } else {
                     break
                 }
             }
 
             return Token(.integer, integerString)
+
+        } else if currentChar == "“"{
+            var string = ""
+            position += 1
+            while position < text.count {
+                let nextChar = text[text.index(text.startIndex, offsetBy: position)]
+                if nextChar != "”" {
+                    string += String(nextChar)
+                    position += 1
+                } else {
+                    break
+                }
+            }
+            return Token(.string, string)
         }
 
-        self.position += 1
+        position += 1
         return getToken(currentChar)
 
     }
 
-    private func getToken(_ currentChar: Character) -> Token{
+    private func getToken(_ currentChar: Character) -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
         switch currentChar {
+        case "“":
+            return Token(.leftQuote, "“")
+        case "”":
+            return Token(.rightQuote, "”")
         case "+":
             return Token(.plus, "+")
         case "-":
@@ -178,6 +332,8 @@ class Calculate {
             return Token(.divide, "/")
         case "%":
             return Token(.modulo, "%")
+        case ".":
+            return Token(.double, ".")
         case "(":
             return Token(.leftBrace, "(")
         case ")":
@@ -225,6 +381,7 @@ class Calculate {
                 }
             }
         default:
+            print(currentChar)
             fatalError("Invalid character")
         }
     }
@@ -241,6 +398,11 @@ class Calculate {
     private func isNumber(_ char: Character) -> Bool {
         return char >= "0" && char <= "9"
     }
+
+    private func isChar(_ char: Character) -> Bool {
+        return char >= "a" && char <= "z" || char >= "A" && char <= "Z"
+    }
+
 
     private func isSpace(_ char: Character) -> Bool {
         return char == " "

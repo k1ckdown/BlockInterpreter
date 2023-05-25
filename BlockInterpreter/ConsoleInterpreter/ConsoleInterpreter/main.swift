@@ -1,27 +1,32 @@
 import Foundation
 
-
 var array: [IBlock] = []
 
-array.append(Variable(id: 1, type: .int, name: "a", value: "5"))
-array.append(Condition(id: 2, type: .ifBlock, value: "a > b", isDebug: false))
-array.append(Flow(id: 3, type: .begin, isDebug: false))
-array.append(Variable(id: 4, type: .int, name: "b", value: "5"))
-array.append(Loop(id: 5, type: .forLoop, value: "i = 0; i < 10; i++", isDebug: false))
-array.append(Flow(id: 6, type: .begin, isDebug: false))
-array.append(Flow(id: 4, type: FlowType.breakFlow, isDebug: false))
-array.append(Flow(id: 5, type: FlowType.continueFlow, isDebug: false))
-array.append(Flow(id: 6, type: FlowType.end, isDebug: false))
-array.append(MethodsOfList(id: 7, type: .append, name: "list", value: "5", isDebug: false))
-array.append(MethodsOfList(id: 8, type: .remove, name: "list", value: "5", isDebug: false))
-array.append(MethodsOfList(id: 9, type: .pop, name: "list", value: "5", isDebug: false))
-array.append(Flow(id: 7, type: FlowType.end, isDebug: false))
-array.append(Output(id: 8, value: "Hello world", isDebug: false))
-array.append(MethodsOfList(id: 9, type: .append, name: "list", value: "5", isDebug: false))
-array.append(Variable(id: 10, type: .arrayInt, name: "list", value: "[5, 6]", isDebug: false))
+array.append(Variable(id: 0, type: .double, name: "b", value: "10.0 + 3", isDebug: false))
+
+// array.append(Variable(id: 2, type: .arrayInt, name: "c", value: "<int>(10)[5, -1132,13,10000000, 10,-20,0,32,32,32,203]", isDebug: false))
+//array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 10; i += 1", isDebug: false))
+//array.append(Flow(id: 4, type: .begin, isDebug: false))
+//array.append(Loop(id: 5, type: .forLoop, value: "int j = i + 1; j < 10; j += 1", isDebug: false))
+//array.append(Flow(id: 6, type: .begin, isDebug: false))
+//array.append(Condition(id: 7, type: .ifBlock, value: "(c[i] > c[j])", isDebug: false))
+//array.append(Flow(id: 8, type: .begin, isDebug: false))
+//array.append(Variable(id: 5, type: .int, name: "temp", value: "c[i]", isDebug: false))
+//array.append(Variable(id: 6, type: .another, name: "c[i]", value: "c[j]", isDebug: false))
+//array.append(Variable(id: 7, type: .another, name: "c[j]", value: "temp", isDebug: false))
+
+//array.append(Flow(id: 8, type: .end, isDebug: false))
+//array.append(Flow(id: 9, type: .end, isDebug: false))
+//array.append(Output(id: 10, value: "c", isDebug: false))
+//array.append(Flow(id: 11, type: .end, isDebug: false))
+//array.append(Flow(id: 12, type: .end, isDebug: false))
+//array.append(Output(id: 13, value: "c", isDebug: false))
+
 
 let tree = Tree()
 tree.setBlocks(array)
 tree.buildTree()
-print("hi")
 
+let interpreter = Interpreter()
+interpreter.setTreeAST(tree.rootNode)
+print(interpreter.getPrintResult())

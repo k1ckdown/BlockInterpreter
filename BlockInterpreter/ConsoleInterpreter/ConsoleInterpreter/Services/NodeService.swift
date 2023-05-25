@@ -49,5 +49,9 @@ class Node {
     func setCountWasHere(_ count: Int) {
         countWasHere = count
     }
+
+    func getCountWasHere() -> Int {
+        return countWasHere
+    }
 }
 
