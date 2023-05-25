@@ -3,32 +3,46 @@ import Foundation
 class ExpressionSolver{
     private var expression: String
     private var type: VariableType
-    public var solvedExpression: String
+    private var solvedExpression: String
 
-    init(_ expression: String, _ type: VariableType) {
+    init() {
+        self.solvedExpression = ""
+        self.expression = ""
+        self.type = .int
+    }
+
+    public func getSolvedExpression() -> String {
+        return solvedExpression
+    }
+
+    public func setExpressionAndType(_ expression: String, _ type: VariableType) {
         self.expression = expression
         self.type = type
-        self.solvedExpression = ""
         updateSolvedExpression()
     }
 
     private func updateSolvedExpression(){
-        let calculate = Calculate("")
+        let calculate = Calculate("") 
 
-        if type == .String {
-            let updatedExpression = expression.replacingOccurrences(of: "“", with: "").replacingOccurrences(of: "”", with: "")
+        var updatedExpression = expression
+        if type == .String || (expression.contains("“") && expression.contains("”")) { 
+            updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
             let calculatedValue = calculate.compareString()
-            if expression.contains("“") && expression.contains("”") && calculatedValue != "false" && calculatedValue != "true"{
+            if expression.contains("“") && expression.contains("”") {
                 self.solvedExpression = "“" +  calculatedValue + "”"
             } else {
                 self.solvedExpression = calculatedValue
             }
-        } else {
-            let updatedExpression = expression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
+
+        } else if expression.contains("“") || expression.contains("”") || expression.contains("[") || expression.contains("]"){
+            fatalError("Invalid type")
+        } else{
+            updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = calculate.compare()
             
+            let calculatedValue = calculate.compare()
+
             if type == .int {
                 self.solvedExpression =  String(calculatedValue)
             } else if type == .double {
@@ -39,5 +53,7 @@ class ExpressionSolver{
                 self.solvedExpression =  ""
             }
         }
+
     }
+
 }

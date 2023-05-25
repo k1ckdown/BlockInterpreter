@@ -20,8 +20,7 @@ class StringNormalizer {
 
     private func normalizeString(_ expression: String) -> String {
         var result = "" 
-        let updatedExpression = getFixedString(expression)
-        let components = updatedExpression.split(whereSeparator: { $0 == " " })
+        let components = getFixedString(expression).split(whereSeparator: { $0 == " " })
         for component in components {
             if let intValue = Int(component) {
                 result += "\(intValue)"
@@ -42,27 +41,40 @@ class StringNormalizer {
                 return replaceSigns(expression, sign)
             }
         }
+        var updatedExpression = expression
+        if expression.contains("[") && expression.contains("]"){
+            updatedExpression = replaceArray(expression)
+        }
 
-        return addWhitespaces(expression)
+        return addWhitespaces(updatedExpression)
     }
-
+    
     private func replaceSigns(_ expression: String, _ sign: String) -> String{
         var updatedExpression = ""
-        if expression.contains("++"){
+        if !expression.contains(sign) {
+            return expression
+        } else if expression.contains("++"){
             let str = expression.split(separator: "+")
             updatedExpression += "\(str[0]) = \(str[0]) + 1"
         } else if expression.contains("--"){
             let str = expression.split(separator: "-")
             updatedExpression += "\(str[0]) = \(str[0]) - 1"
-        } else {
-            var str = expression.split(separator: sign.first!)
+        } else {   
+            guard let firstSign = sign.first else {
+                fatalError("Invalid sign")
+            }
+            var str = expression.split(separator: firstSign)
             str[1].removeFirst()
-            updatedExpression += "\(str[0]) = \(str[0]) \(sign.first!) \(str[1])"
+
+            updatedExpression += "\(str[0]) = \(str[0]) \(firstSign) \(str[1])"
+
             if str.count > 2 {
-                for i in 2..<str.count{
-                    updatedExpression += " \(sign.first!) \(str[i])"
+                for i in 2..<str.count {
+                    updatedExpression += " \(firstSign) \(str[i])"
                 }
             }
+
+
         }
 
         return updatedExpression
@@ -91,6 +103,36 @@ class StringNormalizer {
             index += 1
         }
 
+        return updatedExpression
+    }
+
+    public func replaceArray(_ expression: String) -> String{
+
+        var updatedExpression = ""
+        var index = 0
+        while index < expression.count{
+            let char = expression[expression.index(expression.startIndex, offsetBy: index)]
+            if char == "["{
+                var count = 1
+                var newIndex = index + 1
+                while count != 0{
+                    if expression[expression.index(expression.startIndex, offsetBy: newIndex)] == "["{
+                        count += 1
+                    } else if expression[expression.index(expression.startIndex, offsetBy: newIndex)] == "]"{
+                        count -= 1
+                    }
+                    newIndex += 1
+                }
+                let str = expression[expression.index(expression.startIndex, offsetBy: index + 1)..<expression.index(expression.startIndex, offsetBy: newIndex - 1)]
+                let normalizedString = normalizeString(String(str))
+                let computedValue = Calculate(normalizedString).compare()
+                updatedExpression += "[\(computedValue)]"
+                index = newIndex - 1
+            } else {
+                updatedExpression += "\(char)"
+            }
+            index += 1
+        }
         return updatedExpression
     }
 

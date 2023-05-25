@@ -111,29 +111,31 @@ class Calculate {
 
 
     private func factor() -> Int {
-        let token = currentToken!
+        guard let token = currentToken else{
+            fatalError("Current token is nil")
+        }
 
         switch token.getType() {
-            case .integer:
-                moveToken(.integer)
-                guard let value = token.getValue(), let intValue =
-                        Int(value) else { fatalError("Error parsing input")
-                }
-                return intValue
-            case .minus:
-                moveToken(.minus)
-                return -factor()
-            case .leftBrace:
-                moveToken(.leftBrace)
-                let result = compare()
-                moveToken(.rightBrace)
-                return result
+        case .integer:
+            moveToken(.integer)
+            guard let value = token.getValue(), let intValue =
+                    Int(value) else { fatalError("Error parsing input")
+            }
+            return intValue
+        case .minus:
+            moveToken(.minus)
+            return -factor()
+        case .leftBrace:
+            moveToken(.leftBrace)
+            let result = compare()
+            moveToken(.rightBrace)
+            return result
 
-            case .eof:
-                return 0
-            default:
-                print(token.getType())
-                fatalError("Invalid syntax")
+        case .eof:
+            return 0
+        default:
+            print(token.getType(), text)
+            fatalError("Invalid syntax")
         }
     }
 
@@ -141,7 +143,10 @@ class Calculate {
         currentToken = getNextToken() 
         var result = ""
         result += termString()
+
         let possibleTokens: [TokenType] = [
+            .leftQuote,
+            .rightQuote,
             .plus,
             .equal,
             .less,  
@@ -156,8 +161,13 @@ class Calculate {
             return result
         }
         while let token = currentToken, possibleTokens.contains(token.getType()) {
-            
-            if token.getType() == .plus {
+            if token.getType() == .leftQuote {
+                moveToken(.leftQuote)
+                result += termString()
+            } else if token.getType() == .rightQuote {
+                moveToken(.rightQuote)
+                result += termString()
+            } else if token.getType() == .plus {
                 moveToken(.plus)
                 result += termString()
             } else if possibleTokens.contains(token.getType()){
@@ -191,25 +201,30 @@ class Calculate {
 
     private func termString() -> String {
         var result = factorString()
-
-        let possibleTokens: [TokenType] = [
-            TokenType.multiply,
-        ]
         if currentToken == nil {
             return result
         }
-        while let token = currentToken, possibleTokens.contains(token.getType()) {
+        while let token = currentToken, token.getType() == .multiply {
             switch token.getType() {
             case .multiply:
                 moveToken(.multiply)
                 let factorValue = factorString()
-                if !isNumber(factorValue.first!){
+                guard let firstChar = factorValue.first else{
+                    fatalError("Symbol after * is not found")
+                }
+                if !isNumber(firstChar){
                     fatalError("Invalid syntax")
                 }
                 let oldResult = result
-                for _ in 0..<Int(factorValue)! - 1{
-                    result += oldResult
+                if let factorValue = Int(String(firstChar)){
+                    result = ""
+                    for _ in 0..<factorValue - 1{
+                        result += oldResult
+                    }
+                } else {
+                    fatalError("Value after * is not a number")
                 }
+
             default:
                 fatalError("Invalid token type")
             }
@@ -218,7 +233,9 @@ class Calculate {
     }
 
     private func factorString() -> String {
-        let token = currentToken!
+        guard let token = currentToken else{
+            fatalError("Current token is nil")
+        }
 
         switch token.getType() {
         case .integer:
@@ -232,6 +249,9 @@ class Calculate {
             let result = compareString()
             moveToken(.rightBrace)
             return result
+        case .eof:
+            moveToken(.eof)
+            return token.getValue() ?? ""
         default:
             print(token.getType())
             fatalError("Invalid syntax")
@@ -245,8 +265,13 @@ class Calculate {
         }
  
         let currentChar = text[text.index(text.startIndex, offsetBy: position)]
+
         if isSpace(currentChar) {
-            position += 1
+            var nextChar = text[text.index(text.startIndex, offsetBy: position)]
+            while isSpace(nextChar) {
+                position += 1
+                nextChar = text[text.index(text.startIndex, offsetBy: position)]
+            }
             return getNextToken()
         } else if isNumber(currentChar) {
             var integerString = String(currentChar)
@@ -263,27 +288,21 @@ class Calculate {
             }
 
             return Token(.integer, integerString)
-        } else if isChar(currentChar) {
-            var string = String(currentChar)
+
+        } else if currentChar == "“"{
+            var string = ""
             position += 1
-            
             while position < text.count {
                 let nextChar = text[text.index(text.startIndex, offsetBy: position)]
-
-
-                if nextChar != "*" && nextChar != "+" { //* добавить операторы сравнения
+                if nextChar != "”" {
                     string += String(nextChar)
                     position += 1
                 } else {
                     break
                 }
             }
-
-            
             return Token(.string, string)
-
         }
-
 
         position += 1
         return getToken(currentChar)
@@ -292,65 +311,69 @@ class Calculate {
 
     private func getToken(_ currentChar: Character) -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
         switch currentChar {
-            case "+":
-                return Token(.plus, "+")            
-            case "-":
-                return Token(.minus, "-")
-            case "*":
-                return Token(.multiply, "*")
-            case "/":
-                return Token(.divide, "/") 
-            case "%":
-                return Token(.modulo, "%")
-            case "(":
-                return Token(.leftBrace, "(")
-            case ")":
-                return Token(.rightBrace, ")")
-            case "=", "<", ">", "!", "&", "|":
-                if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
-                    self.position += 1
-                    switch currentChar {
-                        case "=":
-                            return Token(.equal, "==")
-                        case "!":
-                            return Token(.notEqual, "!=")
-                        case "<":
-                            return Token(.lessEqual, "<=")
-                        case ">":
-                            return Token(.greaterEqual, ">=")
-                        default:
-                            fatalError("Invalid character")
-                    }
-                } else {
-                    switch currentChar {
-                        case "=":
-                            return Token(.equal, "=")
-                        case "<":
-                            return Token(.less, "<")
-                        case ">":
-                            return Token(.greater, ">")
-                        case "&":
-                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "&" {
-                                self.position += 1
-                                return Token(.logicalAnd, "&&")
-                            } else {
-                                fatalError("Invalid character")
-                            }
-                            
-                        case "|":
-                            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
-                                self.position += 1
-                                return Token(.logicalOr, "||")
-                            } else {
-                                fatalError("Invalid character")
-                            }
-                        default:
-                            fatalError("Invalid character")
-                    }
+        case "“":
+            return Token(.leftQuote, "“")
+        case "”":
+            return Token(.rightQuote, "”")
+        case "+":
+            return Token(.plus, "+")            
+        case "-":
+            return Token(.minus, "-")
+        case "*":
+            return Token(.multiply, "*")
+        case "/":
+            return Token(.divide, "/") 
+        case "%":
+            return Token(.modulo, "%")
+        case "(":
+            return Token(.leftBrace, "(")
+        case ")":
+            return Token(.rightBrace, ")")
+        case "=", "<", ">", "!", "&", "|":
+            if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "=" {
+                self.position += 1
+                switch currentChar {
+                case "=":
+                    return Token(.equal, "==")
+                case "!":
+                    return Token(.notEqual, "!=")
+                case "<":
+                    return Token(.lessEqual, "<=")
+                case ">":
+                    return Token(.greaterEqual, ">=")
+                default:
+                    fatalError("Invalid character")
                 }
-            default:
-                print(currentChar)
-                fatalError("Invalid character")
+            } else {
+                switch currentChar {
+                case "=":
+                    return Token(.equal, "=")
+                case "<":
+                    return Token(.less, "<")
+                case ">":
+                    return Token(.greater, ">")
+                case "&":
+                    if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "&" {
+                        self.position += 1
+                        return Token(.logicalAnd, "&&")
+                    } else {
+                        fatalError("Invalid character")
+                    }
+                    
+                case "|":
+                    if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
+                        self.position += 1
+                        return Token(.logicalOr, "||")
+                    } else {
+                        fatalError("Invalid character")
+                    }
+                default:
+                    fatalError("Invalid character")
+                }
+            }
+        default:
+            print(currentChar)
+            fatalError("Invalid character")
         }
     }
     private func moveToken(_ type: TokenType) {
