@@ -11,7 +11,6 @@
 		586030AF87ECF1915C6E8D35 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586031E5A8505E6B205B823E /* Variable.swift */; };
 		5860316BE87AB6D10D0F83C8 /* NodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586035925409F98972CBAB63 /* NodeService.swift */; };
 		5860334031A95B52A1D0693A /* BlockProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55633BF5CEC59CFFC6 /* BlockProtocol.swift */; };
-		5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586030B8D020FD8312F37247 /* ReadingData.swift */; };
 		586035A8030399C355559DEF /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603355C5E7B64F1DA5C64C /* Loop.swift */; };
 		586035D0BACE931ECE34A079 /* TokenAST.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586035C5A1F4018C673E076A /* TokenAST.swift */; };
 		5860364EBDBFB1EAF11A3396 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603770F49236CAA8FF6CB1 /* main.swift */; };
@@ -20,7 +19,7 @@
 		58603A5C0860200E848EA221 /* ReversePolishService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603C8AFAFB12FA74A59C0C /* ReversePolishService.swift */; };
 		58603A7337A7271246954C14 /* CalculateAstService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860358433097B1027D75D1E /* CalculateAstService.swift */; };
 		58603BD6B60BC26DF901967D /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586033B9137E810B10B7FE60 /* Output.swift */; };
-		58603C24158AABC08C32BC40 /* MethodsOfList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55AE574B3A1D6DF816 /* MethodsOfList.swift */; };
+		58603C24158AABC08C32BC40 /* ArrayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55AE574B3A1D6DF816 /* ArrayMethod.swift */; };
 		58603CE3591650A8A23905EB /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603858D82768B77CF315E2 /* Function.swift */; };
 		58603E321866AEC57B63A52F /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586038D397DC2ECB5E25A104 /* Condition.swift */; };
 /* End PBXBuildFile section */
@@ -38,7 +37,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		586030B8D020FD8312F37247 /* ReadingData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingData.swift; sourceTree = "<group>"; };
 		5860316432F5DBB1303AEEDE /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		586031E5A8505E6B205B823E /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		58603355C5E7B64F1DA5C64C /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
@@ -51,7 +49,7 @@
 		58603858D82768B77CF315E2 /* Function.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Function.swift; sourceTree = "<group>"; };
 		586038D397DC2ECB5E25A104 /* Condition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Condition.swift; sourceTree = "<group>"; };
 		58603B55633BF5CEC59CFFC6 /* BlockProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockProtocol.swift; sourceTree = "<group>"; };
-		58603B55AE574B3A1D6DF816 /* MethodsOfList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MethodsOfList.swift; sourceTree = "<group>"; };
+		58603B55AE574B3A1D6DF816 /* ArrayMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayMethod.swift; sourceTree = "<group>"; };
 		58603C8AFAFB12FA74A59C0C /* ReversePolishService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReversePolishService.swift; sourceTree = "<group>"; };
 		58603E435CDDED4C158ABE93 /* Flow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		58603EEF6681188B58336C41 /* Returning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Returning.swift; sourceTree = "<group>"; };
@@ -79,9 +77,8 @@
 				586035C5A1F4018C673E076A /* TokenAST.swift */,
 				586031E5A8505E6B205B823E /* Variable.swift */,
 				586033B9137E810B10B7FE60 /* Output.swift */,
-				586030B8D020FD8312F37247 /* ReadingData.swift */,
 				586038D397DC2ECB5E25A104 /* Condition.swift */,
-				58603B55AE574B3A1D6DF816 /* MethodsOfList.swift */,
+				58603B55AE574B3A1D6DF816 /* ArrayMethod.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -183,9 +180,8 @@
 				586035D0BACE931ECE34A079 /* TokenAST.swift in Sources */,
 				586030AF87ECF1915C6E8D35 /* Variable.swift in Sources */,
 				58603BD6B60BC26DF901967D /* Output.swift in Sources */,
-				5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */,
 				58603E321866AEC57B63A52F /* Condition.swift in Sources */,
-				58603C24158AABC08C32BC40 /* MethodsOfList.swift in Sources */,
+				58603C24158AABC08C32BC40 /* ArrayMethod.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

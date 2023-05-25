@@ -16,7 +16,6 @@ enum AllTypes: Equatable {
     case root
     case breakBlock
     case continueBlock
-    case cin
     case append
     case pop
     case remove

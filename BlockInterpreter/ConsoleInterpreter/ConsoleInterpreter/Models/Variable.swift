@@ -4,9 +4,9 @@ import Foundation
 enum VariableType: String {
     case int
     case double
-    case String
+    case string
     case bool
-    case another
+    case void
     case arrayInt
     case arrayDouble
     case arrayString
