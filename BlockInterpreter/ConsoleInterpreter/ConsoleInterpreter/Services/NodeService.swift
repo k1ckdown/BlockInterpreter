@@ -8,8 +8,8 @@ enum AllTypes: Equatable {
     case elseBlock
     case forLoop
     case whileLoop
-    case function
-    case returnFunction
+    case function(type: VariableType)
+    case returnFunction(type: VariableType)
     case variable(type: VariableType)
     case arithmetic
     case print

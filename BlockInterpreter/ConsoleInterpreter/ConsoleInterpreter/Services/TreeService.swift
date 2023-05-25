@@ -51,12 +51,13 @@ class Tree {
                     }
                 }
                 index += 1
-            case is Function:
+            case let functionBlock as Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
-                        type: AllTypes.function) {
+                        type: .function(type: functionBlock.type)) {
                     rootNode.addChild(functionNode)
                 }
-            case let methodBlock as MethodsOfList:
+
+            case let methodBlock as ArrayMethod:
                 let methodNode = buildMethodsOfList(method: methodBlock)
                 rootNode.addChild(methodNode)
                 index += 1
@@ -73,13 +74,14 @@ class Tree {
         return node
     }
 
-    private func buildMethodsOfList(method: MethodsOfList) -> Node {
-        let node = Node(value: method.value, type: determineMethod(method: method) ?? AllTypes.append,
+    private func buildMethodsOfList(method: ArrayMethod) -> Node {
+        let node = Node(value: method.name + ";" + method.value,
+                type: determineMethod(method: method),
                 id: method.id, isDebug: method.isDebug)
         return node
     }
 
-    private func determineMethod(method: MethodsOfList) -> AllTypes? {
+    private func determineMethod(method: ArrayMethod) -> AllTypes {
         switch method.type {
         case .append:
             return AllTypes.append
@@ -220,13 +222,37 @@ class Tree {
                 return nil
             }
         } else if let function = firstBlock as? Function {
-            if type == .function {
-                node = Node(value: function.value, type: type, id: function.id, isDebug: function.isDebug)
+            if type == .function(type: function.type) {
+                node = Node(value: function.name + ";" + function.value, type: .function(type: function.type),
+                        id: function.id, isDebug: function.isDebug)
             } else {
                 return nil
             }
         }
         return node
+    }
+
+    private func transferTypes(_ value: VariableType) -> AllTypes {
+        switch value {
+        case .int:
+            return AllTypes.variable(type: .int)
+        case .double:
+            return AllTypes.variable(type: .double)
+        case .String:
+            return AllTypes.variable(type: .String)
+        case .bool:
+            return AllTypes.variable(type: .bool)
+        case .another:
+            return AllTypes.variable(type: .another)
+        case .arrayInt:
+            return AllTypes.variable(type: .arrayInt)
+        case .arrayDouble:
+            return AllTypes.variable(type: .arrayDouble)
+        case .arrayString:
+            return AllTypes.variable(type: .arrayString)
+        case .arrayBool:
+            return AllTypes.variable(type: .arrayBool)
+        }
     }
 
 
@@ -259,7 +285,7 @@ class Tree {
             } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
-            } else if let method = block[index] as? MethodsOfList {
+            } else if let method = block[index] as? ArrayMethod {
                 let methodNode = buildMethodsOfList(method: method)
                 node?.addChild(methodNode)
             } else if let readingDataBlock = block[index] as? ReadingData {
@@ -269,7 +295,7 @@ class Tree {
                 node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
-                        type: .returnFunction, id: returnBlock.id,
+                        type: transferTypes(returnBlock.type), id: returnBlock.id,
                         isDebug: returnBlock.isDebug)
                 node?.addChild(returnNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
@@ -346,7 +372,8 @@ class Tree {
                     nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildNode(nestedBlocks, type: .function) {
+                if let nestedNode = buildNode(nestedBlocks,
+                        type: .function(type: nestedFunctionBlock.type)) {
                     node?.addChild(nestedNode)
                 }
                 index = additionIndex
@@ -356,3 +383,4 @@ class Tree {
         return node
     }
 }
+

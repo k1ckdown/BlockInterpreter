@@ -1,15 +1,15 @@
 import Foundation
 
 
-enum MethodsOfListType {
+enum ArrayMethodType {
     case append
     case remove
     case pop
 }
 
-struct MethodsOfList: IBlock {
+struct ArrayMethod: IBlock {
     let id: Int
-    let type: MethodsOfListType
+    let type: ArrayMethodType
     let name: String
     let value: String
     let isDebug: Bool
