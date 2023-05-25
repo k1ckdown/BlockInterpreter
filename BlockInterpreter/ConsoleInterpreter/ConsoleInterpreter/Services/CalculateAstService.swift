@@ -128,7 +128,7 @@ class Calculate {
                 Double(value) else {
                 fatalError("Error parsing input")
             }
-            return Double(Int(doubleValue))
+            return Double(doubleValue)
         case .minus:
             moveToken(.minus)
             return -factor()
@@ -281,7 +281,7 @@ class Calculate {
             }
             return getNextToken()
         } else if isNumber(currentChar) {
-            var integerString = String(currentChar)
+            var integerString = String(currentChar), isDouble = false
             position += 1
 
             while position < text.count {
@@ -289,13 +289,19 @@ class Calculate {
                 if isNumber(nextChar) {
                     integerString += String(nextChar)
                     position += 1
+                } else if (nextChar == ".") {
+                    integerString += String(nextChar)
+                    position += 1
+                    isDouble = true
                 } else {
                     break
                 }
             }
-
-            return Token(.integer, integerString)
-
+            if isDouble {
+                return Token(.double, integerString)
+            } else {
+                return Token(.integer, integerString)
+            }
         } else if currentChar == "“"{
             var string = ""
             position += 1
@@ -309,6 +315,9 @@ class Calculate {
                 }
             }
             return Token(.string, string)
+        } else if currentChar == "." {
+            position += 1
+            //           return Token(.double, ".")
         }
 
         position += 1

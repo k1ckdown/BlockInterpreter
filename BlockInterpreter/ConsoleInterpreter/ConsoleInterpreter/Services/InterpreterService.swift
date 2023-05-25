@@ -85,7 +85,6 @@ class Interpreter {
         let components = getPrintValues(node.value)
 
         for component in components{
-
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
                 let rightQuoteCount = component.filter({$0 == "”"}).count
@@ -98,12 +97,11 @@ class Interpreter {
                     let normalizedString = calculateArithmetic(component, .String)
                     printResult += "\(normalizedString) "
                 }
-                printResult += "\(component) "
+                // printResult += "\(component) "
             } else if component.contains("“") || component.contains("”"){
                 fatalError("Invalid syntax")
             } else {
                 let calculatedValue = calculateArithmetic(component, .String)
-
                 printResult += "\(calculatedValue) "
             }
         }

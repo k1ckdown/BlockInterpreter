@@ -2,7 +2,6 @@ import Foundation
 
 var array: [IBlock] = []
 
-array.append(Variable(id: 0, type: .double, name: "b", value: "10.0 + 3", isDebug: false))
 
 // array.append(Variable(id: 2, type: .arrayInt, name: "c", value: "<int>(10)[5, -1132,13,10000000, 10,-20,0,32,32,32,203]", isDebug: false))
 //array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 10; i += 1", isDebug: false))
@@ -23,6 +22,13 @@ array.append(Variable(id: 0, type: .double, name: "b", value: "10.0 + 3", isDebu
 //array.append(Output(id: 13, value: "c", isDebug: false))
 
 
+array.append(Condition(id: 1, type: .ifBlock,
+        value: "false || true", isDebug: false))
+array.append(Flow(id: 2, type: .begin, isDebug: false))
+array.append(Output(id: 3, value: "“ true ”", isDebug: false))
+array.append(Flow(id: 4, type: .end, isDebug: false))
+
+
 let tree = Tree()
 tree.setBlocks(array)
 tree.buildTree()
@@ -30,3 +36,5 @@ tree.buildTree()
 let interpreter = Interpreter()
 interpreter.setTreeAST(tree.rootNode)
 print(interpreter.getPrintResult())
+
+

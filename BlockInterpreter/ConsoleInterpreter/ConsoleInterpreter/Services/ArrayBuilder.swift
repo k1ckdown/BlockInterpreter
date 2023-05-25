@@ -84,9 +84,9 @@ class ArrayBuilder{
             let solvedExpression = expressionSolver.getSolvedExpression()
             let valueType = getTypeByStringValue(solvedExpression)
 
-            if valueType != components.type {
-                fatalError("Invalid type of element in array")
-            }
+            // if valueType != components.type {
+                // fatalError("Invalid type of element in array")
+            // }
             result += solvedExpression + ", "
         }
         if components.count > 0{
@@ -116,7 +116,7 @@ class ArrayBuilder{
     private func getArrayCount(_ expression: String) -> Int{
         let component = expression.split(separator: "(")[1].split(separator: ")")
         let count = String(component[0])
-        if let intValue = Int(count), intValue >= 0{
+        if let intValue = Int(count), intValue >= 0 {
             return intValue
         } else {
             fatalError("Invalid array count")
