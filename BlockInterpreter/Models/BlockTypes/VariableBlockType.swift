@@ -6,11 +6,13 @@
 import Foundation
 
 enum VariableBlockType: CaseIterable {
-    case initial, assignment
+//    case initial
+    case initialAssignment
+    case assignment
     
     var defaultType: VariableType? {
         switch self {
-        case .initial:
+        case .initialAssignment:
             return .int
         case .assignment:
             return nil

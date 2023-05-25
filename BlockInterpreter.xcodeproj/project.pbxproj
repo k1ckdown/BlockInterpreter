@@ -63,9 +63,10 @@
 		496A95B72A01529C007F1C17 /* WorkspaceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */; };
 		496A95B92A015320007F1C17 /* ConsoleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */; };
 		498971BC2A002F0700448D4F /* TabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498971BB2A002F0700448D4F /* TabType.swift */; };
-		49917EC12A1F74D4006A3FF8 /* MethodsOfList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917EC02A1F74D4006A3FF8 /* MethodsOfList.swift */; };
+		49917EC12A1F74D4006A3FF8 /* ArrayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917EC02A1F74D4006A3FF8 /* ArrayMethod.swift */; };
 		49917EC82A1F7A2C006A3FF8 /* ArrayMethodBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917EC72A1F7A2C006A3FF8 /* ArrayMethodBlockCell.swift */; };
 		49917ECA2A1F7A3D006A3FF8 /* ArrayMethodBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917EC92A1F7A3D006A3FF8 /* ArrayMethodBlockCellViewModel.swift */; };
+		49917ECF2A1FCEC8006A3FF8 /* VariableTypeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917ECE2A1FCEC8006A3FF8 /* VariableTypeButton.swift */; };
 		4997E0E92A0CA194000C35AD /* OutputBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */; };
 		4997E0EB2A0CA951000C35AD /* OutputBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */; };
 		49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */; };
@@ -173,9 +174,10 @@
 		496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCoordinator.swift; sourceTree = "<group>"; };
 		496A95B82A015320007F1C17 /* ConsoleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoordinator.swift; sourceTree = "<group>"; };
 		498971BB2A002F0700448D4F /* TabType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabType.swift; sourceTree = "<group>"; };
-		49917EC02A1F74D4006A3FF8 /* MethodsOfList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodsOfList.swift; sourceTree = "<group>"; };
+		49917EC02A1F74D4006A3FF8 /* ArrayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayMethod.swift; sourceTree = "<group>"; };
 		49917EC72A1F7A2C006A3FF8 /* ArrayMethodBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayMethodBlockCell.swift; sourceTree = "<group>"; };
 		49917EC92A1F7A3D006A3FF8 /* ArrayMethodBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayMethodBlockCellViewModel.swift; sourceTree = "<group>"; };
+		49917ECE2A1FCEC8006A3FF8 /* VariableTypeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTypeButton.swift; sourceTree = "<group>"; };
 		4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCell.swift; sourceTree = "<group>"; };
 		4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCell.swift; sourceTree = "<group>"; };
@@ -522,6 +524,14 @@
 				49917EC92A1F7A3D006A3FF8 /* ArrayMethodBlockCellViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		49917ECC2A1FCE99006A3FF8 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				49917ECE2A1FCEC8006A3FF8 /* VariableTypeButton.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 		49969FFC2A05598C00F86EFE /* BlockTypes */ = {
@@ -879,7 +889,7 @@
 				84751A7F2A090FB2003096DA /* Flow.swift */,
 				5860385DC8E3125440F9BC09 /* Loop.swift */,
 				5860332FDA63AB55FFB71FEB /* IBlock.swift */,
-				49917EC02A1F74D4006A3FF8 /* MethodsOfList.swift */,
+				49917EC02A1F74D4006A3FF8 /* ArrayMethod.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -897,6 +907,7 @@
 		49D8A2F329FEDD4600DF5B8E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				49917ECC2A1FCE99006A3FF8 /* Buttons */,
 				491672322A1361DC00457A80 /* Labels */,
 				495B9EB42A0677DC00A825E5 /* TextFields */,
 				49A3465E2A059153003BC2B9 /* CustomViews */,
@@ -1114,7 +1125,7 @@
 				49C661C02A02DA4200439E2A /* VariableBlockCell.swift in Sources */,
 				492F71A12A13B661001532AB /* CalculateAstService.swift in Sources */,
 				49D8A2E529FED87C00DF5B8E /* SettingsViewController.swift in Sources */,
-				49917EC12A1F74D4006A3FF8 /* MethodsOfList.swift in Sources */,
+				49917EC12A1F74D4006A3FF8 /* ArrayMethod.swift in Sources */,
 				492BA4172A0AB0430019EFBE /* BlockType.swift in Sources */,
 				4997E0E92A0CA194000C35AD /* OutputBlockCell.swift in Sources */,
 				498971BC2A002F0700448D4F /* TabType.swift in Sources */,
@@ -1154,6 +1165,7 @@
 				490351B52A0D4B9A00B3693B /* InterpreterManager.swift in Sources */,
 				49D8A2C829FEC05A00DF5B8E /* WorkspaceViewController.swift in Sources */,
 				49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */,
+				49917ECF2A1FCEC8006A3FF8 /* VariableTypeButton.swift in Sources */,
 				49D8A2B729FEB9C800DF5B8E /* BaseCoordinator.swift in Sources */,
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
 				5860313221A5CDD0534CFC0E /* Loop.swift in Sources */,

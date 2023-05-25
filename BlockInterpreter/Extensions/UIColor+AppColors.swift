@@ -26,5 +26,6 @@ extension UIColor {
     static let conditionBlock = UIColor(named: "condition-block")
     static let arrayMethodBlock = UIColor(named: "array-method-block")
     
-    static let variableType = UIColor(named: "variable-type")
+    static let primaryVariableType = UIColor(named: "primary-variable-type")
+    static let secondaryVariableType =  UIColor(named: "secondary-variable-type")
 }

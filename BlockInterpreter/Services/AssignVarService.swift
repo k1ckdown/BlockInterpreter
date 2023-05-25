@@ -14,7 +14,7 @@ class AssignmentVariable {
     public func assign(_ variable: Variable) -> String {
         if variable.type == .int {
             return assignInt(variable.value)
-        } else if variable.type == .String {
+        } else if variable.type == .string {
             return assignString(variable.value)
         } else {
             fatalError("Invalid variable type")

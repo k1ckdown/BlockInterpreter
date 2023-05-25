@@ -1,20 +1,20 @@
 //
-//  MethodsOfList.swift
+//  ArrayMethod.swift
 //  BlockInterpreter
 //
 
 import Foundation
 
 
-enum MethodsOfListType: String, CaseIterable {
+enum ArrayMethodType: String, CaseIterable {
     case append
     case remove
     case pop
 }
 
-struct MethodsOfList: IBlock {
+struct ArrayMethod: IBlock {
     let id: Int
-    let type: MethodsOfListType
+    let type: ArrayMethodType
     let name: String
     let value: String
     let isDebug: Bool

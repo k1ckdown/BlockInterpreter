@@ -16,18 +16,18 @@ final class VariableBlockCell: BlockCell {
     private enum Constants {
             
             enum VariableTypeLabel {
-                static let insetLeading: CGFloat = 20
+                static let insetLeading: CGFloat = 8
             }
             
             enum AssignmentStackView {
                 static let spacing: CGFloat = 5
-                static let muiltiplierWidth: CGFloat = 0.75
-                static let insetLeading: CGFloat = 15
+                static let muiltiplierWidth: CGFloat = 0.7
+                static let insetLeading: CGFloat = 10
             }
             
             enum VariableNameTextField {
                 static let multiplierHeight: CGFloat = 0.7
-                static let multiplierWidth: CGFloat = 0.4
+                static let multiplierWidth: CGFloat = 0.38
             }
             
             enum EqualSignLabel {
@@ -36,19 +36,25 @@ final class VariableBlockCell: BlockCell {
             }
             
             enum VariableValueTextField {
-                static let multiplierWidth: CGFloat = 0.4
+                static let multiplierWidth: CGFloat = 0.38
                 static let multiplierHeight: CGFloat = 0.7
             }
         
     }
     
-    private let variableTypeLabel = BlockTitleLabel()
+    private let variableTypeButton = VariableTypeButton()
     private let equalSignImageView = UIImageView()
     
     private let assignmentStackView = UIStackView()
     
     private(set) var variableNameTextField = BlockTextField()
     private(set) var variableValueTextField = BlockTextField()
+    
+    private var viewModel: VariableBlockCellViewModel? {
+        didSet {
+            setupBindings()
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -63,7 +69,7 @@ final class VariableBlockCell: BlockCell {
         super.prepareForReuse()
         
         subscriptions.removeAll()
-        variableTypeLabel.isHidden = false
+        variableTypeButton.isHidden = false
         assignmentStackView.snp.removeConstraints()
         
         variableNameTextField.text = nil
@@ -73,9 +79,10 @@ final class VariableBlockCell: BlockCell {
     func configure(with viewModel: VariableBlockCellViewModel) {
         super.configure(with: viewModel)
         
+        self.viewModel = viewModel
         variableNameTextField.text = viewModel.variableName
         variableValueTextField.text = viewModel.variableValue
-        variableTypeLabel.text = viewModel.typeTitle
+        variableTypeButton.title = viewModel.typeTitle
 
         variableNameTextField.placeholder = viewModel.variableNamePlaceHolder
         variableValueTextField.placeholder = viewModel.variableValuePlaceholder
@@ -85,13 +92,13 @@ final class VariableBlockCell: BlockCell {
             make.width.equalToSuperview().multipliedBy(Constants.AssignmentStackView.muiltiplierWidth)
         }
         
-        if viewModel.shouldShowVariableType == true {
+        if viewModel.blockType == .initialAssignment {
             assignmentStackView.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
-                make.leading.equalTo(variableTypeLabel.snp.trailing).offset(Constants.AssignmentStackView.insetLeading)
+                make.leading.equalTo(variableTypeButton.snp.trailing).offset(Constants.AssignmentStackView.insetLeading)
             }
         } else {
-            variableTypeLabel.isHidden = true
+            variableTypeButton.isHidden = true
             assignmentStackView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview()
@@ -101,7 +108,7 @@ final class VariableBlockCell: BlockCell {
     
     private func setup() {
         setupContainerView()
-        setupVariableTypeLabel()
+        setupVariableTypeButton()
         setupAssignmentStackView()
         setupVariableNameTextField()
         setupEqualSignImageView()
@@ -112,16 +119,12 @@ final class VariableBlockCell: BlockCell {
         containerView.backgroundColor = .variableBlock
     }
     
-    private func setupVariableTypeLabel() {
-        containerView.addSubview(variableTypeLabel)
+    private func setupVariableTypeButton() {
+        containerView.addSubview(variableTypeButton)
         
-        variableTypeLabel.textColor = .appBlack
-        variableTypeLabel.font = .blockTitle
-        variableTypeLabel.textAlignment = .center
-        variableTypeLabel.backgroundColor = .clear
-        
-        variableTypeLabel.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
+        variableTypeButton.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(15)
+            make.width.equalToSuperview().multipliedBy(0.2)
             make.leading.equalToSuperview().offset(Constants.VariableTypeLabel.insetLeading)
         }
     }
@@ -170,5 +173,26 @@ final class VariableBlockCell: BlockCell {
             make.height.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierHeight)
         }
     }
+    
+    private func updateAppearance() {
+        UIView.transition(
+            with: variableTypeButton,
+            duration: 0.4,
+            options: [.transitionFlipFromLeft]
+        ) {
+            self.variableTypeButton.title = self.viewModel?.typeTitle
+        }
+    }
 
+}
+
+private extension VariableBlockCell {
+    func setupBindings() {
+        variableTypeButton.tapPublisher
+            .sink { [weak self] in
+                self?.viewModel?.didChangeType()
+                self?.updateAppearance()
+            }
+            .store(in: &subscriptions)
+    }
 }

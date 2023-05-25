@@ -15,7 +15,7 @@ class StringNormalizer {
     public func normalize(_ variable: Variable) -> String {
         if variable.type == .int {
             return normalizeIntVariable(variable.value)
-        } else if variable.type == .String {
+        } else if variable.type == .string {
             return normalizeStringVariable(variable.value)
         } else {
             fatalError("Invalid variable type")

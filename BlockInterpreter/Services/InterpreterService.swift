@@ -324,7 +324,7 @@ class Interpreter {
             } else {
                 variableForNormalize = Variable(
                     id: 1,
-                    type: VariableType.String,
+                    type: VariableType.string,
                     name: "temp",
                     value: expression
                 )

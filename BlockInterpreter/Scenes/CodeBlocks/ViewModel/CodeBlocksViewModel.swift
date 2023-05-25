@@ -81,7 +81,7 @@ extension CodeBlocksViewModel {
         ]
         
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {
-            VariableBlockCellViewModel(variableType: $0.defaultType, style: .presentation)
+            VariableBlockCellViewModel(blockType: $0, variableType: $0.defaultType, style: .presentation)
         }
         
         cellViewModels[BlocksSection.conditions.rawValue] = ConditionType.allCases.map {
@@ -95,7 +95,7 @@ extension CodeBlocksViewModel {
         
         cellViewModels[BlocksSection.functions.rawValue] = [FunctionBlockCellViewModel(style: .presentation)]
         
-        cellViewModels[BlocksSection.arrayMethods.rawValue] = MethodsOfListType.allCases.map {
+        cellViewModels[BlocksSection.arrayMethods.rawValue] = ArrayMethodType.allCases.map {
             ArrayMethodBlockCellViewModel(methodType: $0, style: .presentation)
         }
     }

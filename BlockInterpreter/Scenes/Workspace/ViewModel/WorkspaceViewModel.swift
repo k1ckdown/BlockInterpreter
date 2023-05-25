@@ -74,7 +74,7 @@ extension WorkspaceViewModel  {
                                    value: forLoopBlockViewModel.loopValue))
                 
             case let arrayMethodViewModel as ArrayMethodBlockCellViewModel:
-                blocks.append(MethodsOfList(id: index,
+                blocks.append(ArrayMethod(id: index,
                                             type: arrayMethodViewModel.methodType,
                                             name: arrayMethodViewModel.arrayName ?? "",
                                             value: arrayMethodViewModel.value ?? "",

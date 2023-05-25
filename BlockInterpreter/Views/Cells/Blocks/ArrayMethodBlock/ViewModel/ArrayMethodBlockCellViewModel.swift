@@ -16,9 +16,9 @@ final class ArrayMethodBlockCellViewModel: BlockCellViewModel {
         ".\(methodType.rawValue)"
     }
     
-    private(set) var methodType: MethodsOfListType
+    private(set) var methodType: ArrayMethodType
     
-    init(methodType: MethodsOfListType, style: BlockCellStyle) {
+    init(methodType: ArrayMethodType, style: BlockCellStyle) {
         self.methodType = methodType
         super.init(type: .arrayMethod, style: style)
     }
