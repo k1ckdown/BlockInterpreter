@@ -111,3 +111,21 @@ backup
 *.lib
 .idea/ 
 ConsoleInterpreter/tempCodeRunnerFile.swift
+
+### Xcode Patch ###
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
+**/xcshareddata/WorkspaceSettings.xcsettings
+.DS_Store
+.history
+.vscode
+backup
+*.exe
+*.exp
+*.lib
+.idea/ 
+ConsoleInterpreter/tempCodeRunnerFile.swift
