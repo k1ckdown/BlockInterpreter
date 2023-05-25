@@ -26,7 +26,7 @@ enum FlowBlockStyle: String {
         case .end:
             return .endBlock
         case .continueСondition:
-            return .systemGreen
+            return .continueBlock
         case .breakCondition:
             return .breakBlock
         }

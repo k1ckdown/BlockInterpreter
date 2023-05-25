@@ -114,9 +114,10 @@ class Calculate {
         switch token.getType() {
             case .integer:
                 moveToken(.integer)
-                guard let value = token.getValue(), let intValue =
-                        Int(value) else { fatalError("Error parsing input")
-                }
+                guard
+                    let value = token.getValue(),
+                    let intValue = Int(value)
+                else { fatalError("Error parsing input") }
                 return intValue
             case .minus:
                 moveToken(.minus)

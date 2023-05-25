@@ -6,7 +6,7 @@
 import Foundation
 
 enum BlocksSection: Int, CaseIterable {
-    case output, flow, variables, conditions, loops, functions
+    case output, commonFlow, variables, conditions, conditionFlow, loops, functions
     
     var heightForRow: CGFloat {
         return 90
@@ -16,12 +16,14 @@ enum BlocksSection: Int, CaseIterable {
         switch self {
         case .output:
             return "Output"
-        case .flow:
-            return "Flow"
+        case .commonFlow:
+            return "Common Flow"
         case .variables:
             return "Variables"
         case .conditions:
             return "Conditions"
+        case .conditionFlow:
+            return "Condition Flow"
         case .loops:
             return "Loops"
         case .functions:

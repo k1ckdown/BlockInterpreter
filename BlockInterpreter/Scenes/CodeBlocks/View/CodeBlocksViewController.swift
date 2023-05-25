@@ -166,7 +166,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
             
             return cell
             
-        case .flow:
+        case .commonFlow:
             guard
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: FlowBlockCell.identifier,
@@ -226,6 +226,19 @@ extension CodeBlocksViewController: UITableViewDataSource {
                 }
                 .store(in: &cell.subscriptions)
 
+            return cell
+            
+        case .conditionFlow:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: FlowBlockCell.identifier,
+                    for: indexPath
+                ) as? FlowBlockCell,
+                let cellViewModel = cellViewModel as? FlowBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            
             return cell
             
         case .loops:

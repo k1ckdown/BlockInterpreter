@@ -42,7 +42,7 @@ final class FlowBlockCell: BlockCell {
         
         guard viewModel.style == .presentation else { return }
 
-        if viewModel.flowType == .begin {
+        if viewModel.flowType == .begin || viewModel.flowType == .continueCondition {
             containerView.snp.makeConstraints { make in
                 make.leading.equalToSuperview().offset(Constants.ContainerView.insetSide)
             }

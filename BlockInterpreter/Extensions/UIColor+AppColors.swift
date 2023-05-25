@@ -17,11 +17,12 @@ extension UIColor {
     
     static let endBlock = UIColor(named: "end-block")
     static let loopBlock = UIColor(named: "loop-block")
-    static let breakBlock = UIColor(named: "break-block")
     static let beginBlock = UIColor(named: "begin-block")
+    static let breakBlock = UIColor(named: "break-block")
     static let outputBlock = UIColor(named: "output-block")
-    static let variableBlock = UIColor(named: "variable-block")
     static let functionBlock = UIColor(named: "function-block")
+    static let continueBlock = UIColor(named: "continue-block")
+    static let variableBlock = UIColor(named: "variable-block")
     static let conditionBlock = UIColor(named: "condition-block")
     
     static let variableType = UIColor(named: "variable-type")

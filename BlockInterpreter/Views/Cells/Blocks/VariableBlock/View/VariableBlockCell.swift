@@ -31,9 +31,8 @@ final class VariableBlockCell: BlockCell {
             }
             
             enum EqualSignLabel {
-                static let insetLeading: CGFloat = 20
                 static let multiplierHeight: CGFloat = 0.4
-                static let multiplierWidth: CGFloat = 0.1
+                static let multiplierWidth: CGFloat = 0.08
             }
             
             enum VariableValueTextField {
