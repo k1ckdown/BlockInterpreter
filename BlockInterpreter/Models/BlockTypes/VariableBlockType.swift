@@ -10,12 +10,12 @@ enum VariableBlockType: CaseIterable {
     case initialAssignment
     case assignment
     
-    var defaultType: VariableType? {
+    var defaultType: VariableType {
         switch self {
         case .initialAssignment:
             return .int
         case .assignment:
-            return nil
+            return .void
         }
     }
 }

@@ -29,7 +29,9 @@ final class SettingsViewController: UIViewController {
     }
     
     private func setupSuperView() {
-        view.backgroundColor = .appBackground
+        view.setGradientBackground()
     }
 
 }
+
+

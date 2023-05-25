@@ -11,17 +11,17 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     var variableValue: String?
     
     var typeTitle: String? {
-        variableType?.name
+        variableType.name
     }
     
-    private(set) var variableType: VariableType?
+    private(set) var variableType: VariableType
     private(set) var blockType: VariableBlockType
     private(set) var variableNamePlaceHolder: String
     private(set) var variableValuePlaceholder: String
     private var allVariableTypes = VariableType.allCases.filter { $0 != .void }
     private var currentTypeIndex = 0
     
-    init(blockType: VariableBlockType, variableType: VariableType?, style: BlockCellStyle) {
+    init(blockType: VariableBlockType, variableType: VariableType, style: BlockCellStyle) {
         variableValuePlaceholder = "value"
         variableNamePlaceHolder = "name"
         self.blockType = blockType

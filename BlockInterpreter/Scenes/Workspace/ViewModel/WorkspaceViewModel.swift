@@ -47,7 +47,7 @@ extension WorkspaceViewModel  {
             switch blockViewModel {
             case let variableBlockViewModel as VariableBlockCellViewModel:
                 blocks.append(Variable(id: index,
-                                       type: variableBlockViewModel.variableType ?? .int,
+                                       type: variableBlockViewModel.variableType,
                                        name: variableBlockViewModel.variableName ?? "",
                                        value: variableBlockViewModel.variableValue ?? ""))
                 
