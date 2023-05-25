@@ -24,6 +24,7 @@ extension UIColor {
     static let continueBlock = UIColor(named: "continue-block")
     static let variableBlock = UIColor(named: "variable-block")
     static let conditionBlock = UIColor(named: "condition-block")
+    static let arrayMethodBlock = UIColor(named: "array-method-block")
     
     static let variableType = UIColor(named: "variable-type")
 }

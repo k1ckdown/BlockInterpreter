@@ -252,9 +252,10 @@ class Interpreter {
         }
         let variable = component.split(whereSeparator: { $0 == " " }).map{ $0.trimmingCharacters(in: .whitespaces) }
 
-        if variable.count != 3 + isContain || variable[1 + isContain] != "=" {
+        guard variable.count >= 3 + isContain || variable[1 + isContain] != "=" else  {
             fatalError("Invalid syntax")
         }
+        
         let variableName = variable[isContain]
         let variableValue = variable[2 + isContain]
 

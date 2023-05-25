@@ -94,6 +94,10 @@ extension CodeBlocksViewModel {
         ]
         
         cellViewModels[BlocksSection.functions.rawValue] = [FunctionBlockCellViewModel(style: .presentation)]
+        
+        cellViewModels[BlocksSection.arrayMethods.rawValue] = MethodsOfListType.allCases.map {
+            ArrayMethodBlockCellViewModel(methodType: $0, style: .presentation)
+        }
     }
     
     private func bind() {

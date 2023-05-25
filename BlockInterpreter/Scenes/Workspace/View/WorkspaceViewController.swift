@@ -188,13 +188,14 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.contentInset.top = Constants.WorkBlocksTableView.insetTop
         workBlocksTableView.contentInset.bottom = Constants.WorkBlocksTableView.insetBottom
         
-        workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         workBlocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
-        workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
+        workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
+        workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
+        workBlocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.identifier)
         
         workBlocksTableView.addGestureRecognizer(workBlocksTapGesture)
         workBlocksTableView.addGestureRecognizer(workBlocksLongPressGesture)
@@ -475,6 +476,41 @@ extension WorkspaceViewController: UITableViewDataSource {
                     cellViewModel?.argumentsString = text
                 }
                 .store(in: &subscriptions)
+            
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
+            return cell
+            
+        case .arrayMethod:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ArrayMethodBlockCell.identifier,
+                    for: indexPath
+                ) as? ArrayMethodBlockCell,
+                let cellViewModel = cellViewModel as? ArrayMethodBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            
+            cell.arrayNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.arrayName = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.valueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.value = text
+                }
+                .store(in: &cell.subscriptions)
             
             cell.deleteButton.tapPublisher
                 .sink { [weak self] in

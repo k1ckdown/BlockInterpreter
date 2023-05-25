@@ -27,5 +27,7 @@ final class BlockTextField: UITextField {
         font = .blockTextField
         adjustsFontSizeToFitWidth = true
         minimumFontSize = 0.3
+        autocorrectionType = .no
+        autocapitalizationType = .none
     }
 }

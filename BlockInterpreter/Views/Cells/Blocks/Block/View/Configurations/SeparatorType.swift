@@ -1,5 +1,5 @@
 //
-//  ConditionSeparatorType.swift
+//  SeparatorType.swift
 //  BlockInterpreter
 //
 

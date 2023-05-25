@@ -110,6 +110,7 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
         blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
         blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
+        blocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.identifier)
         
         blocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -326,6 +327,35 @@ extension CodeBlocksViewController: UITableViewDataSource {
                     cellViewModel?.argumentsString = text
                 }
                 .store(in: &subscriptions)
+            
+            return cell
+            
+        case .arrayMethods:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ArrayMethodBlockCell.identifier,
+                    for: indexPath
+                ) as? ArrayMethodBlockCell,
+                let cellViewModel = cellViewModel as? ArrayMethodBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            
+            cell.arrayNameTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.arrayName = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.valueTextField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.value = text
+                }
+                .store(in: &cell.subscriptions)
             
             return cell
         }

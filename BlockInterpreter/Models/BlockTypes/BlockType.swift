@@ -12,12 +12,15 @@ enum BlockType {
     case condition
     case loop(LoopType)
     case function
+    case arrayMethod
     
     func isEqualTo(_ otherType: BlockType) -> Bool {
         switch (self, otherType) {
         case (.output, .output):
             return true
         case (.flow, .flow):
+            return true
+        case (.arrayMethod, .arrayMethod):
             return true
         case (.variable, .variable):
             return true

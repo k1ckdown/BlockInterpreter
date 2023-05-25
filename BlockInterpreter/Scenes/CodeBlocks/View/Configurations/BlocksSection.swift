@@ -6,7 +6,14 @@
 import Foundation
 
 enum BlocksSection: Int, CaseIterable {
-    case output, commonFlow, variables, conditions, conditionFlow, loops, functions
+    case output
+    case commonFlow
+    case variables
+    case conditions
+    case conditionFlow
+    case loops
+    case functions
+    case arrayMethods
     
     var heightForRow: CGFloat {
         return 90
@@ -28,6 +35,8 @@ enum BlocksSection: Int, CaseIterable {
             return "Loops"
         case .functions:
             return "Functions"
+        case .arrayMethods:
+            return "Array Methods"
         }
     }
 }

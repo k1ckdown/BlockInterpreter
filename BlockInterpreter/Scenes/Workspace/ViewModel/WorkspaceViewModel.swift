@@ -63,15 +63,23 @@ extension WorkspaceViewModel  {
                 blocks.append(Output(id: index,
                                      value: outputBlockViewModel.outputValue ?? ""))
                 
-            case let whileLoopViewModel as WhileLoopBlockCellViewModel:
+            case let whileLoopBlockViewModel as WhileLoopBlockCellViewModel:
                 blocks.append(Loop(id: index,
                                    type: .whileLoop,
-                                   value: whileLoopViewModel.loopCondition ?? ""))
+                                   value: whileLoopBlockViewModel.loopCondition ?? ""))
                 
-            case let forLoopViewModel as ForLoopBlockCellViewModel:
+            case let forLoopBlockViewModel as ForLoopBlockCellViewModel:
                 blocks.append(Loop(id: index,
                                    type: .forLoop,
-                                   value: forLoopViewModel.loopValue))
+                                   value: forLoopBlockViewModel.loopValue))
+                
+            case let arrayMethodViewModel as ArrayMethodBlockCellViewModel:
+                blocks.append(MethodsOfList(id: index,
+                                            type: arrayMethodViewModel.methodType,
+                                            name: arrayMethodViewModel.arrayName ?? "",
+                                            value: arrayMethodViewModel.value ?? "",
+                                            isDebug: false))
+                
             default: break
             }
         }
