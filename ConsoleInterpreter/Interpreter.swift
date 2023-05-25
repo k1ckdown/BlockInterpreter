@@ -1313,8 +1313,43 @@ class ArrayBuilder{
             fatalError("Invalid value")
         }
         children[index] = value
-        
     }
+
+    public func append(_ value: String) {
+        if value == "" {
+            fatalError("Invalid value")
+        }
+        children.append(value)
+        count += 1
+    }
+
+    public func insert(_ index: Int, _ value: String) {
+        if index >= children.count || index < 0{
+            fatalError("Invalid index")
+        }
+        if value == "" {
+            fatalError("Invalid value")
+        }
+        children.insert(value, at: index)
+        count += 1
+    }
+
+    public func pop() {
+        if children.count == 0 {
+            fatalError("Invalid array")
+        }
+        children.removeLast()
+        count -= 1
+    }
+
+    public func remove(_ index: Int) {
+        if index >= children.count || index < 0{
+            fatalError("Invalid index")
+        }
+        children.remove(at: index)
+        count -= 1
+    }
+
     private func initializeValues(){
         self.childrenType = self.updateChildrenType()
         print(self.childrenType, "childrenType")
@@ -1455,10 +1490,10 @@ class Interpreter {
     
     func traverseTree(_ node: Node) -> String{ 
         switch node.type{
-        case .assign:
-            processAssignNode(node)
         case .root:
             processRootNode(node)
+        case .assign:
+            processAssignNode(node)
         case .ifBlock:
             processIfBlockNode(node)
         case .elifBlock:
@@ -1471,6 +1506,12 @@ class Interpreter {
             processForLoopNode(node)
         case .print:
             processPrintNode(node)
+        case .append:
+            processAppendNode(node)
+        case .pop:
+            processPopNode(node)
+        case .remove:
+            processRemoveNode(node)
         case .breakBlock:
             processBreakNode(node)
         case .continueBlock:
@@ -1480,7 +1521,56 @@ class Interpreter {
         }
         return ""
     }
-    
+
+    private func processAppendNode(_ node: Node){
+        let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
+
+        let arrayName = components[0]
+        let appendValues = getValuesFromExpression(components[1])
+        if appendValues.count > 1{
+            fatalError("Invalid append value")
+        }
+
+        for dictionary in mapOfArrayStack.reversed(){
+            if let arrayBuilder = dictionary[arrayName]{
+                arrayBuilder.append(appendValues[0])
+                updateMapArrayOfStack([arrayName: arrayBuilder])
+                break
+            }
+        }
+
+    }
+
+    private func processPopNode(_ node: Node){
+        let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let arrayName = components[0]
+
+        for dictionary in mapOfArrayStack.reversed(){
+            if let arrayBuilder = dictionary[arrayName]{
+                arrayBuilder.pop()
+                updateMapArrayOfStack([arrayName: arrayBuilder])
+                break
+            }
+        }
+    }
+
+    private func processRemoveNode(_ node: Node){
+        let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let arrayName = components[0]
+        let index = components[1]
+
+        for dictionary in mapOfArrayStack.reversed(){
+            if let arrayBuilder = dictionary[arrayName]{
+                guard let removeIndex =  Int(index) else{
+                    fatalError("Invalid index")
+                }
+                arrayBuilder.remove(Int(removeIndex))
+                updateMapArrayOfStack([arrayName: arrayBuilder])
+                break
+            }
+        }
+    }
+
     private func processRootNode(_ node: Node){
         mapOfVariableStack.append([:])
 
@@ -1506,7 +1596,7 @@ class Interpreter {
     }
 
     private func processPrintNode(_ node: Node){
-        let components = getPrintValues(node.value)
+        let components = getValuesFromExpression(node.value)
 
         for component in components{
 
@@ -1534,7 +1624,7 @@ class Interpreter {
 
     }
 
-    private func getPrintValues(_ expression: String) -> [String]{
+    private func getValuesFromExpression(_ expression: String) -> [String]{
         var result = [String]()
         var index = 0
         var currentString = ""
@@ -1573,7 +1663,6 @@ class Interpreter {
 
     private func processContinueNode(_ node: Node){
     }
-
 
     private func processAssignNode(_ node: Node) {
         print(node.children[0].value, "node.children[0].value")
@@ -1685,6 +1774,7 @@ class Interpreter {
 
         return ""
     }
+
     private func assignValueToStack(_ dictionary: [String: String]){
         for (key, value) in dictionary {
             var isAssigned = false
@@ -1718,6 +1808,7 @@ class Interpreter {
             }
         }
     }
+
     private func setValueFromStack(_ dictionary: [String: String]) {
         // print(dictionary, "dictionary in setValueFromStack")
         // print(mapOfVariableStack, "mapOfVariableStack in setValueFromStack")
@@ -1755,9 +1846,9 @@ class Interpreter {
         let calculatedValue = calculateArithmetic(node.value, .bool)
         if (calculatedValue == "true" && node.getCountWasHere() == 0){
             handleIfBlockNode(node) 
-            node.setCountWasHere(1)
+            node.setCountWasHere(2)
         } else{
-            node.setCountWasHere(0)
+            node.setCountWasHere(1)
         }
     }
 
@@ -1766,16 +1857,16 @@ class Interpreter {
         
         if (calculatedValue == "true" && node.getCountWasHere() == 0){
             handleIfBlockNode(node) 
-            node.setCountWasHere(1)
+            node.setCountWasHere(2)
         } else{
-            node.setCountWasHere(0)
+            node.setCountWasHere(1)
         }
     }
 
     private func processElseBlockNode(_ node: Node){
-        if (node.getCountWasHere() == 0){
+        if (node.getCountWasHere() == 1){
             handleIfBlockNode(node) 
-        }
+        } 
     }
     
     private func handleIfBlockNode(_ node: Node){
@@ -1813,22 +1904,18 @@ class Interpreter {
             fatalError("Invalid syntax")
         }
         mapOfVariableStack.append([:])
-        while calculateArithmetic(node.value, .bool) == "true" { //* изменить на сравнение с true
+        while calculateArithmetic(node.value, .bool) == "true" { 
 
             for child in node.children {
                 if child.type == .ifBlock {
                     child.setCountWasHere(0)
-                    let _ = traverseTree(child)
-
-                } else{
-                    let _ = traverseTree(child)
-                }  
+                }
+                let _ = traverseTree(child)
             }
         }
         if let lastDictionary = mapOfVariableStack.last {
             setValueFromStack(lastDictionary)
             mapOfVariableStack.removeLast()
-            
         }
     }
 
@@ -1875,7 +1962,7 @@ class Interpreter {
             }
         }
 
-        
+
         while calculateArithmetic(components[1], .bool) == "true" { 
             for child in node.children {
                 if child.type == .ifBlock {
