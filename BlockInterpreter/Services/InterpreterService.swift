@@ -64,11 +64,11 @@ class Interpreter {
     private func processPrintNode(_ node: Node){
         let calculatedValue = calculateArithmetic(node.value)
         if let value = Int(calculatedValue) {
-            printResult += "\(value) "
+            printResult += "\(value) \n"
         } else {
             for dictionary in mapOfVariableStack.reversed(){
                 if dictionary[node.value] != nil{
-                    printResult += "\(dictionary[node.value]!) "
+                    printResult += "\(dictionary[node.value]!) \n"
                     break;
                 }
                 if dictionary == mapOfVariableStack[0]{

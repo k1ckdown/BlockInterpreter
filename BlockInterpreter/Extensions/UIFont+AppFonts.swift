@@ -6,6 +6,7 @@
 import UIKit
 
 extension UIFont {
+    static let outputText = UIFont(name: "Futura", size: 20)
     static let blockHeader = UIFont.systemFont(ofSize: 14, weight: .bold)
     static let blockTitle = UIFont.systemFont(ofSize: 20, weight: .heavy)
     static let typeTitle = UIFont.systemFont(ofSize: 13, weight: .semibold)

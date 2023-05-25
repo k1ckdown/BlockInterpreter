@@ -8,7 +8,7 @@ import Combine
 
 final class ConsoleViewController: UIViewController {
     
-    private let outputLabel = UILabel()
+    private let outputTextView = UITextView()
     
     private let viewModel: ConsoleViewModelType
     private var subscriptions = Set<AnyCancellable>()
@@ -42,11 +42,16 @@ final class ConsoleViewController: UIViewController {
     }
     
     private func setupOutputLabel() {
-        view.addSubview(outputLabel)
+        view.addSubview(outputTextView)
         
-        outputLabel.textColor = .appWhite
+        outputTextView.textColor = .appWhite
+        outputTextView.backgroundColor = .clear
+        outputTextView.isEditable = false
+        outputTextView.font = .outputText
+        outputTextView.textColor = .appWhite
+        outputTextView.tintColor = .appMain
         
-        outputLabel.snp.makeConstraints { make in
+        outputTextView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)
         }
     }
@@ -71,7 +76,7 @@ private extension ConsoleViewController {
         viewModel.didUpdateConsoleContent
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.outputLabel.text = $0
+                self?.outputTextView.text = $0 + "\nProgram ended with exit code: 0"
             }
             .store(in: &subscriptions)
         
