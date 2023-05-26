@@ -18,13 +18,6 @@ final class WorkspaceViewController: UIViewController {
                 static let insetBottom: CGFloat = 40
             }
         
-            enum RunButton {
-                static let size: CGFloat = 60
-                static let cornerRadius: CGFloat = size / 2
-                static let insetRight: CGFloat = 40
-                static let insetBotton: CGFloat = 130
-            }
-        
             enum OptionsView {
                 static let height: Double = 50
                 static let width: Double = 220
@@ -43,11 +36,13 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private let workBlocksTableView = UITableView()
-    private let runButton = UIButton(type: .system)
     private let optionsView = OptionsView(configuration: .optionDeleteAllBlocks)
     
     private let workBlocksTapGesture = UITapGestureRecognizer()
     private let workBlocksLongPressGesture = UILongPressGestureRecognizer()
+    
+    let runBarButton = UIBarButtonItem(barButtonSystemItem: .play, target: nil, action: nil)
+    let saveBarButton = UIBarButtonItem(barButtonSystemItem: .save, target: nil, action: nil)
     
     private let introView = UIView()
     private let introImageView = UIImageView()
@@ -74,31 +69,18 @@ final class WorkspaceViewController: UIViewController {
     
     private func hideIntro() {
         introView.isHidden = true
-        runButton.layer.opacity = 1
+        navigationController?.navigationBar.isHidden = false
     }
     
     private func showIntro() {
         introView.isHidden = false
-        runButton.layer.opacity = 0
-    }
-    
-    private func hideRunButton() {
-        UIView.transition(with: runButton, duration: 0.3) {
-            self.runButton.layer.opacity = 0
-        }
-    }
-    
-    private func showRunButton() {
-        UIView.transition(with: runButton, duration: 0.3) {
-            self.runButton.layer.opacity = 1
-        }
+        navigationController?.navigationBar.isHidden = true
     }
     
     private func hideOptions() {
         UIView.animate(withDuration: 0.3) {
             self.optionsView.frame.origin.y = self.view.frame.height + self.optionsView.frame.height
         }
-        
     }
     
     private func showOptions() {
@@ -125,8 +107,8 @@ final class WorkspaceViewController: UIViewController {
     
     private func enableEditingMode() {
         hideTabBar()
-        hideRunButton()
         showOptions()
+        navigationController?.setNavigationBarHidden(true, animated: true)
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -136,8 +118,8 @@ final class WorkspaceViewController: UIViewController {
     
     private func disableEditMode() {
         showTabBar()
-        showRunButton()
         hideOptions()
+        navigationController?.setNavigationBarHidden(false, animated: true)
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -163,11 +145,12 @@ final class WorkspaceViewController: UIViewController {
     private func setupUI() {
         setupSuperView()
         setupWorkBlocksTableView()
-        setupRunButton()
         setupOptionsView()
         setupIntroView()
         setupIntroImageView()
         setupIntroLabel()
+        setupRunBarButton()
+        setupSaveBarButton()
     }
     
     private func setupSuperView() {
@@ -204,21 +187,6 @@ final class WorkspaceViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview().inset(Constants.WorkBlocksTableView.insetSide)
             make.bottom.equalToSuperview()
-        }
-    }
-    
-    private func setupRunButton() {
-        view.addSubview(runButton)
-        
-        runButton.backgroundColor = .appGray
-        runButton.tintColor = .systemGreen
-        runButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-        runButton.layer.cornerRadius = Constants.RunButton.cornerRadius
-        
-        runButton.snp.makeConstraints { make in
-            make.width.height.equalTo(Constants.RunButton.size)
-            make.right.equalToSuperview().inset(Constants.RunButton.insetRight)
-            make.bottom.equalToSuperview().inset(Constants.RunButton.insetBotton)
         }
     }
     
@@ -269,6 +237,16 @@ final class WorkspaceViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.top.equalTo(introImageView.snp.bottom).offset(Constants.IntroLabel.insetTop)
         }
+    }
+    
+    private func setupRunBarButton() {
+        runBarButton.tintColor = .appGreen
+        navigationItem.rightBarButtonItem = runBarButton
+    }
+    
+    private func setupSaveBarButton() {
+        saveBarButton.tintColor = .appMain
+        navigationItem.leftBarButtonItem = saveBarButton
     }
     
 }
@@ -607,11 +585,11 @@ extension WorkspaceViewController: UITableViewDropDelegate {
 private extension WorkspaceViewController {
     
     func setupBindings() {
-        runButton.tapPublisher
+        runBarButton.tapPublisher
             .sink { [weak self] in
-                self?.viewModel.showConsole.send()
-            }
-            .store(in: &subscriptions)
+            self?.viewModel.showConsole.send()
+        }
+        .store(in: &subscriptions)
         
         workBlocksTapGesture.tapPublisher
             .sink { [weak self] _ in

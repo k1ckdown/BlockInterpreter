@@ -23,7 +23,6 @@ final class WorkspaceCoordinator: BaseCoordinator {
             .sink { [weak self] in self?.showConsoleScene(outputText: $0) }
             .store(in: &subscriptions)
         
-        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(workspaceViewController, animated: true)
     }
 }
