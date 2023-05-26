@@ -1,10 +1,73 @@
 import Foundation
 
-// struct ConsoleOutput{
-//     outputValue: String;
-//     errorDictionary: [Int: ErrorType]
-// }
+struct ConsoleOutput: Error{
+    var errorOutputValue: String;
+    var errorIdArray: [Int]
+}
 
+enum ErrorType: Error {
+    case nilTokenError
+    case isNotDeclaredVariableError
+    case alreadyExistsVariableError
+    case variableNotFoundError
+    case integerOwerflowError
+    case invalidSyntaxError
+    case unsupportedArrayError
+    case invalidTokenTypeError
+    case invalidIndexError
+    case invalidValueError
+    case invalidArrayError
+    case invalidTypeError
+    case invalidAppendValueError
+    case invalidArrayValueError
+    case invalidVariableNameError
+    case invalidNodeError
+
+
+
+    var description: String {
+        switch self {
+        case .invalidTokenTypeError:
+            return "Token type errorType"
+        case .nilTokenError:
+            return "Nil token errorType"
+        case .integerOwerflowError:
+            return "Integer overflow errorType"
+        case .invalidSyntaxError:
+            return "Syntax errorType"
+        case .unsupportedArrayError:
+            return "Unsoported array errorType"
+        case .invalidIndexError:
+            return "Invalid index"
+        case .invalidValueError:
+            return "Invalid value"
+        case .invalidArrayError:
+            return "Invalid array"
+        case .invalidTypeError:
+            return "Invalid type"
+        case .invalidAppendValueError:
+            return "Invalid append value"
+        case .invalidArrayValueError:
+            return "Invalid array value"
+        case .invalidVariableNameError:
+            return "Invalid variable name"
+        case .isNotDeclaredVariableError:
+            return "Is not declared variable"
+        case .alreadyExistsVariableError:
+            return "Already exists variable"
+        case .variableNotFoundError:
+            return "Variable not found"
+        case .invalidNodeError:
+            return "Invalid node"
+        }
+    }
+    var value: ErrorType {
+        switch self {
+        default:
+            return self
+        }
+    }
+}
 
 protocol IBlock {
 
@@ -29,15 +92,15 @@ struct Output: IBlock {
     let isDebug: Bool
 }
 
-enum MethodsOfListType {
+enum ArrayMethodType {
     case append
     case remove
     case pop
 }
 
-struct MethodsOfList: IBlock {
+struct ArrayMethod: IBlock {
     let id: Int
-    let type: MethodsOfListType
+    let type: ArrayMethodType
     let name: String
     let value: String
     let isDebug: Bool
@@ -45,6 +108,8 @@ struct MethodsOfList: IBlock {
 
 struct Function: IBlock {
     let id: Int
+    let name: String
+    let type: VariableType
     let value: String
     let isDebug: Bool
 }
@@ -58,6 +123,7 @@ struct Loop: IBlock {
 
 struct Returning: IBlock {
     let id: Int
+    let type: VariableType
     let value: String
     let isDebug: Bool
 }
@@ -152,8 +218,8 @@ enum AllTypes: Equatable {
     case elseBlock
     case forLoop
     case whileLoop
-    case function
-    case returnFunction
+    case function(type: VariableType)
+    case returnFunction(type: VariableType)
     case variable(type: VariableType)
     case arithmetic
     case print
@@ -164,49 +230,6 @@ enum AllTypes: Equatable {
     case append
     case pop
     case remove
-
-    static func ==(lhs: AllTypes, rhs: AllTypes) -> Bool {
-        switch (lhs, rhs) {
-        case (.assign, .assign):
-            return true
-        case (.ifBlock, .ifBlock):
-            return true
-        case (.elifBlock, .elifBlock):
-            return true
-        case (.elseBlock, .elseBlock):
-            return true
-        case (.forLoop, .forLoop):
-            return true
-        case (.whileLoop, .whileLoop):
-            return true
-        case (.function, .function):
-            return true
-        case (.returnFunction, .returnFunction):
-            return true
-        case (.variable(_), .variable(_)):
-            return  true
-        case (.arithmetic, .arithmetic):
-            return true
-        case (.print, .print):
-            return true
-        case (.root, .root):
-            return true
-        case (.breakBlock, .breakBlock):
-            return true
-        case (.continueBlock, .continueBlock):
-            return true
-        case (.cin, .cin):
-            return true
-        case (.append, .append):
-            return true
-        case (.pop, .pop):
-            return true
-        case (.remove, .remove):
-            return true
-        default:
-            return false
-        }
-    }
 }
 
 
@@ -272,12 +295,13 @@ class Tree {
                     }
                 }
                 index += 1
-            case is Function:
+            case let functionBlock as Function:
                 if let functionNode = buildNode(getBlockAndMoveIndex(),
-                        type: AllTypes.function) {
+                        type: .function(type: functionBlock.type)) {
                     rootNode.addChild(functionNode)
                 }
-            case let methodBlock as MethodsOfList:
+
+            case let methodBlock as ArrayMethod:
                 let methodNode = buildMethodsOfList(method: methodBlock)
                 rootNode.addChild(methodNode)
                 index += 1
@@ -294,13 +318,14 @@ class Tree {
         return node
     }
 
-    private func buildMethodsOfList(method: MethodsOfList) -> Node {
-        let node = Node(value: method.value, type: determineMethod(method: method) ?? AllTypes.append,
+    private func buildMethodsOfList(method: ArrayMethod) -> Node {
+        let node = Node(value: method.name + ";" + method.value,
+                type: determineMethod(method: method),
                 id: method.id, isDebug: method.isDebug)
         return node
     }
 
-    private func determineMethod(method: MethodsOfList) -> AllTypes? {
+    private func determineMethod(method: ArrayMethod) -> AllTypes {
         switch method.type {
         case .append:
             return AllTypes.append
@@ -441,13 +466,37 @@ class Tree {
                 return nil
             }
         } else if let function = firstBlock as? Function {
-            if type == .function {
-                node = Node(value: function.value, type: type, id: function.id, isDebug: function.isDebug)
+            if type == .function(type: function.type) {
+                node = Node(value: function.name + ";" + function.value, type: .function(type: function.type),
+                        id: function.id, isDebug: function.isDebug)
             } else {
                 return nil
             }
         }
         return node
+    }
+
+    private func transferTypes(_ value: VariableType) -> AllTypes {
+        switch value {
+        case .int:
+            return AllTypes.variable(type: .int)
+        case .double:
+            return AllTypes.variable(type: .double)
+        case .String:
+            return AllTypes.variable(type: .String)
+        case .bool:
+            return AllTypes.variable(type: .bool)
+        case .another:
+            return AllTypes.variable(type: .another)
+        case .arrayInt:
+            return AllTypes.variable(type: .arrayInt)
+        case .arrayDouble:
+            return AllTypes.variable(type: .arrayDouble)
+        case .arrayString:
+            return AllTypes.variable(type: .arrayString)
+        case .arrayBool:
+            return AllTypes.variable(type: .arrayBool)
+        }
     }
 
 
@@ -480,7 +529,7 @@ class Tree {
             } else if let printBlock = block[index] as? Output {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 node?.addChild(printingNode)
-            } else if let method = block[index] as? MethodsOfList {
+            } else if let method = block[index] as? ArrayMethod {
                 let methodNode = buildMethodsOfList(method: method)
                 node?.addChild(methodNode)
             } else if let readingDataBlock = block[index] as? ReadingData {
@@ -490,7 +539,7 @@ class Tree {
                 node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
-                        type: .returnFunction, id: returnBlock.id,
+                        type: transferTypes(returnBlock.type), id: returnBlock.id,
                         isDebug: returnBlock.isDebug)
                 node?.addChild(returnNode)
             } else if let nestedConditionBlock = block[index] as? Condition {
@@ -567,7 +616,8 @@ class Tree {
                     nestedBlocks.append(block[additionIndex])
                     additionIndex += 1
                 }
-                if let nestedNode = buildNode(nestedBlocks, type: .function) {
+                if let nestedNode = buildNode(nestedBlocks,
+                        type: .function(type: nestedFunctionBlock.type)) {
                     node?.addChild(nestedNode)
                 }
                 index = additionIndex
@@ -577,6 +627,7 @@ class Tree {
         return node
     }
 }
+
 
 class Token {
     private var type: TokenType
@@ -610,12 +661,17 @@ class Calculate {
     private var text: String
     private var position: Int
     private var currentToken: Token?
+    private var nodeId: Int = 0
+    private var consoleOutput: ConsoleOutput
+
     
-    init(_ text: String) {
+    init(_ text: String, _ nodeId: Int) {
         self.text = text
         self.position = 0
+        self.nodeId = nodeId
+        self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
- 
+    
     public func getText() -> String {
         return text
     }
@@ -626,10 +682,10 @@ class Calculate {
     }
 
     
-    public func compare() -> Int {
-        currentToken = getNextToken() 
+    public func compare() throws -> Int {
+        currentToken = try getNextToken() 
         
-        var result = term()
+        var result = try term()
         let possibleTokens: [TokenType] = [
             .plus,
             .minus,
@@ -648,14 +704,14 @@ class Calculate {
         while let token = currentToken, possibleTokens.contains(token.getType()) {
             
             if token.getType() == .plus {
-                moveToken(.plus)
-                result += term()
+                try  moveToken(.plus)
+                result += try term()
             } else if token.getType() == .minus {
-                moveToken(.minus)
-                result -= term()
+                try  moveToken(.minus)
+                result -= try term()
             } else if possibleTokens.contains(token.getType()){
-                moveToken(token.getType())
-                let factorValue = factor()
+                try  moveToken(token.getType())
+                let factorValue =  try factor()
 
                 switch token.getType() {
                 case .equal:
@@ -675,7 +731,8 @@ class Calculate {
                 case .logicalOr:
                     result = result != 0 || factorValue != 0  ? 1 : 0
                 default:
-                    fatalError("Invalid token type")
+
+                    throw ErrorType.invalidTokenTypeError
                 }
             }
         }
@@ -684,8 +741,8 @@ class Calculate {
 
 
 
-    private func term() -> Int {
-        var result = factor()
+    private func term() throws -> Int {
+        var result = try factor()
         let possibleTokens: [TokenType] = [
             TokenType.modulo,
             TokenType.multiply,
@@ -697,59 +754,59 @@ class Calculate {
         while let token = currentToken, possibleTokens.contains(token.getType()) {
             switch token.getType() {
             case .modulo:
-                moveToken(.modulo)
-                result %= factor()
+                try moveToken(.modulo)
+                result %= try factor()
             case .multiply:
-                moveToken(.multiply)
-                result *= factor()
+                try moveToken(.multiply)
+                result *= try factor()
 
             case .divide:
-                moveToken(.divide)
-                result /= factor()
+                try moveToken(.divide)
+                result /= try factor()
             
             default:
-                fatalError("Invalid token type")
+                throw ErrorType.invalidTokenTypeError
             }
         }
         return result
     }
 
 
-    private func factor() -> Int {
+    private func factor()throws -> Int {
         guard let token = currentToken else{
-            fatalError("Current token is nil")
+            throw ErrorType.invalidTokenTypeError
         }
 
         switch token.getType() {
         case .integer:
-            moveToken(.integer)
+            try moveToken(.integer)
             guard let 
                 value = token.getValue(), 
                 let intValue = Int(value),
                 intValue <= Int.max 
-            else { fatalError("Error parsing input")}
+            else { throw ErrorType.integerOwerflowError}
             return intValue
         case .minus:
-            moveToken(.minus)
-            return -factor()
+            try moveToken(.minus)
+            return try factor() * -1
         case .leftBrace:
-            moveToken(.leftBrace)
-            let result = compare()
-            moveToken(.rightBrace)
+            try moveToken(.leftBrace)
+            let result = try compare()
+            try moveToken(.rightBrace)
             return result
 
         case .eof:
             return 0
         default:
             print(token.getType(), text)
-            fatalError("Invalid syntax")
+            throw ErrorType.invalidTokenTypeError
         }
     }
 
-    public func compareString() -> String{
-        currentToken = getNextToken() 
+    public func compareString() throws -> String{
+        currentToken = try getNextToken() 
         var result = ""
-        result += termString()
+        result += try termString()
 
         let possibleTokens: [TokenType] = [
             .leftQuote,
@@ -769,17 +826,17 @@ class Calculate {
         }
         while let token = currentToken, possibleTokens.contains(token.getType()) {
             if token.getType() == .leftQuote {
-                moveToken(.leftQuote)
-                result += termString()
+                try moveToken(.leftQuote)
+                result += try termString()
             } else if token.getType() == .rightQuote {
-                moveToken(.rightQuote)
-                result += termString()
+                try moveToken(.rightQuote)
+                result += try termString()
             } else if token.getType() == .plus {
-                moveToken(.plus)
-                result += termString()
+                try moveToken(.plus)
+                result += try termString()
             } else if possibleTokens.contains(token.getType()){
-                moveToken(token.getType())
-                let factorValue = factorString()
+                try moveToken(token.getType())
+                let factorValue = try factorString()
 
                 switch token.getType() {
                 case .equal:
@@ -799,31 +856,31 @@ class Calculate {
                 case .logicalOr:
                     result = result != "" || factorValue != ""  ? "true" : "false"
                 default:
-                    fatalError("Invalid token type")
+                    throw ErrorType.invalidTokenTypeError
                 }
             }
         }
         return result
     }
 
-    private func termString() -> String {
-        var result = factorString()
+    private func termString() throws -> String {
+        var result = try factorString()
         if currentToken == nil {
             return result
         }
         if currentToken?.getType() == .rightQuote {
-            moveToken(.rightQuote)
+            try moveToken(.rightQuote)
         }
         while let token = currentToken, token.getType() == .multiply {
             switch token.getType() {
             case .multiply:
-                moveToken(.multiply)
-                let factorValue = factorString()
+                try moveToken(.multiply)
+                let factorValue = try factorString()
                 guard let firstChar = factorValue.first else{
-                    fatalError("Symbol after * is not found")
+                    throw ErrorType.invalidSyntaxError
                 }
                 if !isNumber(firstChar){
-                    fatalError("Invalid syntax")
+                    throw ErrorType.invalidSyntaxError
                 }
                 let oldResult = result
                 if let factorValue = Int(String(firstChar)){
@@ -832,45 +889,45 @@ class Calculate {
                         result += oldResult
                     }
                 } else {
-                    fatalError("Value after * is not a number")
+                    throw ErrorType.invalidSyntaxError
                 }
 
             default:
-                fatalError("Invalid token type")
+                throw ErrorType.invalidTokenTypeError
             }
         }
         return result
     }
 
-    private func factorString() -> String {
+    private func factorString() throws -> String {
         guard let token = currentToken else{
-            fatalError("Current token is nil")
+            throw ErrorType.nilTokenError
         }
 
         switch token.getType() {
         case .integer:
-            moveToken(.integer)
+            try moveToken(.integer)
             return token.getValue() ?? ""
         case .string:
-            moveToken(.string)
+            try moveToken(.string)
             return token.getValue() ?? ""
         case .leftBrace:
-            moveToken(.leftBrace)
-            let result = compareString()
-            moveToken(.rightBrace)
+            try moveToken(.leftBrace)
+            let result = try compareString()
+            try moveToken(.rightBrace)
             return result
         case .eof:
-            moveToken(.eof)
+            try moveToken(.eof)
             return token.getValue() ?? ""
         default:
             print(token.getType())
             print(text)
-            fatalError("Invalid syntax")
+            throw ErrorType.invalidSyntaxError
         } 
     }
  
 
-    private func getNextToken() -> Token? { 
+    private func getNextToken()throws -> Token? { 
         guard position < text.count else {
             return Token(.eof, nil)
         }
@@ -883,7 +940,7 @@ class Calculate {
                 position += 1
                 nextChar = text[text.index(text.startIndex, offsetBy: position)]
             }
-            return getNextToken()
+            return try getNextToken()
         } else if isNumber(currentChar) {
             var integerString = String(currentChar)
             position += 1
@@ -916,11 +973,17 @@ class Calculate {
         }
 
         position += 1
-        return getToken(currentChar)
+        do {
+            return try getToken(currentChar)
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
         
     }
 
-    private func getToken(_ currentChar: Character) -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
+    private func getToken(_ currentChar: Character)throws -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
         switch currentChar {
         case "“":
             return Token(.leftQuote, "“")
@@ -953,7 +1016,7 @@ class Calculate {
                 case ">":
                     return Token(.greaterEqual, ">=")
                 default:
-                    fatalError("Invalid character")
+                    throw ErrorType.invalidSyntaxError
                 }
             } else {
                 switch currentChar {
@@ -968,7 +1031,7 @@ class Calculate {
                         self.position += 1
                         return Token(.logicalAnd, "&&")
                     } else {
-                        fatalError("Invalid character")
+                        throw ErrorType.invalidSyntaxError
                     }
                     
                 case "|":
@@ -976,24 +1039,24 @@ class Calculate {
                         self.position += 1
                         return Token(.logicalOr, "||")
                     } else {
-                        fatalError("Invalid character")
+                        throw ErrorType.invalidSyntaxError
                     }
                 default:
-                    fatalError("Invalid character")
+                    throw ErrorType.invalidSyntaxError
                 }
             }
         default:
-            print(currentChar)
-            fatalError("Invalid character")
+            print(currentChar) 
+            throw ErrorType.invalidSyntaxError
         }
     }
-    private func moveToken(_ type: TokenType) {
+    private func moveToken(_ type: TokenType) throws {
         if let token = currentToken, token.getType() == type{
             if !(token.getType() == .leftBrace) {
-                currentToken = getNextToken()
+                currentToken = try getNextToken()
             }
         } else {
-            fatalError("Invalid syntax")
+            throw ErrorType.invalidSyntaxError
         }
     }
 
@@ -1049,53 +1112,78 @@ class Node {
 
 class StringNormalizer {
     private var variableMap: [String: String]
+    private var nodeId: Int = 0
+    private var consoleOutput: ConsoleOutput
 
-    init(_ variableMap: [String: String]) {
+    init(_ variableMap: [String: String], _ nodeId: Int = 0) {
         self.variableMap = variableMap
+        self.nodeId = nodeId
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
  
     public func setMapOfVariable(_ mapOfVariable: [String: String]) {
         self.variableMap.merge(mapOfVariable){(_, new) in new}
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
 
  
-    public func normalize(_ expression: String) -> String {
-        return normalizeString(expression)
-    }
-
-
-    private func normalizeString(_ expression: String) -> String {
-        var result = "" 
-        let components = getFixedString(expression).split(whereSeparator: { $0 == " " })
-        for component in components {
-            if let intValue = Int(component) {
-                result += "\(intValue)"
-            } else if let value = variableMap[String(component)] {
-                result += "\(value)"
-            } else {
-                result += "\(component)"
-            }
+    public func normalize(_ expression: String, _ nodeId: Int) throws -> String {
+        self.nodeId = nodeId
+        do{
+            return try normalizeString(expression)
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput 
         }
-        return result
     }
 
-    private func getFixedString(_ expression: String) -> String{
+    private func normalizeString(_ expression: String)throws -> String {
+        var result = "" 
+        do {
+            let components = try getFixedString(expression).split(whereSeparator: { $0 == " " })
+            for component in components {
+                if let intValue = Int(component) {
+                    result += "\(intValue)"
+                } else if let value = variableMap[String(component)] {
+                    result += "\(value)"
+                } else {
+                    result += "\(component)"
+                }
+            }
+            return result
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput 
+        }
+
+    }
+
+    private func getFixedString(_ expression: String)throws -> String{
 
         let signsForReplacing = ["++","--","+=","-=","*=","/=","%="]
         for sign in signsForReplacing{
             if expression.contains(sign){
-                return replaceSigns(expression, sign)
+                do {
+                    return try replaceSigns(expression, sign)
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(nodeId)
+                    throw consoleOutput 
+                }
+
             }
         }
         var updatedExpression = expression
         if expression.contains("[") && expression.contains("]"){
-            updatedExpression = replaceArray(expression)
+            updatedExpression = try replaceArray(expression)
         }
 
         return addWhitespaces(updatedExpression)
     }
     
-    private func replaceSigns(_ expression: String, _ sign: String) -> String{
+    private func replaceSigns(_ expression: String, _ sign: String) throws -> String{
         var updatedExpression = ""
         if !expression.contains(sign) {
             return expression
@@ -1107,7 +1195,7 @@ class StringNormalizer {
             updatedExpression += "\(str[0]) = \(str[0]) - 1"
         } else {   
             guard let firstSign = sign.first else {
-                fatalError("Invalid sign")
+                throw ErrorType.invalidSyntaxError
             }
             var str = expression.split(separator: firstSign)
             str[1].removeFirst()
@@ -1152,11 +1240,10 @@ class StringNormalizer {
         return updatedExpression
     }
 
-    public func replaceArray(_ expression: String) -> String{
+    public func replaceArray(_ expression: String) throws -> String{
 
         var updatedExpression = ""
         var index = 0
-        print(expression, "expression",expression.contains("“") || expression.contains("”"))
 
         while index < expression.count{
             let char = expression[expression.index(expression.startIndex, offsetBy: index)]
@@ -1172,9 +1259,17 @@ class StringNormalizer {
                     newIndex += 1
                 }
                 let str = expression[expression.index(expression.startIndex, offsetBy: index + 1)..<expression.index(expression.startIndex, offsetBy: newIndex - 1)]
-                let normalizedString = normalizeString(String(str))
-                let computedValue = Calculate(normalizedString).compare()
-                updatedExpression += "[\(computedValue)]"
+                do {
+                    let normalizedString = try normalizeString(String(str))
+                    let calculate = Calculate(normalizedString, nodeId)
+                    let computedValue = try calculate.compare() 
+
+                    updatedExpression += "[\(Int(computedValue))]"
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(nodeId)
+                    throw consoleOutput
+                }
                 index = newIndex - 1
             } else {
                 updatedExpression += "\(char)"
@@ -1193,44 +1288,56 @@ class ExpressionSolver{
     private var expression: String
     private var type: VariableType
     private var solvedExpression: String
+    private var consoleOutput: ConsoleOutput
+    private var nodeId: Int
 
     init() {
         self.solvedExpression = ""
         self.expression = ""
         self.type = .int
+        self.nodeId = 0
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
 
     public func getSolvedExpression() -> String {
         return solvedExpression
     }
 
-    public func setExpressionAndType(_ expression: String, _ type: VariableType) {
+    public func setExpressionAndType(_ expression: String, _ type: VariableType, _ nodeId: Int) throws{
         self.expression = expression
         self.type = type
-        updateSolvedExpression()
+        self.nodeId = nodeId
+        self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
+        do{
+            try updateSolvedExpression()
+        } catch let errorType as ErrorType {
+            self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            self.consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
     }
 
-    private func updateSolvedExpression(){
-        let calculate = Calculate("") 
-
+    private func updateSolvedExpression() throws{
+        let calculate = Calculate("", nodeId) 
+        print(expression)
         var updatedExpression = expression
+
         if type == .String || (expression.contains("“") && expression.contains("”")) { 
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = calculate.compareString()
+            let calculatedValue = try calculate.compareString()
             if expression.contains("“") && expression.contains("”") {
                 self.solvedExpression = "“" +  calculatedValue + "”"
             } else {
                 self.solvedExpression = calculatedValue
             }
 
-        } else if expression.contains("“") || expression.contains("”") || expression.contains("[") || expression.contains("]"){
-            fatalError("Invalid type")
+        } else if expression.contains("“") || expression.contains("”"){
+            throw ErrorType.invalidTokenTypeError
         } else{
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
-            
-            let calculatedValue = calculate.compare()
+            let calculatedValue = try calculate.compare()
 
             if type == .int {
                 self.solvedExpression =  String(calculatedValue)
@@ -1241,8 +1348,7 @@ class ExpressionSolver{
             } else {
                 self.solvedExpression =  ""
             }
-        }
-
+        } 
     }
 
 }
@@ -1255,29 +1361,37 @@ class ArrayBuilder{
     private var count: Int 
     private var children: [String]
     private var expressionSolver: ExpressionSolver = .init()
+    private var consoleOutput: ConsoleOutput
+    private var nodeId: Int
 
-    init(_ expression: String, _ arrayType: VariableType) {
+    init(_ expression: String, _ arrayType: VariableType, _ nodeId: Int) throws {
         self.expression = expression
         self.arrayType = arrayType
+        self.nodeId = nodeId
+
+        self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
         self.childrenType = .int
         self.count = 0
         self.children = []
 
         self.result = ""
-        self.initializeValues()
+        do {
+            try initializeValues()
+        } catch let errorType as ErrorType {
+            self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            self.consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
     }
 
-
-
-    public func getArrayElement(_ index: Int) -> String {
+    public func getArrayElement(_ index: Int) throws -> String {
         if index >= children.count {
-            fatalError("Invalid index")
+            throw ErrorType.invalidIndexError
         }
         return children[index]
     }
 
     public func getArray() -> String{
-        // верни массив children в виде строки. То есть создай строку и в цикле добавь в нее все элементы массива children и верни эту строку
         var result = "["
         for i in 0..<children.count{
             result += children[i]
@@ -1305,66 +1419,75 @@ class ArrayBuilder{
         self.children = children
     }
 
-    public func setArrayValue(_ index: Int, _ value: String) {
+    public func setArrayValue(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
-            fatalError("Invalid index")
+            throw ErrorType.invalidIndexError
         }
         if value == "" {
-            fatalError("Invalid value")
+            throw ErrorType.invalidValueError
         }
         children[index] = value
     }
 
-    public func append(_ value: String) {
+    public func append(_ value: String) throws{
         if value == "" {
-            fatalError("Invalid value")
+            throw ErrorType.invalidValueError
+        }
+        if getTypeByStringValue(value) != self.childrenType{
+            throw ErrorType.invalidTypeError
         }
         children.append(value)
         count += 1
     }
 
-    public func insert(_ index: Int, _ value: String) {
+    public func insert(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
-            fatalError("Invalid index")
+            throw ErrorType.invalidIndexError
         }
         if value == "" {
-            fatalError("Invalid value")
+            throw ErrorType.invalidValueError
         }
         children.insert(value, at: index)
         count += 1
+        self.result = updateArrayResultAfterMethods()
     }
 
-    public func pop() {
+    public func pop() throws {
         if children.count == 0 {
-            fatalError("Invalid array")
+            throw ErrorType.invalidIndexError
         }
         children.removeLast()
+        print(children)
         count -= 1
+        self.result = updateArrayResultAfterMethods()
     }
 
-    public func remove(_ index: Int) {
+    public func remove(_ index: Int) throws {
         if index >= children.count || index < 0{
-            fatalError("Invalid index")
+            throw ErrorType.invalidIndexError
         }
         children.remove(at: index)
         count -= 1
+        self.result = updateArrayResultAfterMethods()
     }
 
-    private func initializeValues(){
-        self.childrenType = self.updateChildrenType()
-        print(self.childrenType, "childrenType")
-        self.children = self.updateArrayChildren()
-        print(self.children, "children")
-        self.count = self.updateArrayCount()
-        print(self.count, "count")
-        self.result = self.handleExpression()
-        print("result", self.result)
+    private func initializeValues() throws{
+        do{
+            self.childrenType = try self.updateChildrenType()
+            self.children = try self.updateArrayChildren()
+            self.count = try self.updateArrayCount()
+            self.result = try self.handleExpression()
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
         
     }
 
-    private func handleExpression() -> String{
+    private func handleExpression() throws -> String{
         if expression.first != "[" || expression.last != "]" || !isCorrectBrackets(expression){
-            fatalError("Invalid array")
+            throw ErrorType.invalidArrayValueError
         } 
 
         if count == 0 && children.count == 0 {
@@ -1394,22 +1517,33 @@ class ArrayBuilder{
         }
         return count == 0
     }
-
-    private func updateArrayChildren() -> [String]{
+    private func updateArrayResultAfterMethods() -> String{
+        var str = "["
+        for child in children {
+            str += child + ", "
+        }
+        if count > 0{
+            str.removeLast()
+            str.removeLast()
+        }
+        str += "]"
+        return str
+    }
+    private func updateArrayChildren() throws -> [String]{
         let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
         var result = [String]()
         for component in components{
             if component.first == "[" {
-                fatalError("Invalid array, we can't use array in array:((")
+                throw ErrorType.unsupportedArrayError
             }
             print(childrenType, component,"childrenType, component")
-            expressionSolver.setExpressionAndType(String(component), childrenType)
+            try expressionSolver.setExpressionAndType(String(component), childrenType, nodeId)
 
             let solvedExpression = expressionSolver.getSolvedExpression()
             let valueType = getTypeByStringValue(solvedExpression)
 
             if valueType != childrenType {
-                fatalError("Invalid type of element in array")
+                throw ErrorType.invalidTypeError
             }
             result.append(String(solvedExpression))
         }
@@ -1417,20 +1551,20 @@ class ArrayBuilder{
         return result
     }
 
-    private func updateArrayCount() -> Int{
+    private func updateArrayCount() throws -> Int{
         let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",")
         var count = 0
         for component in components{
             if component.trimmingCharacters(in: .whitespaces) != ""{
                 count += 1
             } else {
-                fatalError("Invalid array, empty element")
+                throw ErrorType.invalidArrayValueError
             }
         }
         return count
     }
 
-    private func updateChildrenType() -> VariableType{
+    private func updateChildrenType()throws -> VariableType{
         switch arrayType {
         case .arrayString:
             return .String
@@ -1441,7 +1575,7 @@ class ArrayBuilder{
         case .arrayBool:
             return .bool
         default:
-            fatalError("Invalid type")
+            throw ErrorType.invalidArrayValueError
         }
     }
     
@@ -1464,15 +1598,17 @@ class Interpreter {
     private var treeAST: Node
     internal var mapOfVariableStack = [[String: String]]()
     internal var mapOfArrayStack = [[String: ArrayBuilder]]()
-    private var assignmentVariableInstance = StringNormalizer([:])
+    private var assignmentVariableInstance: StringNormalizer
     private var printResult = ""
+    private var consoleOutput: ConsoleOutput
 
     init() {
         treeAST = Node(value: "", type: .root, id: 0)
-        
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
+        assignmentVariableInstance = .init([:])
     }
     
-    func setTreeAST(_ treeAST: Node){
+    func setTreeAST(_ treeAST: Node) throws{
         printResult = ""
         self.treeAST = treeAST
         self.mapOfVariableStack = [[String: String]]()
@@ -1480,60 +1616,71 @@ class Interpreter {
 
         mapOfVariableStack.removeAll()
         mapOfArrayStack.removeAll()
-
-        let _ = traverseTree(treeAST)
+        do{
+            let _ = try traverseTree(treeAST)
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(treeAST.id)
+            throw consoleOutput
+        }
+        
     }
     
     func getPrintResult() -> String {
         return printResult
     }
     
-    func traverseTree(_ node: Node) -> String{ 
+    func traverseTree(_ node: Node)throws { 
+        do{
         switch node.type{
         case .root:
-            processRootNode(node)
+            try processRootNode(node)
         case .assign:
-            processAssignNode(node)
+            try processAssignNode(node)
         case .ifBlock:
-            processIfBlockNode(node)
+            try processIfBlockNode(node)
         case .elifBlock:
-            processElifBlockNode(node)
+            try processElifBlockNode(node)
         case .elseBlock:
-            processElseBlockNode(node)
+            try processElseBlockNode(node)
         case .whileLoop:
-            processWhileLoopNode(node)
+            try processWhileLoopNode(node)
         case .forLoop:
-            processForLoopNode(node)
+            try processForLoopNode(node)
         case .print:
-            processPrintNode(node)
+            try processPrintNode(node)
         case .append:
-            processAppendNode(node)
+            try processAppendNode(node)
         case .pop:
-            processPopNode(node)
+            try processPopNode(node)
         case .remove:
-            processRemoveNode(node)
+            try processRemoveNode(node)   
         case .breakBlock:
             processBreakNode(node)
         case .continueBlock:
             processContinueNode(node)
         default:
-            return ""
+            throw ErrorType.invalidNodeError
         }
-        return ""
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(node.id)
+            throw consoleOutput
+        }
     }
 
-    private func processAppendNode(_ node: Node){
+    private func processAppendNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
 
         let arrayName = components[0]
         let appendValues = getValuesFromExpression(components[1])
         if appendValues.count > 1{
-            fatalError("Invalid append value")
+            throw ErrorType.invalidAppendValueError
         }
 
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
-                arrayBuilder.append(appendValues[0])
+                try arrayBuilder.append(appendValues[0])
                 updateMapArrayOfStack([arrayName: arrayBuilder])
                 break
             }
@@ -1541,20 +1688,26 @@ class Interpreter {
 
     }
 
-    private func processPopNode(_ node: Node){
+    private func processPopNode(_ node: Node)throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
         let arrayName = components[0]
 
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
-                arrayBuilder.pop()
+                do{
+                    try arrayBuilder.pop()
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(node.id)
+                    throw consoleOutput
+                }
                 updateMapArrayOfStack([arrayName: arrayBuilder])
                 break
             }
         }
     }
 
-    private func processRemoveNode(_ node: Node){
+    private func processRemoveNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
         let arrayName = components[0]
         let index = components[1]
@@ -1562,21 +1715,26 @@ class Interpreter {
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
                 guard let removeIndex =  Int(index) else{
-                    fatalError("Invalid index")
+                    throw ErrorType.invalidIndexError
                 }
-                arrayBuilder.remove(Int(removeIndex))
+                try arrayBuilder.remove(Int(removeIndex))
                 updateMapArrayOfStack([arrayName: arrayBuilder])
                 break
             }
         }
     }
 
-    private func processRootNode(_ node: Node){
+    private func processRootNode(_ node: Node)throws{
         mapOfVariableStack.append([:])
 
         for child in node.children{
- 
-            let _ = traverseTree(child)
+            do{
+                let _ = try traverseTree(child)
+            } catch let errorType as ErrorType {
+                consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
 
             while mapOfVariableStack.count > 1 {
                 mapOfVariableStack.removeLast()
@@ -1593,32 +1751,38 @@ class Interpreter {
                 
             }
         }
+        // print(consoleOutput.errorOutputValue, "errorOutputValue")
+        // print(consoleOutput.errorIdArray, "errorIdArray")
     }
 
-    private func processPrintNode(_ node: Node){
+    private func processPrintNode(_ node: Node) throws{
         let components = getValuesFromExpression(node.value)
 
         for component in components{
-
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
                 let rightQuoteCount = component.filter({$0 == "”"}).count
+                print(leftQuoteCount, rightQuoteCount)
                 if leftQuoteCount != rightQuoteCount{
-                    fatalError("Invalid syntax")
+                    throw ErrorType.invalidSyntaxError
                 }
                 if leftQuoteCount == 1 && rightQuoteCount == 1{
                     printResult += "\(component)"
                 } else {
-                    let normalizedString = calculateArithmetic(component, .String)
+                    let normalizedString = try calculateArithmetic(component, .String, node.id)
                     printResult += "\(normalizedString) "
                 }
-                printResult += "\(component) "
             } else if component.contains("“") || component.contains("”"){
-                fatalError("Invalid syntax")
+                throw ErrorType.invalidSyntaxError
             } else {
-                let calculatedValue = calculateArithmetic(component, .String)
-
-                printResult += "\(calculatedValue) "
+                do{
+                    let calculatedValue = try calculateArithmetic(component, .String, node.id)
+                    printResult += "\(calculatedValue) "
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(node.id)
+                    throw consoleOutput
+                }
             }
         }
 
@@ -1664,42 +1828,42 @@ class Interpreter {
     private func processContinueNode(_ node: Node){
     }
 
-    private func processAssignNode(_ node: Node) {
-        print(node.children[0].value, "node.children[0].value")
-        let varName = assignmentVariableInstance.replaceArray(node.children[0].value)
+    private func processAssignNode(_ node: Node) throws{
+        // print(node.children[0].value, "node.children[0].value")
+        let varName = try assignmentVariableInstance.replaceArray(node.children[0].value)
 
         guard isVariable(varName) else { // проверяем, что мы пытается присвоить значение НЕ числу
-            fatalError("Check your variable name")
+            throw ErrorType.invalidVariableNameError
         }
         var variableType: VariableType // здесь мы получаем тип переменной, которой присваиваем значение
-        if let variableFromStack = getValueFromStack(varName), variableFromStack != "" {
+        if let variableFromStack = try getValueFromStack(varName), variableFromStack != "" {
             variableType = getTypeByStringValue(variableFromStack)
         } else {
             switch node.children[0].type {
             case .variable(let type):
                 if type == .another{
-                    fatalError("Variable is not declared")
+                     throw ErrorType.variableNotFoundError
                 }
                 variableType = type
             default:
-                fatalError("Invalid syntax")
+                throw ErrorType.invalidSyntaxError
             }
         }
         let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
         if (variableType == .another && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
-            let assignValue = calculateArithmetic(node.children[1].value, variableType)
+            let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             print(assignValue, "assignValue")
-            assignValueToStack([varName: assignValue])   
+            try assignValueToStack([varName: assignValue])   
             
         } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
-            let assignValue = calculateArithmetic(node.children[1].value, variableType)
+            let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             guard isSameType(variableName: varName, value: assignValue) else {
-                fatalError("Invalid type")
+                throw ErrorType.invalidTypeError
             }
-            assignValueToStack([varName: assignValue])
+            try assignValueToStack([varName: assignValue])
 
         } else {
-            let arrayBuilder = ArrayBuilder(node.children[1].value, variableType)
+            let arrayBuilder = try ArrayBuilder(node.children[1].value, variableType, node.id)
             updateMapArrayOfStack([varName: arrayBuilder])
         }
 
@@ -1714,9 +1878,16 @@ class Interpreter {
     }
 
     private func isSameType(variableName: String, value: String) -> Bool{ 
-        guard let variableValue = getValueFromStack(variableName), variableValue != "" else {
-            return true
+        var variableValue = ""
+        do{
+            variableValue = try getValueFromStack(variableName) ?? ""
+            if variableValue == ""{
+                return true
+            }
+        } catch {
+            return false
         }
+
         let type = getTypeByStringValue(variableValue)
 
         if type == .int {
@@ -1750,7 +1921,7 @@ class Interpreter {
         }
     }
     
-    private func getValueFromStack(_ name: String) -> String? {
+    private func getValueFromStack(_ name: String)throws -> String? {
         for dictionary in mapOfVariableStack.reversed(){
             if let value = dictionary[name]{
                 return value
@@ -1764,9 +1935,9 @@ class Interpreter {
                 if let arrayBuilder = array[arrayName] {
                     let index = Int(arrayIndex) ?? -1
                     if index >= arrayBuilder.getArrayCount() || index < 0 {
-                        fatalError("Invalid index")
+                        throw ErrorType.invalidIndexError
                     }
-                    return arrayBuilder.getArrayElement(index)
+                    return try arrayBuilder.getArrayElement(index)
                 }
             }
         }
@@ -1775,7 +1946,7 @@ class Interpreter {
         return ""
     }
 
-    private func assignValueToStack(_ dictionary: [String: String]){
+    private func assignValueToStack(_ dictionary: [String: String])throws{
         for (key, value) in dictionary {
             var isAssigned = false
             if key.contains("[") && key.contains("]"){
@@ -1787,9 +1958,9 @@ class Interpreter {
                         
                         let updatedValueIndex = Int(arrayIndex) ?? -1
                         if updatedValueIndex >= arrayBuilder.getArrayCount() || updatedValueIndex < 0 {
-                            fatalError("Invalid index")
+                            throw ErrorType.invalidIndexError
                         }
-                        arrayBuilder.setArrayValue(updatedValueIndex, value)
+                        try arrayBuilder.setArrayValue(updatedValueIndex, value)
                         mapOfArrayStack[index][arrayName] = arrayBuilder
                         break
                     }
@@ -1809,7 +1980,7 @@ class Interpreter {
         }
     }
 
-    private func setValueFromStack(_ dictionary: [String: String]) {
+    private func setValueFromStack(_ dictionary: [String: String]) throws{
         // print(dictionary, "dictionary in setValueFromStack")
         // print(mapOfVariableStack, "mapOfVariableStack in setValueFromStack")
         // print(mapOfArrayStack, "mapOfArrayStack in setValueFromStack")
@@ -1823,9 +1994,9 @@ class Interpreter {
                         
                         let updatedValueIndex = Int(arrayIndex) ?? -1
                         if updatedValueIndex >= arrayBuilder.getArrayCount() || updatedValueIndex < 0 {
-                            fatalError("Invalid index")
+                            throw ErrorType.invalidIndexError
                         }
-                        arrayBuilder.setArrayValue(updatedValueIndex, value)
+                        try arrayBuilder.setArrayValue(updatedValueIndex, value)
                         mapOfArrayStack[index][arrayName] = arrayBuilder
                         break
                     }
@@ -1841,145 +2012,201 @@ class Interpreter {
         }
     }
 
-    private func processIfBlockNode(_ node: Node){ 
-        
-        let calculatedValue = calculateArithmetic(node.value, .bool)
-        if (calculatedValue == "true" && node.getCountWasHere() == 0){
-            handleIfBlockNode(node) 
-            node.setCountWasHere(2)
-        } else{
-            node.setCountWasHere(1)
+    private func processIfBlockNode(_ node: Node) throws{ 
+        do{
+            let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
+            if (calculatedValue == "true" && node.getCountWasHere() == 0){
+                try handleIfBlockNode(node) 
+                node.setCountWasHere(2)
+            } else{
+                node.setCountWasHere(1)
+            }
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(node.id)
+            throw consoleOutput
+        } catch{
+            consoleOutput.errorOutputValue += String(describing: error) + "\n"
+            consoleOutput.errorIdArray.append(node.id)
+            throw consoleOutput
         }
+        
+
     }
 
-    private func processElifBlockNode(_ node: Node){
-        let calculatedValue = calculateArithmetic(node.value, .bool)
-        
-        if (calculatedValue == "true" && node.getCountWasHere() == 0){
-            handleIfBlockNode(node) 
-            node.setCountWasHere(2)
-        } else{
-            node.setCountWasHere(1)
+    private func processElifBlockNode(_ node: Node) throws{
+        do{
+            let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
+            if (calculatedValue == "true" && node.getCountWasHere() == 0){
+                try handleIfBlockNode(node) 
+                node.setCountWasHere(2)
+            } else{
+                node.setCountWasHere(1)
+            }
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(node.id)
+            throw consoleOutput
         }
+        
+        
+
     }
 
-    private func processElseBlockNode(_ node: Node){
+    private func processElseBlockNode(_ node: Node)throws{
         if (node.getCountWasHere() == 1){
-            handleIfBlockNode(node) 
+            do{
+                try handleIfBlockNode(node) 
+            } catch let errorType as ErrorType {
+                consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
+            
         } 
     }
     
-    private func handleIfBlockNode(_ node: Node){
-        mapOfVariableStack.append([:])
+    private func handleIfBlockNode(_ node: Node) throws {
+        do{
+            mapOfVariableStack.append([:])
         for child in node.children{
 
             if child.type == .ifBlock {
                 child.setCountWasHere(0)
                 mapOfVariableStack.append([:])
             }
-
-            let _ = traverseTree(child)
+            
+            let _ = try traverseTree(child)
 
             if child.type == .ifBlock {
                 if let lastDictionary = mapOfVariableStack.last {
-                    setValueFromStack(lastDictionary)
+                    do {
+                        try setValueFromStack(lastDictionary)
+                    } catch let errorType as ErrorType {
+                        consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                        consoleOutput.errorIdArray.append(node.id)
+                        throw consoleOutput
+                    }
                     mapOfVariableStack.removeLast()
                 }
             }
             if let lastDictionary = mapOfVariableStack.last {
-                setValueFromStack(lastDictionary)
+                do {
+                    try setValueFromStack(lastDictionary)
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(node.id)
+                    throw consoleOutput
+                }
             }
         } 
         if let lastDictionary = mapOfVariableStack.last {
-            setValueFromStack(lastDictionary)
+            do {
+                try setValueFromStack(lastDictionary)
+            } catch let errorType as ErrorType {
+                consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
             mapOfVariableStack.removeLast()
             
         }
 
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(node.id)
+            throw consoleOutput
+        }
+        
     }
 
-    private func processWhileLoopNode(_ node: Node){
+    private func processWhileLoopNode(_ node: Node) throws {
         let condition = node.value
         if condition == "" {
-            fatalError("Invalid syntax")
+            throw ErrorType.invalidSyntaxError
         }
         mapOfVariableStack.append([:])
-        while calculateArithmetic(node.value, .bool) == "true" { 
+        while try calculateArithmetic(node.value, .bool, node.id) == "true" { 
 
             for child in node.children {
                 if child.type == .ifBlock {
                     child.setCountWasHere(0)
                 }
-                let _ = traverseTree(child)
+                let _ = try! traverseTree(child)
             }
         }
         if let lastDictionary = mapOfVariableStack.last {
-            setValueFromStack(lastDictionary)
+            try setValueFromStack(lastDictionary)
             mapOfVariableStack.removeLast()
         }
     }
 
-    private func processForLoopNode(_ node: Node) {
+    private func processForLoopNode(_ node: Node) throws{
 
-        guard let components = getForLoopComponents(node.value) else {
-            fatalError("Invalid syntax")
+        guard let components = try getForLoopComponents(node.value) else {
+            throw ErrorType.invalidSyntaxError
         }
         mapOfVariableStack.append([:])
 
 
         if components[0] != "" {
-            let variableComponents = getForLoopInitializationComponents(components[0])
+            let variableComponents = try getForLoopInitializationComponents(components[0])
             guard variableComponents.name != "", variableComponents.value != ""  else {
-                fatalError("Invalid syntax")
+                throw ErrorType.invalidSyntaxError
             }
             guard isVariable(variableComponents.name) else{
-                fatalError("Check your variable name")
+                throw ErrorType.invalidVariableNameError
             }
             var isThereVariable = false
 
-            if let valueFromStack = getValueFromStack(variableComponents.name), valueFromStack != "" {
+            if let valueFromStack = try getValueFromStack(variableComponents.name), valueFromStack != "" {
                 isThereVariable = true
             }
             if isThereVariable && variableComponents.wasInitialized == 1 {
-                fatalError("Variable already exists")
+                throw ErrorType.alreadyExistsVariableError
 
             } else if !isThereVariable && variableComponents.wasInitialized == 0{
-                fatalError("Variable not found")
+                throw ErrorType.variableNotFoundError
             }
 
-            let normalizedVariableValue = assignmentVariableInstance.normalize(variableComponents.value)
-            mapOfVariableStack[mapOfVariableStack.count - 1][variableComponents.name] = normalizedVariableValue
-
+            do {
+                let normalizedVariableValue = try assignmentVariableInstance.normalize(variableComponents.value, node.id)
+                mapOfVariableStack[mapOfVariableStack.count - 1][variableComponents.name] = normalizedVariableValue
+            } catch let errorType as ErrorType {
+                consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
 
         } else if let variable = getConditionVariable(components[1]){
-            let valueFromStack = getValueFromStack(variable)
+            let valueFromStack = try getValueFromStack(variable)
 
             if valueFromStack != "" {
                 mapOfVariableStack[mapOfVariableStack.count - 1][variable] = valueFromStack
             } 
             if mapOfVariableStack[mapOfVariableStack.count - 1][variable] == nil {
-                fatalError("Variable or array variable not found")
+                throw ErrorType.variableNotFoundError
             }
         }
 
 
-        while calculateArithmetic(components[1], .bool) == "true" { 
+        while try calculateArithmetic(components[1], .bool, node.id) == "true" { 
             for child in node.children {
                 if child.type == .ifBlock {
                     child.setCountWasHere(0)
                 }
-                let _ = traverseTree(child)
+                let _ = try traverseTree(child)
             }
 
             guard let variable = getStepComponents(components[2]) else{
-                fatalError("Invalid syntax")
+                throw ErrorType.invalidSyntaxError
             }
-            let assignValue = String(calculateArithmetic(variable.value, .int))
-            setValueFromStack([variable.name: assignValue])
+            let assignValue = String(try calculateArithmetic(variable.value, .int, node.id))
+            try setValueFromStack([variable.name: assignValue])
         }
 
         if let lastDictionary = mapOfVariableStack.last {
-            setValueFromStack(lastDictionary)
+            try setValueFromStack(lastDictionary)
             mapOfVariableStack.removeLast()
         }
     }
@@ -2014,14 +2241,14 @@ class Interpreter {
         }
     }
 
-    private func getForLoopComponents(_ value: String) -> [String]? {
+    private func getForLoopComponents(_ value: String)throws -> [String]? {
         let components = value.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
         guard components.count == 3 else {
             return nil
         }
         return components
     }
-    private func getForLoopInitializationComponents(_ component: String) -> (name: String, value: String, wasInitialized: Int) {
+    private func getForLoopInitializationComponents(_ component: String) throws -> (name: String, value: String, wasInitialized: Int) {
         var wasInitialized = 0
 
         if component.contains("int") || component.contains("string") {
@@ -2029,7 +2256,7 @@ class Interpreter {
         }
         let variable = component.split(whereSeparator: { $0 == " " }).map{ $0.trimmingCharacters(in: .whitespaces) }
         guard variable.count >= 3 + wasInitialized, variable[1 + wasInitialized] == "=" else {
-            fatalError("Invalid syntax")
+            throw ErrorType.invalidSyntaxError
         }
 
         let variableName = variable[wasInitialized]
@@ -2094,7 +2321,7 @@ class Interpreter {
 
     }
 
-    private func calculateArithmetic(_ expression: String, _ type: VariableType) -> String {
+    private func calculateArithmetic(_ expression: String, _ type: VariableType, _ nodeId: Int)throws -> String {
         var lastDictionary: [String: String] = [:]
 
         for dictionary in mapOfVariableStack {
@@ -2116,13 +2343,19 @@ class Interpreter {
             }
         }
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
-        let mapElement = assignmentVariableInstance.normalize(expression)
-        if mapElement.contains("[") && mapElement.contains("]"){
-            return mapElement
+        do{
+            let mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
+
+            let expressionSolver = ExpressionSolver()
+            try expressionSolver.setExpressionAndType(mapElement, type, nodeId)
+
+            return expressionSolver.getSolvedExpression()
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
         }
-        let expressionSolver = ExpressionSolver()
-        expressionSolver.setExpressionAndType(mapElement, type)
-        return expressionSolver.getSolvedExpression()
+        
     }
 
     private func isCondition(_ expression: String) -> Bool {
@@ -2156,37 +2389,55 @@ class Interpreter {
 // print(c)
 
 
-
  
 var array: [IBlock] = []
 
-array.append(Variable(id: 0, type: .String, name: "b", value: "“fdf” + “fdf”", isDebug: false))
+// array.append(Variable(id: 0, type: .String, name: "b", value: "“fdf” + “fdf”", isDebug: false))
 
-array.append(Variable(id: 2, type: .arrayString, name: "c", value: "[“10 + 25”,“94”,“3”, “-1132 ”,“13 ”]", isDebug: false))
-array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 10; i += 1", isDebug: false))
-array.append(Flow(id: 1, type: .begin, isDebug: false))
-array.append(Loop(id: 3, type: .forLoop, value: "int j = i + 1; j < 10; j += 1", isDebug: false))
-array.append(Flow(id: 1, type: .begin, isDebug: false))
-array.append(Condition(id: 4, type: .ifBlock, value: "c[i] > c[j]", isDebug: false))
-array.append(Flow(id: 1, type: .begin, isDebug: false))
-array.append(Variable(id: 5, type: .int, name: "temp", value: "c[i]", isDebug: false))
-array.append(Variable(id: 6, type: .another, name: "c[i]", value: "c[j]", isDebug: false))
-array.append(Variable(id: 7, type: .another, name: "c[j]", value: "temp", isDebug: false))
+array.append(Variable(id: 0, type: .arrayString, name: "c", value: "[“10 + 25”,“94”,“3”, “-1132 ”,“13 ”]", isDebug: false))
+array.append(ArrayMethod(id: 1, type: .append, name: "c", value: "“10 + 25”", isDebug: false))
+array.append(Output(id: 2, value: "c", isDebug: false))
+array.append(ArrayMethod(id: 4, type: .pop, name: "c", value: "", isDebug: false))
+array.append(Output(id: 5, value: "c", isDebug: false))
+array.append(ArrayMethod(id: 6, type: .pop, name: "c", value: "", isDebug: false))
+array.append(Output(id: 7, value: "c", isDebug: false))
+array.append(ArrayMethod(id: 8, type: .pop, name: "c", value: "", isDebug: false))
+array.append(Output(id: 9, value: "c", isDebug: false))
+array.append(ArrayMethod(id: 10, type: .pop, name: "c", value: "", isDebug: false))
+array.append(Output(id: 11, value: "c", isDebug: false))
 
-array.append(Flow(id: 1, type: .end, isDebug: false))
-array.append(Flow(id: 1, type: .end, isDebug: false))
-array.append(Output(id: 8, value: "c", isDebug: false))
-array.append(Flow(id: 1,type: .end, isDebug: false))
-array.append(Flow(id: 1, type: .end, isDebug: false))
-array.append(Output(id: 8, value: "b", isDebug: false))
+array.append(Loop(id: 12, type: .forLoop, value: "int i = 0; i < 10; i += 1", isDebug: false))
+array.append(Flow(id: 13, type: .begin, isDebug: false))
+array.append(Loop(id: 14, type: .forLoop, value: "int j = i + 1; j < 10; j += 1", isDebug: false))
+array.append(Flow(id: 15, type: .begin, isDebug: false))
+array.append(Condition(id: 16, type: .ifBlock, value: "c[i] > c[j]", isDebug: false))
+array.append(Flow(id: 17, type: .begin, isDebug: false))
+array.append(Variable(id: 18, type: .int, name: "temp", value: "c[i]", isDebug: false))
+array.append(Variable(id: 19, type: .another, name: "c[i]", value: "c[j]", isDebug: false))
+array.append(Variable(id: 20, type: .another, name: "c[j]", value: "temp", isDebug: false))
 
+array.append(Flow(id: 21, type: .end, isDebug: false))
+array.append(Flow(id: 22, type: .end, isDebug: false))
+array.append(Output(id: 23, value: "c", isDebug: false))
+array.append(Flow(id: 24,type: .end, isDebug: false))
+array.append(Flow(id: 25, type: .end, isDebug: false))
+// array.append(Output(id: 26, value: "b", isDebug: false))
+// array.append(Condition(id: 1, type: .ifBlock,
+//         value: "((1 < 3) || ((12 > 10) && (1 > 0)))", isDebug: false))
+// array.append(Flow(id: 2, type: .begin, isDebug: false))
+// array.append(Output(id: 3, value: "“ssss ”", isDebug: false))
+// array.append(Flow(id: 4, type: .end, isDebug: false))
 
 let tree = Tree()
 tree.setBlocks(array)
 tree.buildTree()
 
 let interpreter = Interpreter()
-interpreter.setTreeAST(tree.rootNode)
+do {
+    try interpreter.setTreeAST(tree.rootNode)
+} catch let errorType as ErrorType {
+    print(errorType)
+}
 print(interpreter.getPrintResult())
 
 

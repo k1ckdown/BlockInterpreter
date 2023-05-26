@@ -4,44 +4,56 @@ class ExpressionSolver{
     private var expression: String
     private var type: VariableType
     private var solvedExpression: String
+    private var consoleOutput: ConsoleOutput
+    private var nodeId: Int
 
     init() {
         self.solvedExpression = ""
         self.expression = ""
         self.type = .int
+        self.nodeId = 0
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
 
     public func getSolvedExpression() -> String {
         return solvedExpression
     }
 
-    public func setExpressionAndType(_ expression: String, _ type: VariableType) {
+    public func setExpressionAndType(_ expression: String, _ type: VariableType, _ nodeId: Int) throws{
         self.expression = expression
         self.type = type
-        updateSolvedExpression()
+        self.nodeId = nodeId
+        self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
+        do{
+            try updateSolvedExpression()
+        } catch let errorType as ErrorType {
+            self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            self.consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
     }
 
-    private func updateSolvedExpression(){
-        let calculate = Calculate("") 
-
+    private func updateSolvedExpression() throws{
+        let calculate = Calculate("", nodeId) 
+        print(expression)
         var updatedExpression = expression
+
         if type == .String || (expression.contains("“") && expression.contains("”")) { 
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = calculate.compareString()
+            let calculatedValue = try calculate.compareString()
             if expression.contains("“") && expression.contains("”") {
                 self.solvedExpression = "“" +  calculatedValue + "”"
             } else {
                 self.solvedExpression = calculatedValue
             }
 
-        } else if expression.contains("“") || expression.contains("”") || expression.contains("[") || expression.contains("]"){
-            fatalError("Invalid type")
+        } else if expression.contains("“") || expression.contains("”"){
+            throw ErrorType.invalidTokenTypeError
         } else{
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
-            
-            let calculatedValue = calculate.compare()
+            let calculatedValue = try calculate.compare()
 
             if type == .int {
                 self.solvedExpression =  String(calculatedValue)
@@ -52,8 +64,7 @@ class ExpressionSolver{
             } else {
                 self.solvedExpression =  ""
             }
-        }
-
+        } 
     }
 
 }
