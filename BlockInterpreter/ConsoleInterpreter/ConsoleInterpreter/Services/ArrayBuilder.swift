@@ -8,7 +8,7 @@ class ArrayBuilder{
     private var result: String
     private var count: Int
     private var children: [String]
-    private var expressionSolver: ExpressionSolver = .init()
+    private var expressionSolver: ExpressionSolver
 
     init(_ expression: String, _ type: VariableType) {
         self.expression = expression
@@ -17,6 +17,7 @@ class ArrayBuilder{
         self.result = "["
         self.count = 0
         self.children = []
+        self.expressionSolver = .init(type)
 
         handleExpression()
     }

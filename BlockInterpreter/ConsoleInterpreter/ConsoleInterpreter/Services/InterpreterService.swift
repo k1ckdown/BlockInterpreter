@@ -174,9 +174,18 @@ class Interpreter {
 
         } else if (varName.contains("[") && varName.contains("]")) || variableType != .arrayInt{
             let assignValue = calculateArithmetic(node.children[1].value, variableType)
-            guard isSameType(variableName: varName, value: assignValue) else {
+            guard isSameType(variableName: varName, valueReceived: assignValue, type: variableType) else {
                 fatalError("Invalid type")
             }
+            //if (variableType == .bool) {
+                //if (assignValue == "true") {
+                    //assignValueToStack([varName: "1.0"])
+                //} else {
+                    //assignValueToStack([varName: "0.0"])
+                //}
+            //} else {
+                //assignValueToStack([varName: assignValue])
+            //}
             let lastDictionary = [varName: assignValue]
             assignValueToStack(lastDictionary)
 
@@ -195,26 +204,35 @@ class Interpreter {
         return isCondition
     }
 
-    private func isSameType(variableName: String, value: String) -> Bool{
+    private func isSameType(variableName: String, valueReceived: String, type: VariableType) -> Bool {
+        if type == .String {
+            return valueReceived.contains("“") || valueReceived.contains("”")
+        } else if type == .arrayInt || type == .arrayDouble || type == .arrayBool || type == .arrayString {
+            return valueReceived.contains("[") && valueReceived.contains("]")
+        }
+
+
         guard let variableValue = getValueFromStack(variableName), variableValue != "" else {
             return true
         }
+
         let type = getTypeByStringValue(variableValue)
 
         if type == .int {
-            return Int(value) != nil
+            return Int(valueReceived) != nil
         } else if type == .double {
-            return Double(value) != nil
+            return Double(valueReceived) != nil
         } else if type == .bool {
-            return value == "true" || value == "false"
+            return valueReceived == "true" || valueReceived == "false"
         } else if type == .String {
-            return value.contains("“") && value.contains("”")
+            return valueReceived.contains("“") && valueReceived.contains("”")
         } else if type == .arrayInt {
-            return value.contains("[") && value.contains("]")
+            return valueReceived.contains("[") && valueReceived.contains("]")
         } else {
             return false
         }
     }
+
 
     private func getTypeByStringValue(_ value: String) -> VariableType{
         if Int(value) != nil {
@@ -587,7 +605,7 @@ class Interpreter {
             lastDictionary.merge(dictionary) { (_, new) in new }
         }
 
-        for dictionary in mapOfArrayStack {
+         for dictionary in mapOfArrayStack {
             for (key, value) in dictionary {
                 let children = value.getArrayChildren()
                 for index in 0..<children.count {
@@ -602,11 +620,12 @@ class Interpreter {
             }
         }
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
-        let mapElement = assignmentVariableInstance.normalize(expression)
+        var mapElement = assignmentVariableInstance.normalize(expression)
         if mapElement.contains("[") && mapElement.contains("]"){
             return mapElement
         }
-        let expressionSolver = ExpressionSolver()
+
+        let expressionSolver = ExpressionSolver(type)
         expressionSolver.setExpressionAndType(mapElement, type)
         return expressionSolver.getSolvedExpression()
     }

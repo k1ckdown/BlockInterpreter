@@ -5,23 +5,25 @@ class ExpressionSolver{
     private var type: VariableType
     private var solvedExpression: String
 
-    init() {
+    init(_ type: VariableType) {
         self.solvedExpression = ""
         self.expression = ""
-        self.type = .int
+        self.type = type
     }
 
     public func getSolvedExpression() -> String {
         return solvedExpression
     }
 
-    public func setExpressionAndType(_ expression: String, _ type: VariableType) {
+    public func setExpressionAndType(_ expression: String,
+                                     _ type: VariableType) -> VariableType {
         self.expression = expression
         self.type = type
         updateSolvedExpression()
+        return self.type
     }
 
-    private func updateSolvedExpression(){
+    private func updateSolvedExpression() {
         let calculate = Calculate("")
 
         var updatedExpression = expression
@@ -48,7 +50,7 @@ class ExpressionSolver{
             } else if type == .double {
                 self.solvedExpression = String(Double(calculatedValue))
             } else if type == .bool {
-                self.solvedExpression = calculatedValue == 0 ? "false" : "true"
+                self.solvedExpression = Int(calculatedValue) == 0 ? "false" : "true"
             } else {
                 self.solvedExpression =  ""
             }

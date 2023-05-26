@@ -126,7 +126,7 @@ class StringNormalizer {
                 let str = expression[expression.index(expression.startIndex, offsetBy: index + 1)..<expression.index(expression.startIndex, offsetBy: newIndex - 1)]
                 let normalizedString = normalizeString(String(str))
                 let computedValue = Calculate(normalizedString).compare()
-                updatedExpression += "[\(computedValue)]"
+                updatedExpression += "[\(Int(computedValue))]"
                 index = newIndex - 1
             } else {
                 updatedExpression += "\(char)"

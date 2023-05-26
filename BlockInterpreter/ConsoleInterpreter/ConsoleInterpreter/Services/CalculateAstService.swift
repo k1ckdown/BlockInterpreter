@@ -240,7 +240,7 @@ class Calculate {
     }
 
     private func factorString() -> String {
-        guard let token = currentToken else{
+        guard let token = currentToken else {
             fatalError("Current token is nil")
         }
 
@@ -248,9 +248,15 @@ class Calculate {
         case .integer:
             moveToken(.integer)
             return token.getValue() ?? ""
+        case .double:
+            moveToken(.double)
+            return token.getValue() ?? ""
         case .string:
             moveToken(.string)
             return token.getValue() ?? ""
+        case .plus:
+            moveToken(.plus)
+            return factorString()
         case .leftBrace:
             moveToken(.leftBrace)
             let result = compareString()
