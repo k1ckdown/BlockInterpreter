@@ -38,8 +38,28 @@ class Interpreter {
         return printResult
     }
 
+    // function that print all the variable in the mapOfVariableStack
+    func printMapOfVariableStack() {
+        print("Internal storage: \(mapOfVariableStack)" + ":))")
+    }
+
+    func parseMapOfArrayStack() {
+        for arrayBuilderDict in mapOfArrayStack {
+            for (key, arrayBuilder) in arrayBuilderDict {
+                print("Name array: \(key), Value: \(arrayBuilder.getArray())")
+
+            }
+        }
+    }
+
     func traverseTree(_ node: Node)throws {
-        do{
+        do {
+            if (node.isDebug == true) {
+                printMapOfVariableStack()
+                parseMapOfArrayStack()
+                print(node.type)
+                print("@!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            }
             switch node.type{
             case .root:
                 try processRootNode(node)
