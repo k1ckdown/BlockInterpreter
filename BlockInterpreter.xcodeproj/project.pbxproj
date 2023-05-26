@@ -69,6 +69,8 @@
 		49917ECF2A1FCEC8006A3FF8 /* VariableTypeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49917ECE2A1FCEC8006A3FF8 /* VariableTypeButton.swift */; };
 		4997E0E92A0CA194000C35AD /* OutputBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */; };
 		4997E0EB2A0CA951000C35AD /* OutputBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */; };
+		49A08EBC2A20AF9F009B92CD /* DataStoreImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A08EBB2A20AF9F009B92CD /* DataStoreImpl.swift */; };
+		49A08EBF2A20E54D009B92CD /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A08EBE2A20E54D009B92CD /* DataStore.swift */; };
 		49A3465B2A058F8F003BC2B9 /* ConditionBlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */; };
 		49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */; };
 		49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */; };
@@ -180,6 +182,8 @@
 		49917ECE2A1FCEC8006A3FF8 /* VariableTypeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTypeButton.swift; sourceTree = "<group>"; };
 		4997E0E82A0CA194000C35AD /* OutputBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCell.swift; sourceTree = "<group>"; };
 		4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputBlockCellViewModel.swift; sourceTree = "<group>"; };
+		49A08EBB2A20AF9F009B92CD /* DataStoreImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreImpl.swift; sourceTree = "<group>"; };
+		49A08EBE2A20E54D009B92CD /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		49A3465A2A058F8F003BC2B9 /* ConditionBlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCell.swift; sourceTree = "<group>"; };
 		49A3465C2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionBlockCellViewModel.swift; sourceTree = "<group>"; };
 		49A346622A0592FD003BC2B9 /* BlockHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockHeaderView.swift; sourceTree = "<group>"; };
@@ -479,6 +483,7 @@
 		495B416A29FCEFD300DEF375 /* BlockInterpreter */ = {
 			isa = PBXGroup;
 			children = (
+				49A08EBA2A20A847009B92CD /* Data */,
 				490351B32A0D4B7200B3693B /* Managers */,
 				49D8A2F229FEDD3C00DF5B8E /* Extensions */,
 				49D8A2B829FEB9CE00DF5B8E /* Protocols */,
@@ -566,6 +571,23 @@
 				4997E0EA2A0CA951000C35AD /* OutputBlockCellViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		49A08EBA2A20A847009B92CD /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				49A08EBD2A20E537009B92CD /* DataStore */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		49A08EBD2A20E537009B92CD /* DataStore */ = {
+			isa = PBXGroup;
+			children = (
+				49A08EBB2A20AF9F009B92CD /* DataStoreImpl.swift */,
+				49A08EBE2A20E54D009B92CD /* DataStore.swift */,
+			);
+			path = DataStore;
 			sourceTree = "<group>";
 		};
 		49A346592A058F69003BC2B9 /* ConditionBlock */ = {
@@ -1106,6 +1128,7 @@
 				49D8A2C629FEBFC100DF5B8E /* CodeBlocksViewController.swift in Sources */,
 				492BA4192A0AB83F0019EFBE /* BlockCellStyle.swift in Sources */,
 				495147812A08CF8B00FD13AB /* BlockCell.swift in Sources */,
+				49A08EBC2A20AF9F009B92CD /* DataStoreImpl.swift in Sources */,
 				495EECD42A1A277E00C90546 /* OptionsViewConfiguration.swift in Sources */,
 				49A3465D2A058FA9003BC2B9 /* ConditionBlockCellViewModel.swift in Sources */,
 				49C661C32A02DAA200439E2A /* VariableBlockCellViewModel.swift in Sources */,
@@ -1162,6 +1185,7 @@
 				492F719E2A13B659001532AB /* NodeSevice.swift in Sources */,
 				495B416E29FCEFD300DEF375 /* SceneDelegate.swift in Sources */,
 				490351B12A0D448900B3693B /* Condition.swift in Sources */,
+				49A08EBF2A20E54D009B92CD /* DataStore.swift in Sources */,
 				490351B52A0D4B9A00B3693B /* InterpreterManager.swift in Sources */,
 				49D8A2C829FEC05A00DF5B8E /* WorkspaceViewController.swift in Sources */,
 				49A346632A0592FD003BC2B9 /* BlockHeaderView.swift in Sources */,

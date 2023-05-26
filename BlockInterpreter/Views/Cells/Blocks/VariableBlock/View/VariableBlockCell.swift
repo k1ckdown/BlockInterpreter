@@ -30,7 +30,7 @@ final class VariableBlockCell: BlockCell {
                 static let multiplierWidth: CGFloat = 0.38
             }
             
-            enum EqualSignLabel {
+            enum EqualSignImageView {
                 static let multiplierHeight: CGFloat = 0.4
                 static let multiplierWidth: CGFloat = 0.08
             }
@@ -158,8 +158,8 @@ final class VariableBlockCell: BlockCell {
         equalSignImageView.image = UIImage(systemName: "equal")
         
         equalSignImageView.snp.makeConstraints { make in
-            make.height.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierHeight)
-            make.width.equalToSuperview().multipliedBy(Constants.EqualSignLabel.multiplierWidth)
+            make.height.equalToSuperview().multipliedBy(Constants.EqualSignImageView.multiplierHeight)
+            make.width.equalToSuperview().multipliedBy(Constants.EqualSignImageView.multiplierWidth)
         }
     }
     

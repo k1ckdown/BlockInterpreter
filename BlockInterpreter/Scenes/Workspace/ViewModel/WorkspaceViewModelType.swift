@@ -19,6 +19,7 @@ protocol WorkspaceViewModelType {
     var removeBlock: PassthroughSubject<BlockCellViewModel, Never> { get }
     var addBlocks: PassthroughSubject<[BlockCellViewModel], Never> { get }
     var moveBlock: PassthroughSubject<(from: IndexPath, to: IndexPath), Never> { get }
+    var saveAlgorithm: PassthroughSubject<String?, Never> { get }
     var didBeginEditingBlocks: PassthroughSubject<Void, Never> { get }
     
     var didUpdateBlocksTable: PassthroughSubject<Void, Never> { get }

@@ -142,6 +142,27 @@ final class WorkspaceViewController: UIViewController {
       }
     }
     
+    private func presentAlertToSaveAlgorithm() {
+        let alertController = UIAlertController(title: "Save Algorithm", message: "", preferredStyle: .alert)
+        alertController.overrideUserInterfaceStyle = .dark
+        
+        var saveTextField: UITextField?
+        
+        alertController.addTextField() { textField in
+            saveTextField = textField
+            textField.placeholder = "Enter name file"
+        }
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) {_ in
+            print(saveTextField?.text)
+            self.viewModel.saveAlgorithm.send(saveTextField?.text)
+        }
+        
+        alertController.addAction(okAction)
+        
+        present(alertController, animated: true)
+    }
+    
     private func setupUI() {
         setupSuperView()
         setupWorkBlocksTableView()
@@ -590,6 +611,12 @@ private extension WorkspaceViewController {
             self?.viewModel.showConsole.send()
         }
         .store(in: &subscriptions)
+        
+        saveBarButton.tapPublisher
+            .sink { [weak self] in
+                self?.presentAlertToSaveAlgorithm()
+            }
+            .store(in: &subscriptions)
         
         workBlocksTapGesture.tapPublisher
             .sink { [weak self] _ in

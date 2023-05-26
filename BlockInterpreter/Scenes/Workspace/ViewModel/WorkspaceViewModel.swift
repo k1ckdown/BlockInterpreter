@@ -14,6 +14,7 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     var didFinishEditingBlocks = PassthroughSubject<Void, Never>()
     
     var showConsole = PassthroughSubject<Void, Never>()
+    var saveAlgorithm = PassthroughSubject<String?, Never>()
     var deleteAllBlocks = PassthroughSubject<Void, Never>()
     var didBeginEditingBlocks = PassthroughSubject<Void, Never>()
     var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
@@ -30,11 +31,26 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     
+    private let dataStore: DataStore
     private let interpreterManager: InterpreterManager
     
     init(interpreterManager: InterpreterManager) {
         self.interpreterManager = interpreterManager
+        self.dataStore = DataStoreImpl()
         bind()
+        
+        if dataStore.doFileExist(documentName: "someFile") {
+            dataStore.load(from: "someFile") { (result: Result<[IBlock], Error>) in
+                switch result {
+                case .success(let blocks):
+                    print(blocks)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        } else {
+            print("FILE NOT FOUND")
+        }
     }
     
 }
@@ -57,7 +73,7 @@ extension WorkspaceViewModel  {
                                         value: conditionBlockViewModel.conditionText ?? ""))
                 
             case let flowBlockViewModel as FlowBlockCellViewModel:
-                blocks.append(Flow(type: flowBlockViewModel.flowType))
+                blocks.append(Flow(id: index, type: flowBlockViewModel.flowType))
                 
             case let outputBlockViewModel as OutputBlockCellViewModel:
                 blocks.append(Output(id: index,
@@ -166,6 +182,17 @@ extension WorkspaceViewModel  {
                 guard cellViewModels.value.isEmpty == false else { return }
                 
                 isWiggleMode.send(true)
+            }
+            .store(in: &subscriptions)
+        
+        saveAlgorithm
+            .sink { [weak self] docName in
+                guard let self = self else { return }
+                guard let docName = docName else { return }
+                
+                let blocks = getBlocks()
+                dataStore.write(blocks, to: docName)
+                print(blocks)
             }
             .store(in: &subscriptions)
     }

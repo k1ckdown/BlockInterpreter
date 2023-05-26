@@ -1,6 +1,13 @@
 import Foundation
 
 
-protocol IBlock {
-
+class IBlock: Codable {
+    
+    init() {
+        
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        
+    }
 }
