@@ -167,6 +167,7 @@ class Interpreter {
         let components = getValuesFromExpression(node.value)
         // let valueTypeDictionary = try getValuesType(components, node.id)
         print(components, "components")
+
         for component in components{
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
@@ -199,15 +200,6 @@ class Interpreter {
 
                     let calculatedValue = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(calculatedValue) "
-                    // if component == "true" || component == "false"{
-                    //     printResult += "\(component) "
-                    //     continue
-                    // } else {
-                    //     let calculatedValue = try calculateArithmetic(component, .String, node.id)
-                    //     printResult += "\(calculatedValue) "
-                    // }
-                    // Bool, Double, Int, Array
-                    // if component
                 } catch let errorType as ErrorType {
                     consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
                     consoleOutput.errorIdArray.append(node.id)
@@ -215,7 +207,7 @@ class Interpreter {
                 }
             }
         }
-
+        printResult += "\n"
     }
 
     private func isFalseValue(_ component: String) -> Int {

@@ -29,10 +29,39 @@ class StringNormalizer {
         }
     }
 
+    private func splitStringBySpace(_ expression: String) -> [String] {
+        var components: [String] = []
+        var currentComponent = ""
+        var isInQuotes = false
+
+        for char in expression {
+            if char == " " && !isInQuotes {
+                if !currentComponent.isEmpty {
+                    components.append(currentComponent)
+                    currentComponent = ""
+                }
+            } else {
+                if char == "“" {
+                    isInQuotes = true
+                } else if char == "”" {
+                    isInQuotes = false
+                }
+                currentComponent.append(char)
+            }
+        }
+
+        if !currentComponent.isEmpty {
+            components.append(currentComponent)
+        }
+
+        return components
+    }
+
     private func normalizeString(_ expression: String)throws -> String {
         var result = ""
         do {
-            let components = try getFixedString(expression).split(whereSeparator: { String($0) == " " })
+            //let components = try getFixedString(expression).split(whereSeparator: { String($0) == " " })
+            let components = splitStringBySpace(try getFixedString(expression))
             for component in components {
                 if let intValue = Int(component) {
                     result += "\(intValue)"

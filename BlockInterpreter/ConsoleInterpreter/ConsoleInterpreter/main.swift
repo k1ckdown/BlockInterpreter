@@ -21,8 +21,8 @@ array.append(Flow(id: 12, type: .end, isDebug: false))
 array.append(Output(id: 13, value: "c", isDebug: false))
 
 
-// array.append(Variable(id: 1, type: .int, name: "b", value: " 1.0 + false + 1  ", isDebug: false))
-// array.append(Output(id: 2, value: "b", isDebug: false))
+array.append(Variable(id: 1, type: .int, name: "b", value: "“ abc”   + “ t  def”", isDebug: false))
+array.append(Output(id: 2, value: "b", isDebug: false))
 
 
 let tree = Tree()
