@@ -3,6 +3,7 @@ import Foundation
 
 enum TokenType {
     case integer
+    case double
     case string
     case plus
     case minus
