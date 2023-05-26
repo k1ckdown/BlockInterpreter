@@ -26,10 +26,6 @@ class Tree {
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
-            case let readBlock as ReadingData:
-                let readingNode = buildReadingNode(reading: readBlock)
-                rootNode.addChild(readingNode)
-                index += 1
             case is Loop:
                 if let loopNode = buildNode(getBlockAndMoveIndex(),
                         type: determineLoopBlock(block) ?? AllTypes.forLoop) {
@@ -66,12 +62,6 @@ class Tree {
 
             }
         }
-    }
-
-    private func buildReadingNode(reading: ReadingData) -> Node {
-        let node = Node(value: reading.value, type: AllTypes.cin,
-                id: reading.id, isDebug: reading.isDebug)
-        return node
     }
 
     private func buildMethodsOfList(method: ArrayMethod) -> Node {
@@ -238,12 +228,12 @@ class Tree {
             return AllTypes.variable(type: .int)
         case .double:
             return AllTypes.variable(type: .double)
-        case .String:
-            return AllTypes.variable(type: .String)
+        case .string:
+            return AllTypes.variable(type: .string)
         case .bool:
             return AllTypes.variable(type: .bool)
-        case .another:
-            return AllTypes.variable(type: .another)
+        case .void:
+            return AllTypes.variable(type: .void)
         case .arrayInt:
             return AllTypes.variable(type: .arrayInt)
         case .arrayDouble:
@@ -288,11 +278,6 @@ class Tree {
             } else if let method = block[index] as? ArrayMethod {
                 let methodNode = buildMethodsOfList(method: method)
                 node?.addChild(methodNode)
-            } else if let readingDataBlock = block[index] as? ReadingData {
-                let readingDataNode = Node(value: readingDataBlock.value,
-                        type: .cin, id: readingDataBlock.id,
-                        isDebug: readingDataBlock.isDebug)
-                node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
                         type: transferTypes(returnBlock.type), id: returnBlock.id,

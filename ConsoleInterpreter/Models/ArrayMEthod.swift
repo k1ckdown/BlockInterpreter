@@ -1,6 +1,5 @@
 import Foundation
 
-
 enum ArrayMethodType {
     case append
     case remove

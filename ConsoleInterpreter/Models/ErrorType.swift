@@ -17,9 +17,9 @@ enum ErrorType: Error {
     case invalidArrayValueError
     case invalidVariableNameError
     case invalidNodeError
-
-
-
+ 
+ 
+ 
     var description: String {
         switch self {
         case .invalidTokenTypeError:

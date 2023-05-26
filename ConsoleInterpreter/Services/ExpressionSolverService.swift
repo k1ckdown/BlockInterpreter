@@ -6,7 +6,7 @@ class ExpressionSolver{
     private var solvedExpression: String
     private var consoleOutput: ConsoleOutput
     private var nodeId: Int
-
+ 
     init() {
         self.solvedExpression = ""
         self.expression = ""
@@ -14,11 +14,11 @@ class ExpressionSolver{
         self.nodeId = 0
         self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
-
+ 
     public func getSolvedExpression() -> String {
         return solvedExpression
     }
-
+ 
     public func setExpressionAndType(_ expression: String, _ type: VariableType, _ nodeId: Int) throws{
         self.expression = expression
         self.type = type
@@ -32,12 +32,12 @@ class ExpressionSolver{
             throw consoleOutput
         }
     }
-
+ 
     private func updateSolvedExpression() throws{
         let calculate = Calculate("", nodeId) 
         print(expression)
         var updatedExpression = expression
-
+ 
         if type == .String || (expression.contains("“") && expression.contains("”")) { 
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
@@ -47,16 +47,18 @@ class ExpressionSolver{
             } else {
                 self.solvedExpression = calculatedValue
             }
-
+ 
         } else if expression.contains("“") || expression.contains("”"){
-            throw ErrorType.invalidTokenTypeError
-        } else{
+            print("here 2")
+            throw ErrorType.invalidTokenTypeError 
+        } else if type == .bool || type == .int || type == .double{
+            print("here 3")
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compare()
-
+ 
             if type == .int {
-                self.solvedExpression =  String(calculatedValue)
+                self.solvedExpression =  String(Int(calculatedValue))
             } else if type == .double {
                 self.solvedExpression = String(Double(calculatedValue))
             } else if type == .bool {
@@ -64,7 +66,13 @@ class ExpressionSolver{
             } else {
                 self.solvedExpression =  ""
             }
-        } 
+        }  else {
+            self.solvedExpression =  expression
+        }
+        // let calculatedValue = try calculate.compare()
+        // self.
+ 
+        print(solvedExpression, "solvedExpression")
     }
-
+ 
 }
