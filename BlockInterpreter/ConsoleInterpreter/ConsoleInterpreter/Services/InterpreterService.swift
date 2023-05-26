@@ -6,6 +6,7 @@ class Interpreter {
     internal var mapOfArrayStack = [[String: ArrayBuilder]]()
     private var assignmentVariableInstance: StringNormalizer
     private var arrayOfBoolVariable = [String: String]()
+    private var arrayOfIntVariable = [String: String]()
     private var printResult = ""
     private var consoleOutput: ConsoleOutput
 
@@ -168,7 +169,7 @@ class Interpreter {
         // let valueTypeDictionary = try getValuesType(components, node.id)
         print(components, "components")
 
-        for component in components{
+        for component in components {
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
                 let rightQuoteCount = component.filter({$0 == "”"}).count
@@ -198,6 +199,12 @@ class Interpreter {
                         continue
                     }
 
+                    let currentIntValue = getArrayOfIntByName(component)
+                    if (currentIntValue != "") {
+                        printResult += getIntPartFromString(currentIntValue)
+                        continue
+                    }
+
                     let calculatedValue = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(calculatedValue) "
                 } catch let errorType as ErrorType {
@@ -208,6 +215,23 @@ class Interpreter {
             }
         }
         printResult += "\n"
+    }
+
+    private func getIntPartFromString(_ value: String) -> String {
+        if let doubleValue = Double(value) {
+            let intValue = Int(doubleValue)
+            return "\(intValue)"
+        }
+        return ""
+    }
+
+    private func getArrayOfIntByName(_ component: String) -> String {
+        for (key, value ) in arrayOfIntVariable {
+            if key == component {
+                return value
+            }
+        }
+        return ""
     }
 
     private func isFalseValue(_ component: String) -> Int {
@@ -311,7 +335,9 @@ class Interpreter {
             try assignValueToStack([varName: assignValue])
             if (assignValue == "true" || assignValue == "false") {
                 arrayOfBoolVariable[varName] = assignValue
-
+            }
+            else if (variableType == .int) {
+                arrayOfIntVariable[varName] = assignValue
             }
         } else {
             let arrayBuilder = try ArrayBuilder(node.children[1].value, variableType, node.id)

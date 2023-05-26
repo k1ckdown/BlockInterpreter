@@ -1,5 +1,6 @@
 import Foundation
 
+
 class ExpressionSolver{
     private var expression: String
     private var type: VariableType
@@ -36,8 +37,8 @@ class ExpressionSolver{
     private func updateSolvedExpression() throws{
         let calculate = Calculate("", nodeId)
         var updatedExpression = expression
-
-        if type == .string || (expression.contains("“") && expression.contains("”")) {
+        // && first instead ||
+        if type == .string && (expression.contains("“") && expression.contains("”")) {
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compareString()
@@ -47,25 +48,44 @@ class ExpressionSolver{
                 self.solvedExpression = calculatedValue
             }
 
-        } else if expression.contains("“") || expression.contains("”"){
+        } else if (expression.contains("“") || expression.contains("”")) && (type == .int || type == .double || type == .bool) {
+            updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
+                    .replacingOccurrences(of: "“", with: "").replacingOccurrences(of: "”", with: "")
+            calculate.setText(text: updatedExpression)
+            let calculatedValue = try calculate.compare()
+
+            if type == .int {
+                self.solvedExpression = String(Int(calculatedValue))
+            } else if type == .double {
+                self.solvedExpression = String(Double(calculatedValue))
+            } else if type == .bool {
+                self.solvedExpression = calculatedValue == 0 ? "false" : "true"
+            } else {
+                self.solvedExpression = ""
+            }
+        }
+        else if expression.contains("“") || expression.contains("”"){
             print("here 2")
             throw ErrorType.invalidTokenTypeError
-        } else if type == .bool || type == .int || type == .double{
+        } else if type == .bool || type == .int || type == .double || type == .string {
             print("here 3")
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compare()
 
             if type == .int {
-                self.solvedExpression =  String(Int(calculatedValue))
+                self.solvedExpression = String(Int(calculatedValue))
             } else if type == .double {
                 self.solvedExpression = String(Double(calculatedValue))
             } else if type == .bool {
                 self.solvedExpression = calculatedValue == 0 ? "false" : "true"
+            } else if type == .string {
+                self.solvedExpression = "“" + String(calculatedValue) + "”"
             } else {
-                self.solvedExpression =  ""
+                self.solvedExpression = ""
             }
-        }  else {
+        }
+         else {
             self.solvedExpression =  expression
         }
         print(solvedExpression, "solvedExpression")
