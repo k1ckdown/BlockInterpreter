@@ -70,7 +70,8 @@ enum ErrorType: Error {
 }
  
 protocol IBlock {
- 
+    var id: Int { get }
+    var isDebug: Bool { get }
 }
  
 struct Flow: IBlock {
@@ -97,7 +98,7 @@ enum ArrayMethodType {
     case remove
     case pop
 }
- 
+
 struct ArrayMethod: IBlock {
     let id: Int
     let type: ArrayMethodType
@@ -105,7 +106,7 @@ struct ArrayMethod: IBlock {
     let value: String
     let isDebug: Bool
 }
- 
+
 struct Function: IBlock {
     let id: Int
     let name: String
@@ -227,7 +228,6 @@ enum AllTypes: Equatable {
     case root
     case breakBlock
     case continueBlock
-    case cin
     case append
     case pop
     case remove
@@ -237,9 +237,9 @@ enum AllTypes: Equatable {
 enum VariableType: String {
     case int
     case double
-    case String
+    case string
     case bool
-    case another
+    case void
     case arrayInt
     case arrayDouble
     case arrayString
@@ -250,15 +250,15 @@ class Tree {
     var rootNode: Node = Node(value: "", type: AllTypes.root, id: 0)
     var index: Int = 0
     var blocks = [IBlock]()
- 
+
     init() {
- 
+
     }
- 
+
     func setBlocks(_ blocks: [IBlock]) {
         self.blocks = blocks
     }
- 
+
     func buildTree() {
         while index < blocks.count {
             let block = blocks[index]
@@ -270,10 +270,6 @@ class Tree {
             case let printBlock as Output:
                 let printingNode = buildPrintingNode(printing: printBlock)
                 rootNode.addChild(printingNode)
-                index += 1
-            case let readBlock as ReadingData:
-                let readingNode = buildReadingNode(reading: readBlock)
-                rootNode.addChild(readingNode)
                 index += 1
             case is Loop:
                 if let loopNode = buildNode(getBlockAndMoveIndex(),
@@ -301,31 +297,25 @@ class Tree {
                         type: .function(type: functionBlock.type)) {
                     rootNode.addChild(functionNode)
                 }
- 
+
             case let methodBlock as ArrayMethod:
                 let methodNode = buildMethodsOfList(method: methodBlock)
                 rootNode.addChild(methodNode)
                 index += 1
             default:
                 index += 1
- 
+
             }
         }
     }
- 
-    private func buildReadingNode(reading: ReadingData) -> Node {
-        let node = Node(value: reading.value, type: AllTypes.cin,
-                id: reading.id, isDebug: reading.isDebug)
-        return node
-    }
- 
+
     private func buildMethodsOfList(method: ArrayMethod) -> Node {
         let node = Node(value: method.name + ";" + method.value,
                 type: determineMethod(method: method),
                 id: method.id, isDebug: method.isDebug)
         return node
     }
- 
+
     private func determineMethod(method: ArrayMethod) -> AllTypes {
         switch method.type {
         case .append:
@@ -336,7 +326,7 @@ class Tree {
             return AllTypes.pop
         }
     }
- 
+
     private func buildBreak(_ block: IBlock) -> Node? {
         if let breakBlock = block as? Flow {
             if (breakBlock.type != FlowType.breakFlow) {
@@ -348,7 +338,7 @@ class Tree {
         }
         return nil
     }
- 
+
     private func buildContinue(_ block: IBlock) -> Node? {
         if let continueBlock = block as? Flow {
             if (continueBlock.type != FlowType.continueFlow) {
@@ -360,7 +350,7 @@ class Tree {
         }
         return nil
     }
- 
+
     private func getMatchingDelimiterIndex() -> Int? {
         var countBegin = 0
         for i in (index + 1)..<blocks.count {
@@ -374,7 +364,7 @@ class Tree {
         }
         return nil
     }
- 
+
     private func countForMatchingDelimiter(_ block: Flow) -> Int {
         if isEndDelimiter(block) {
             return -1
@@ -383,16 +373,16 @@ class Tree {
         }
         return 0
     }
- 
+
     private func isBeginDelimiter(_ block: Flow) -> Bool {
         block.type == FlowType.begin
     }
- 
+
     private func isEndDelimiter(_ block: Flow) -> Bool {
         block.type == FlowType.end
     }
- 
- 
+
+
     private func getBlockAndMoveIndex() -> [IBlock] {
         var wholeBlock: [IBlock] = []
         guard let endIndex = getMatchingDelimiterIndex() else {
@@ -403,7 +393,7 @@ class Tree {
         index = endIndex + 1
         return wholeBlock
     }
- 
+
     private func buildVariableNode(variable: Variable) -> Node {
         let node = Node(value: variable.type.rawValue, type: AllTypes.assign,
                 id: variable.id, isDebug: variable.isDebug)
@@ -415,14 +405,14 @@ class Tree {
         node.addChild(valueVariable)
         return node
     }
- 
- 
+
+
     private func buildPrintingNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
                 id: printing.id, isDebug: printing.isDebug)
         return node
     }
- 
+
     private func determineLoopBlock(_ block: IBlock) -> AllTypes? {
         if let loop = block as? Loop {
             if loop.type == LoopType.forLoop {
@@ -433,7 +423,7 @@ class Tree {
         }
         return nil
     }
- 
+
     private func determineConditionBlock(_ block: IBlock) -> AllTypes? {
         if let condition = block as? Condition {
             if condition.type == ConditionType.ifBlock {
@@ -446,7 +436,7 @@ class Tree {
         }
         return nil
     }
- 
+
     private func buildFirstNode(_ type: AllTypes, _ firstBlock: IBlock) -> Node? {
         var node: Node?
         if let condition = firstBlock as? Condition {
@@ -476,19 +466,19 @@ class Tree {
         }
         return node
     }
- 
+
     private func transferTypes(_ value: VariableType) -> AllTypes {
         switch value {
         case .int:
             return AllTypes.variable(type: .int)
         case .double:
             return AllTypes.variable(type: .double)
-        case .String:
-            return AllTypes.variable(type: .String)
+        case .string:
+            return AllTypes.variable(type: .string)
         case .bool:
             return AllTypes.variable(type: .bool)
-        case .another:
-            return AllTypes.variable(type: .another)
+        case .void:
+            return AllTypes.variable(type: .void)
         case .arrayInt:
             return AllTypes.variable(type: .arrayInt)
         case .arrayDouble:
@@ -499,16 +489,16 @@ class Tree {
             return AllTypes.variable(type: .arrayBool)
         }
     }
- 
- 
+
+
     private func buildNode(_ block: [IBlock], type: AllTypes) -> Node? {
         guard let firstBlock = block.first else {
             return nil
         }
- 
+
         let node = buildFirstNode(type, firstBlock)
         var index = 1
- 
+
         while index < block.count {
             if let flowBlock = block[index] as? Flow {
                 if flowBlock.type == FlowType.continueFlow {
@@ -533,11 +523,6 @@ class Tree {
             } else if let method = block[index] as? ArrayMethod {
                 let methodNode = buildMethodsOfList(method: method)
                 node?.addChild(methodNode)
-            } else if let readingDataBlock = block[index] as? ReadingData {
-                let readingDataNode = Node(value: readingDataBlock.value,
-                        type: .cin, id: readingDataBlock.id,
-                        isDebug: readingDataBlock.isDebug)
-                node?.addChild(readingDataNode)
             } else if let returnBlock = block[index] as? Returning {
                 let returnNode = Node(value: returnBlock.value,
                         type: transferTypes(returnBlock.type), id: returnBlock.id,
@@ -554,7 +539,7 @@ class Tree {
                                    blockEnd.type == FlowType.breakFlow {
                             nestedBlocks.append(block[additionIndex])
                         }
- 
+
                         countBegin += countForMatchingDelimiter(blockEnd)
                         if countBegin == 0 {
                             break
@@ -568,7 +553,7 @@ class Tree {
                         node?.addChild(nestedNode)
                     }
                 }
- 
+
                 index = additionIndex
             } else if let nestedBlock = block[index] as? Flow {
                 if nestedBlock.type == FlowType.breakFlow {
@@ -628,6 +613,7 @@ class Tree {
         return node
     }
 }
+
  
  
 class Token {
