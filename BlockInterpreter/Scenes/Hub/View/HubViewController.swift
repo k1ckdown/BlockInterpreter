@@ -1,23 +1,23 @@
 //
-//  SettingsViewController.swift
+//  HubViewController.swift
 //  BlockInterpreter
 //
 
 import UIKit
 import Combine
 
-final class SettingsViewController: UIViewController {
+final class HubViewController: UIViewController {
     
     private lazy var savedAlgorithmsCollectionView: UICollectionView = {
-        let layout = FilePreviewLayout()
+        let layout = AlgorithmPreviewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
     
-    private let viewModel: SettingsViewModelType
+    private let viewModel: HubViewModelType
     private var subscriptions = Set<AnyCancellable>()
     
-    init(with viewModel: SettingsViewModelType) {
+    init(with viewModel: HubViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -50,8 +50,8 @@ final class SettingsViewController: UIViewController {
         savedAlgorithmsCollectionView.showsVerticalScrollIndicator = false
         savedAlgorithmsCollectionView.showsHorizontalScrollIndicator = false
         savedAlgorithmsCollectionView.register(
-            FilePreviewCell.self,
-            forCellWithReuseIdentifier: FilePreviewCell.identifier)
+            AlgorithmPreviewCell.self,
+            forCellWithReuseIdentifier: AlgorithmPreviewCell.identifier)
         
         savedAlgorithmsCollectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -61,23 +61,27 @@ final class SettingsViewController: UIViewController {
 
 }
 
-extension SettingsViewController: UICollectionViewDataSource {
+extension HubViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        viewModel.cellViewModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cellViewModel = viewModel.cellViewModels[indexPath.item]
+        
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: FilePreviewCell.identifier,
+            withReuseIdentifier: AlgorithmPreviewCell.identifier,
             for: indexPath
-        ) as? FilePreviewCell
+        ) as? AlgorithmPreviewCell
         else { return .init() }
+        
+        cell.configure(with: cellViewModel)
         
         return cell
     }
 }
 
-private extension SettingsViewController {
+private extension HubViewController {
     func setupBindings() {
         viewModel.didUpdateCollection
             .receive(on: DispatchQueue.main)

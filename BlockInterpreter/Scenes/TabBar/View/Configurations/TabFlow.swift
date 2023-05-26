@@ -1,12 +1,12 @@
 //
-//  TabType.swift
+//  TabFlow.swift
 //  BlockInterpreter
 //
 
 import UIKit
 
-enum TabType: CaseIterable {
-    case codeblocks, workspace, settings
+enum TabFlow: CaseIterable {
+    case codeblocks, workspace, hub
     
     var title: String {
         switch self {
@@ -14,8 +14,8 @@ enum TabType: CaseIterable {
             return "CodeBlocks"
         case .workspace:
             return "Workspace"
-        case .settings:
-            return "Settings"
+        case .hub:
+            return "Hub"
         }
     }
     
@@ -25,7 +25,7 @@ enum TabType: CaseIterable {
             return 0
         case .workspace:
             return 1
-        case .settings:
+        case .hub:
             return 2
         }
     }
@@ -36,19 +36,8 @@ enum TabType: CaseIterable {
             return UIImage(systemName: "square.stack.3d.up.fill")
         case .workspace:
             return UIImage(systemName: "ellipsis.curlybraces")
-        case .settings:
-            return UIImage(systemName: "gear")
-        }
-    }
-    
-    var imageSelected: UIImage? {
-        switch self {
-        case .codeblocks:
-            return UIImage(named: "codeblocks-icon-selected")
-        case .workspace:
-            return UIImage(named: "workspace-icon-selected")
-        case .settings:
-            return UIImage(named: "settings-icon-selected")
+        case .hub:
+            return UIImage(systemName: "square.grid.2x2")
         }
     }
 }

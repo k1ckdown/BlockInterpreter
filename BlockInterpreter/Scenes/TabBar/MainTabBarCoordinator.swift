@@ -4,22 +4,35 @@
 //
 
 import UIKit
+import Combine
 
 final class MainTabBarCoordinator: BaseCoordinator {
     
+    private let hubViewModel: HubViewModel
     private let workspaceViewModel: WorkspaceViewModel
+    
     private let mainTabBarController: UITabBarController
     private let algorithmRepository: AlgorithmRepository
     
+    private var subscriptions = Set<AnyCancellable>()
+    
     override init(navigationController: UINavigationController) {
-        workspaceViewModel = WorkspaceViewModel(interpreterManager: InterpreterManager())
-        mainTabBarController = MainTabBarViewController()
         algorithmRepository = AlgorithmRepositoryImpl()
+        hubViewModel = HubViewModel()
+        
+        workspaceViewModel = WorkspaceViewModel(
+            interpreterManager: InterpreterManager(),
+            algorithmRepository: algorithmRepository
+        )
+        
+        mainTabBarController = MainTabBarViewController()
         super.init(navigationController: navigationController)
     }
     
     override func start() {
-        let viewControllers = TabType.allCases.map { getTab(with: $0) }
+        setupBindings()
+        
+        let viewControllers = TabFlow.allCases.map { getTab(with: $0) }
         
         navigationController.navigationBar.isHidden = true
         mainTabBarController.setViewControllers(viewControllers, animated: true)
@@ -28,11 +41,11 @@ final class MainTabBarCoordinator: BaseCoordinator {
         selectTab(with: .workspace)
     }
     
-    private func selectTab(with type: TabType) {
-        mainTabBarController.selectedIndex = type.orderNumber
+    private func selectTab(with flow: TabFlow) {
+        mainTabBarController.selectedIndex = flow.orderNumber
     }
     
-    private func getTab(with tabType: TabType) -> UIViewController {
+    private func getTab(with tabType: TabFlow) -> UIViewController {
         let navController = UINavigationController()
         let coordinator: Coordinator
         
@@ -47,8 +60,9 @@ final class MainTabBarCoordinator: BaseCoordinator {
             coordinator = WorkspaceCoordinator(navigationController: navController,
                                                workspaceViewModel: workspaceViewModel)
             
-        case .settings:
-            coordinator = SettingsCoordinator(navigationController: navController)
+        case .hub:
+            coordinator = HubCoordinator(navigationController: navController,
+                                         hubViewModel: hubViewModel)
         }
         
         coordinate(to: coordinator)
@@ -60,21 +74,31 @@ final class MainTabBarCoordinator: BaseCoordinator {
     }
 }
 
+// MARK: - CodeBlocksCoordinatorDelegate
+
+extension MainTabBarCoordinator: CodeBlocksCoordinatorDelegate {
+    func goToWorkspace(blocks: [BlockCellViewModel]) {
+        showWorkspace(blocks: blocks)
+    }
+}
+
 // MARK: - Navigation
 
 private extension MainTabBarCoordinator {
     func showWorkspace(blocks: [BlockCellViewModel]) {
         workspaceViewModel.addBlocks.send(blocks)
         mainTabBarController.tabBar(mainTabBarController.tabBar,
-                                    didSelect: mainTabBarController.viewControllers?[TabType.workspace.orderNumber].tabBarItem ?? .init())
+                                    didSelect: mainTabBarController.viewControllers?[TabFlow.workspace.orderNumber].tabBarItem ?? .init())
         selectTab(with: .workspace)
     }
 }
 
-// MARK: - CodeBlocksCoordinatorDelegate
-
-extension MainTabBarCoordinator: CodeBlocksCoordinatorDelegate {
-    func goToWorkspace(blocks: [BlockCellViewModel]) {
-        showWorkspace(blocks: blocks)
+private extension MainTabBarCoordinator {
+    func setupBindings() {
+        algorithmRepository.algorithms
+            .sink { [weak self] in
+                self?.hubViewModel.updateSavedAlgorithms.send($0)
+            }
+            .store(in: &subscriptions)
     }
 }

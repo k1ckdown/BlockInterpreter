@@ -34,23 +34,10 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     private let algorithmRepository: AlgorithmRepository
     private let interpreterManager: InterpreterManager
     
-    init(interpreterManager: InterpreterManager) {
+    init(interpreterManager: InterpreterManager, algorithmRepository: AlgorithmRepository) {
         self.interpreterManager = interpreterManager
-        algorithmRepository = AlgorithmRepositoryImpl()
+        self.algorithmRepository = algorithmRepository
         bind()
-        
-        if algorithmRepository.doFileExist(documentName: "someFile") {
-//            algorithmRepository.loadAlgorithm(from: "someFile") { (result: Result<[AlgorithmDTO], Error>) in
-//                switch result {
-//                case .success(let blocks):
-//                    print(blocks)
-//                case .failure(let error):
-//                    print(error.localizedDescription)
-//                }
-//            }
-        } else {
-            print("FILE NOT FOUND")
-        }
     }
     
 }

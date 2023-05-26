@@ -1,10 +1,10 @@
 //
-//  FilePreviewLayout.swift
+//  AlgorithmPreviewLayout.swift
 //  BlockInterpreter
 //
 import UIKit
 
-final class FilePreviewLayout: UICollectionViewFlowLayout {
+final class AlgorithmPreviewLayout: UICollectionViewFlowLayout {
     
     override func prepare() {
         super.prepare()

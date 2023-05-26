@@ -1,12 +1,12 @@
 //
-//  SettingsViewModelType.swift
+//  HubViewModelType.swift
 //  BlockInterpreter
 //
 
 import Foundation
 import Combine
 
-protocol SettingsViewModelType {
-    var cellViewModels: [FilePreviewCellViewModel] { get }
+protocol HubViewModelType {
+    var cellViewModels: [AlgorithmPreviewCellViewModel] { get }
     var didUpdateCollection: PassthroughSubject<Void, Never> { get }
 }
