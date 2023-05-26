@@ -3,53 +3,78 @@ import Foundation
 
 class StringNormalizer {
     private var variableMap: [String: String]
+    private var nodeId: Int = 0
+    private var consoleOutput: ConsoleOutput
 
-    init(_ variableMap: [String: String]) {
+    init(_ variableMap: [String: String], _ nodeId: Int = 0) {
         self.variableMap = variableMap
+        self.nodeId = nodeId
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
 
     public func setMapOfVariable(_ mapOfVariable: [String: String]) {
         self.variableMap.merge(mapOfVariable){(_, new) in new}
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
 
 
-    public func normalize(_ expression: String) -> String {
-        return normalizeString(expression)
-    }
-
-
-    private func normalizeString(_ expression: String) -> String {
-        var result = ""
-        let components = getFixedString(expression).split(whereSeparator: { $0 == " " })
-        for component in components {
-            if let intValue = Int(component) {
-                result += "\(intValue)"
-            } else if let value = variableMap[String(component)] {
-                result += "\(value)"
-            } else {
-                result += "\(component)"
-            }
+    public func normalize(_ expression: String, _ nodeId: Int) throws -> String {
+        self.nodeId = nodeId
+        do{
+            return try normalizeString(expression)
+        } catch let errorType as ErrorType {
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
         }
-        return result
     }
 
-    private func getFixedString(_ expression: String) -> String{
+    private func normalizeString(_ expression: String)throws -> String {
+        var result = ""
+        do {
+            let components = try getFixedString(expression).split(whereSeparator: { $0 == " " })
+            for component in components {
+                if let intValue = Int(component) {
+                    result += "\(intValue)"
+                } else if let value = variableMap[String(component)] {
+                    result += "\(value)"
+                } else {
+                    result += "\(component)"
+                }
+            }
+            return result
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
+
+    }
+
+    private func getFixedString(_ expression: String)throws -> String{
 
         let signsForReplacing = ["++","--","+=","-=","*=","/=","%="]
         for sign in signsForReplacing{
             if expression.contains(sign){
-                return replaceSigns(expression, sign)
+                do {
+                    return try replaceSigns(expression, sign)
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(nodeId)
+                    throw consoleOutput
+                }
+
             }
         }
         var updatedExpression = expression
         if expression.contains("[") && expression.contains("]"){
-            updatedExpression = replaceArray(expression)
+            updatedExpression = try replaceArray(expression)
         }
 
         return addWhitespaces(updatedExpression)
     }
 
-    private func replaceSigns(_ expression: String, _ sign: String) -> String{
+    private func replaceSigns(_ expression: String, _ sign: String) throws -> String{
         var updatedExpression = ""
         if !expression.contains(sign) {
             return expression
@@ -61,7 +86,7 @@ class StringNormalizer {
             updatedExpression += "\(str[0]) = \(str[0]) - 1"
         } else {
             guard let firstSign = sign.first else {
-                fatalError("Invalid sign")
+                throw ErrorType.invalidSyntaxError
             }
             var str = expression.split(separator: firstSign)
             str[1].removeFirst()
@@ -106,10 +131,11 @@ class StringNormalizer {
         return updatedExpression
     }
 
-    public func replaceArray(_ expression: String) -> String{
+    public func replaceArray(_ expression: String) throws -> String{
 
         var updatedExpression = ""
         var index = 0
+
         while index < expression.count{
             let char = expression[expression.index(expression.startIndex, offsetBy: index)]
             if char == "["{
@@ -124,9 +150,17 @@ class StringNormalizer {
                     newIndex += 1
                 }
                 let str = expression[expression.index(expression.startIndex, offsetBy: index + 1)..<expression.index(expression.startIndex, offsetBy: newIndex - 1)]
-                let normalizedString = normalizeString(String(str))
-                let computedValue = Calculate(normalizedString).compare()
-                updatedExpression += "[\(Int(computedValue))]"
+                do {
+                    let normalizedString = try normalizeString(String(str))
+                    let calculate = Calculate(normalizedString, nodeId)
+                    let computedValue = try calculate.compare()
+
+                    updatedExpression += "[\(Int(computedValue))]"
+                } catch let errorType as ErrorType {
+                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorIdArray.append(nodeId)
+                    throw consoleOutput
+                }
                 index = newIndex - 1
             } else {
                 updatedExpression += "\(char)"

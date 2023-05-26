@@ -36,7 +36,7 @@ class Token {
     }
 
     func getType() -> TokenType {
-        return type
+        return self.type
     }
 
     func setType(type: TokenType) {

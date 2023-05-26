@@ -13,18 +13,19 @@
 		586031741289F941B7233EEC /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586038BF21506FD29369AD5B /* ArrayBuilder.swift */; };
 		586031B7B6E055427F1B415B /* StringNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603E18D64C32A275F8928F /* StringNormalizer.swift */; };
 		5860334031A95B52A1D0693A /* BlockProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55633BF5CEC59CFFC6 /* BlockProtocol.swift */; };
-		5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586030B8D020FD8312F37247 /* ReadingData.swift */; };
 		586035A8030399C355559DEF /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603355C5E7B64F1DA5C64C /* Loop.swift */; };
 		586035D0BACE931ECE34A079 /* TokenAST.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586035C5A1F4018C673E076A /* TokenAST.swift */; };
 		5860364EBDBFB1EAF11A3396 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603770F49236CAA8FF6CB1 /* main.swift */; };
 		5860365DC1B319495DECD97B /* InterpreterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603546B7D176BD1D0B1C76 /* InterpreterService.swift */; };
 		586036714679672BC9CF980C /* Returning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603EEF6681188B58336C41 /* Returning.swift */; };
+		586036D03335C979B53B5D94 /* ConsoleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860350E598B68D6A10105B8 /* ConsoleOutput.swift */; };
 		5860379E237C397292F7BE43 /* TreeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603719F75E950BDCE56E4E /* TreeService.swift */; };
 		586037A616F83FBDD151A848 /* ExpressionSolverService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603871F4A7AD7CE8C9408C /* ExpressionSolverService.swift */; };
 		58603A5C0860200E848EA221 /* ReversePolishService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603C8AFAFB12FA74A59C0C /* ReversePolishService.swift */; };
 		58603A7337A7271246954C14 /* CalculateAstService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860358433097B1027D75D1E /* CalculateAstService.swift */; };
 		58603BD6B60BC26DF901967D /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586033B9137E810B10B7FE60 /* Output.swift */; };
 		58603C24158AABC08C32BC40 /* MethodsOfList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603B55AE574B3A1D6DF816 /* MethodsOfList.swift */; };
+		58603C74AE785C40E888BFFB /* ErrorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586033623D07AAC0E0A71BC8 /* ErrorType.swift */; };
 		58603CE3591650A8A23905EB /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603858D82768B77CF315E2 /* Function.swift */; };
 		58603E321866AEC57B63A52F /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586038D397DC2ECB5E25A104 /* Condition.swift */; };
 /* End PBXBuildFile section */
@@ -42,11 +43,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		586030B8D020FD8312F37247 /* ReadingData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingData.swift; sourceTree = "<group>"; };
 		5860316432F5DBB1303AEEDE /* ConsoleInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		586031E5A8505E6B205B823E /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		58603355C5E7B64F1DA5C64C /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
+		586033623D07AAC0E0A71BC8 /* ErrorType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorType.swift; sourceTree = "<group>"; };
 		586033B9137E810B10B7FE60 /* Output.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
+		5860350E598B68D6A10105B8 /* ConsoleOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleOutput.swift; sourceTree = "<group>"; };
 		58603546B7D176BD1D0B1C76 /* InterpreterService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterService.swift; sourceTree = "<group>"; };
 		5860358433097B1027D75D1E /* CalculateAstService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculateAstService.swift; sourceTree = "<group>"; };
 		586035925409F98972CBAB63 /* NodeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeService.swift; sourceTree = "<group>"; };
@@ -87,9 +89,10 @@
 				586035C5A1F4018C673E076A /* TokenAST.swift */,
 				586031E5A8505E6B205B823E /* Variable.swift */,
 				586033B9137E810B10B7FE60 /* Output.swift */,
-				586030B8D020FD8312F37247 /* ReadingData.swift */,
 				586038D397DC2ECB5E25A104 /* Condition.swift */,
 				58603B55AE574B3A1D6DF816 /* MethodsOfList.swift */,
+				5860350E598B68D6A10105B8 /* ConsoleOutput.swift */,
+				586033623D07AAC0E0A71BC8 /* ErrorType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -195,13 +198,14 @@
 				586035D0BACE931ECE34A079 /* TokenAST.swift in Sources */,
 				586030AF87ECF1915C6E8D35 /* Variable.swift in Sources */,
 				58603BD6B60BC26DF901967D /* Output.swift in Sources */,
-				5860354D6BED8C83CD85C6BC /* ReadingData.swift in Sources */,
 				58603E321866AEC57B63A52F /* Condition.swift in Sources */,
 				58603C24158AABC08C32BC40 /* MethodsOfList.swift in Sources */,
 				586031741289F941B7233EEC /* ArrayBuilder.swift in Sources */,
 				5860365DC1B319495DECD97B /* InterpreterService.swift in Sources */,
 				586031B7B6E055427F1B415B /* StringNormalizer.swift in Sources */,
 				586037A616F83FBDD151A848 /* ExpressionSolverService.swift in Sources */,
+				586036D03335C979B53B5D94 /* ConsoleOutput.swift in Sources */,
+				58603C74AE785C40E888BFFB /* ErrorType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

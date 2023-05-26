@@ -8,27 +8,25 @@ enum AllTypes: Equatable {
     case elseBlock
     case forLoop
     case whileLoop
-    case function
-    case returnFunction
+    case function(type: VariableType)
+    case returnFunction(type: VariableType)
     case variable(type: VariableType)
     case arithmetic
     case print
     case root
     case breakBlock
     case continueBlock
-    case cin
     case append
     case pop
     case remove
 }
-
 
 class Node {
     private(set) var value: String
     private(set) var type: AllTypes
     private(set) var parent: Node?
     private(set) var children: [Node]
-    private(set) var countWasHere: Int
+    private var countWasHere: Int
     private(set) var id: Int
     private(set) var isDebug: Bool
 
@@ -45,13 +43,10 @@ class Node {
         children.append(child)
         child.parent = self
     }
-
-    func setCountWasHere(_ count: Int) {
-        countWasHere = count
-    }
-
     func getCountWasHere() -> Int {
         return countWasHere
     }
+    func setCountWasHere(_ countWasHere: Int) {
+        self.countWasHere = countWasHere
+    }
 }
-
