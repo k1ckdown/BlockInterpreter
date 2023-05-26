@@ -290,7 +290,11 @@ class Calculate {
             var nextChar = text[text.index(text.startIndex, offsetBy: position)]
             while isSpace(nextChar) {
                 position += 1
-                nextChar = text[text.index(text.startIndex, offsetBy: position)]
+                if position < text.count {
+                    nextChar = text[text.index(text.startIndex, offsetBy: position)]
+                } else {
+                    return Token(.eof, nil)
+                }
             }
             return try getNextToken()
         } else if isNumber(currentChar) {

@@ -32,7 +32,7 @@ class StringNormalizer {
     private func normalizeString(_ expression: String)throws -> String {
         var result = ""
         do {
-            let components = try getFixedString(expression).split(whereSeparator: { $0 == " " })
+            let components = try getFixedString(expression).split(whereSeparator: { String($0) == " " })
             for component in components {
                 if let intValue = Int(component) {
                     result += "\(intValue)"

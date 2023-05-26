@@ -5,6 +5,7 @@ class Interpreter {
     internal var mapOfVariableStack = [[String: String]]()
     internal var mapOfArrayStack = [[String: ArrayBuilder]]()
     private var assignmentVariableInstance: StringNormalizer
+    private var arrayOfBoolVariable = [String: String]()
     private var printResult = ""
     private var consoleOutput: ConsoleOutput
 
@@ -184,7 +185,18 @@ class Interpreter {
             } else if component.contains("“") || component.contains("”"){
                 throw ErrorType.invalidSyntaxError
             } else {
-                do{
+                do {
+                    // find component in arrayOfBoolValue and give it a value
+                    if (getArrayOfBoolByName(component)){
+                        // if (mapOfVariableStack[component] == "0.0") {
+                        if (isFalseValue(component) == 1) {
+                            printResult += "false"
+                        } else if (isFalseValue(component) == 0) {
+                            printResult += "true"
+                        }
+                        continue
+                    }
+
                     let calculatedValue = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(calculatedValue) "
                     // if component == "true" || component == "false"{
@@ -205,11 +217,31 @@ class Interpreter {
         }
 
     }
+
+    private func isFalseValue(_ component: String) -> Int {
+        for dictionary in mapOfVariableStack.reversed() {
+             if (dictionary[component] == "0") {
+                 return 1
+             } else if (dictionary[component] == "1") {
+                 return 0
+             }
+        }
+        return 3
+    }
     // private func  getValuesType(_ components: [String], _ id: Int) throws -> [String: ValueType]{
     //     var result = [String: ValueType]()
     //     for component in components{
+    private func getArrayOfBoolByName(_ component: String) -> Bool {
+        for (key, _ ) in arrayOfBoolVariable {
+            if key == component {
+                return true
+            }
+        }
+        return false
+    }
 
-    //     }
+
+//     }
     //     return result
     // }
     private func getValuesFromExpression(_ expression: String) -> [String]{
@@ -281,16 +313,18 @@ class Interpreter {
 
         } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
-            guard isSameType(variableName: varName, value: assignValue) else {
+            guard isSameType(variableName: varName, value: assignValue, typeInput: variableType) else {
                 throw ErrorType.invalidTypeError
             }
             try assignValueToStack([varName: assignValue])
+            if (assignValue == "true" || assignValue == "false") {
+                arrayOfBoolVariable[varName] = assignValue
 
+            }
         } else {
             let arrayBuilder = try ArrayBuilder(node.children[1].value, variableType, node.id)
             updateMapArrayOfStack([varName: arrayBuilder])
         }
-
     }
 
     private func isVariable(_ expression: String) -> Bool{
@@ -301,29 +335,29 @@ class Interpreter {
         return isCondition
     }
 
-    private func isSameType(variableName: String, value: String) -> Bool{
+    private func isSameType(variableName: String, value: String, typeInput: VariableType) -> Bool{
         var variableValue = ""
         do{
             variableValue = try getValueFromStack(variableName) ?? ""
-            if variableValue == ""{
-                return true
-            }
+            //if variableValue == ""{
+                //return true
+            //}
         } catch {
             return false
         }
 
-        let type = getTypeByStringValue(variableValue)
+        let type = getTypeByStringValue(value)
 
         if type == .int {
-            return Int(value) != nil
+            return Int(value) != nil && typeInput == .int
         } else if type == .double {
-            return Double(value) != nil
+            return Double(value) != nil && typeInput == .double
         } else if type == .bool {
-            return value == "true" || value == "false"
+            return value == "true" || value == "false" && typeInput == .bool
         } else if type == .string {
-            return value.contains("“") && value.contains("”")
+            return value.contains("“") && value.contains("”") && typeInput == .string
         } else if type == .arrayInt {
-            return value.contains("[") && value.contains("]")
+            return value.contains("[") && value.contains("]") && typeInput == .arrayInt
         } else {
             return false
         }
@@ -399,7 +433,14 @@ class Interpreter {
                 }
             }
             if !isAssigned{
-                mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
+                if (value == "true") {
+                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = "1"
+                } else if (value == "false") {
+                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = "0"
+                } else {
+                    mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
+                }
+                // mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
             }
         }
     }
@@ -770,12 +811,11 @@ class Interpreter {
         print(expression, "expression", type, "type", nodeId, "nodeId")
         print(lastDictionary, "lastDictionary")
         do{
-            let mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
+            var mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
             print(mapElement, "mapElement")
             if mapElement.contains("[") && mapElement.contains("]"){
                 return mapElement
             }
-
 
             let expressionSolver = ExpressionSolver()
             try expressionSolver.setExpressionAndType(mapElement, type, nodeId)

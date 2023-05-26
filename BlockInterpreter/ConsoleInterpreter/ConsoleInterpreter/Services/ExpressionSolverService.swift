@@ -23,8 +23,8 @@ class ExpressionSolver{
         self.expression = expression
         self.type = type
         self.nodeId = nodeId
-        self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
-        do{
+        self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
+        do {
             try updateSolvedExpression()
         } catch let errorType as ErrorType {
             self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
@@ -35,7 +35,6 @@ class ExpressionSolver{
 
     private func updateSolvedExpression() throws{
         let calculate = Calculate("", nodeId)
-        print(expression)
         var updatedExpression = expression
 
         if type == .string || (expression.contains("“") && expression.contains("”")) {
