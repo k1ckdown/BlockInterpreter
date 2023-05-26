@@ -215,7 +215,7 @@ class ArrayBuilder{
     private func updateChildrenType()throws -> VariableType{
         switch arrayType {
         case .arrayString:
-            return .String
+            return .string
         case .arrayInt:
             return .int
         case .arrayDouble:
@@ -235,9 +235,9 @@ class ArrayBuilder{
         } else if expression == "true" || expression == "false" {
             return .bool
         } else if expression.contains("“") && expression.contains("”") {
-            return .String
+            return .string
         } else {
-            return .another
+            return .void
         }
     }
 }

@@ -38,7 +38,7 @@ class ExpressionSolver{
         print(expression)
         var updatedExpression = expression
  
-        if type == .String || (expression.contains("“") && expression.contains("”")) { 
+        if type == .string || (expression.contains("“") && expression.contains("”")) { 
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compareString()

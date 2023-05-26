@@ -75,6 +75,11 @@ class Interpreter {
             throw consoleOutput
         }
     }
+    private func processBreakNode(_ node: Node){
+    }
+ 
+    private func processContinueNode(_ node: Node){
+    }
  
     private func processAppendNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
@@ -163,10 +168,7 @@ class Interpreter {
     }
  
     private func processPrintNode(_ node: Node) throws{
-        // fdfsd, "dsadas", 3213 + 1
         let components = getValuesFromExpression(node.value)
-        // let valueTypeDictionary = try getValuesType(components, node.id)
-        print(components, "components")
         for component in components{
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
@@ -179,14 +181,14 @@ class Interpreter {
                 if leftQuoteCount == 1 && rightQuoteCount == 1{
                     printResult += "\(component)"
                 } else {
-                    let normalizedString = try calculateArithmetic(component, .String, node.id)
+                    let normalizedString = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(normalizedString) "
                 }
             } else if component.contains("“") || component.contains("”"){
                 throw ErrorType.invalidSyntaxError
             } else {
                 do{
-                    let calculatedValue = try calculateArithmetic(component, .String, node.id)
+                    let calculatedValue = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(calculatedValue) "
                     // if component == "true" || component == "false"{
                     //     printResult += "\(component) "
@@ -206,13 +208,7 @@ class Interpreter {
         }
  
     }
-    // private func  getValuesType(_ components: [String], _ id: Int) throws -> [String: ValueType]{
-    //     var result = [String: ValueType]()
-    //     for component in components{
- 
-    //     }
-    //     return result
-    // }
+
     private func getValuesFromExpression(_ expression: String) -> [String]{
         var result = [String]()
         var index = 0
@@ -247,12 +243,7 @@ class Interpreter {
         return result
     }
  
-    private func processBreakNode(_ node: Node){
-    }
- 
-    private func processContinueNode(_ node: Node){
-    }
- 
+
     private func processAssignNode(_ node: Node) throws{
         // print(node.children[0].value, "node.children[0].value")
         let varName = try assignmentVariableInstance.replaceArray(node.children[0].value)
@@ -266,7 +257,7 @@ class Interpreter {
         } else {
             switch node.children[0].type {
             case .variable(let type):
-                if type == .another{
+                if type == .void{
                      throw ErrorType.variableNotFoundError
                 }
                 variableType = type
@@ -275,7 +266,7 @@ class Interpreter {
             }
         }
         let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
-        if (variableType == .another && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
+        if (variableType == .void && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             print(assignValue, "assignValue")
             try assignValueToStack([varName: assignValue])   
@@ -321,9 +312,9 @@ class Interpreter {
             return Double(value) != nil
         } else if type == .bool {
             return value == "true" || value == "false"
-        } else if type == .String {
+        } else if type == .string {
             return value.contains("“") && value.contains("”")
-        } else if type == .arrayInt {
+        } else if type == .arrayInt || type == .arrayDouble || type == .arrayString || type == .arrayBool {
             return value.contains("[") && value.contains("]") 
         } else {
             return false
@@ -338,11 +329,11 @@ class Interpreter {
         } else if value == "true" || value == "false" {
             return .bool
         } else if value.contains("“") && value.contains("”") {
-            return .String
+            return .string
         } else if value.contains("[") && value.contains("]") {
             return .arrayInt
         } else {
-            return .another
+            return .void
         }
     }
  
@@ -502,7 +493,7 @@ class Interpreter {
             }
  
             let _ = try traverseTree(child)
- 
+
             if child.type == .ifBlock {
                 if let lastDictionary = mapOfVariableStack.last {
                     do {
