@@ -9,6 +9,7 @@ enum ErrorType: Error {
     case nilTokenError
     case isNotDeclaredVariableError
     case alreadyExistsVariableError
+    case alreadyExistsFunctionError
     case variableNotFoundError
     case integerOwerflowError
     case invalidSyntaxError
@@ -22,6 +23,9 @@ enum ErrorType: Error {
     case invalidArrayValueError
     case invalidVariableNameError
     case invalidNodeError
+    case invalidFunctionReturnTypeError
+    case invalidFunctionParameterNameError
+    
  
  
  
@@ -59,6 +63,12 @@ enum ErrorType: Error {
             return "Variable not found"
         case .invalidNodeError:
             return "Invalid node"
+        case .alreadyExistsFunctionError:
+            return "Already exists function"
+        case .invalidFunctionReturnTypeError:
+            return "Invalid function return type"
+        case .invalidFunctionParameterNameError:
+            return "Invalid function parameter name"
         }
     }
     var value: ErrorType {
@@ -599,7 +609,7 @@ class Tree {
                             break
                         }
                     }
-                    nestedBlocks.append(block[additionIndex])
+                    nestedBlocks.append(block[additionIndex]) 
                     additionIndex += 1
                 }
                 if let nestedNode = buildNode(nestedBlocks,
@@ -922,7 +932,7 @@ class Calculate {
     }
  
  
-    private func getNextToken()throws -> Token? { 
+    private func getNextToken() throws -> Token? { 
         guard position < text.count else {
             return Token(.eof, nil)
         }
@@ -1349,7 +1359,7 @@ class ExpressionSolver{
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compare()
- 
+            print(calculatedValue, "calculatedValue", type, "type")
             if type == .int {
                 self.solvedExpression =  String(Int(calculatedValue))
             } else if type == .double {
@@ -1610,11 +1620,41 @@ class ArrayBuilder{
         }
     }
 }
- 
+
+class FunctionBuilder{
+    // хранит в себе: имя функции, тип возвращаемого значения, типы аргументов и их имена, тело функции
+    private var functionName: String
+    private var functionReturnType: VariableType
+    private var functionArguments: [String: VariableType]
+    private var children: [Node]
+    private var nodeId: Int
+    
+    init(_ functionName: String, _ functionReturnType: VariableType, _ functionArguments: [String: VariableType], _ children: [Node], _ nodeId: Int){
+        self.functionName = functionName
+        self.functionReturnType = functionReturnType
+        self.functionArguments = functionArguments
+        self.children = children
+        self.nodeId = nodeId
+    }
+
+    public func getFunctionName() -> String{
+        return functionName
+    }
+
+    public func getFunctionReturnType() -> VariableType{
+        return functionReturnType
+    }
+
+    public func getFunctionArguments() -> [String: VariableType]{
+        return functionArguments
+    }
+
+}
 class Interpreter {
     private var treeAST: Node
     internal var mapOfVariableStack = [[String: String]]()
     internal var mapOfArrayStack = [[String: ArrayBuilder]]()
+    internal var mapOfFunctionStack = [[String: FunctionBuilder]]()
     private var assignmentVariableInstance: StringNormalizer
     private var printResult = ""
     private var consoleOutput: ConsoleOutput
@@ -1676,6 +1716,10 @@ class Interpreter {
             processBreakNode(node)
         case .continueBlock:
             processContinueNode(node)
+        case .function:
+            try processFunctionNode(node)
+        case .returnFunction:
+            try processReturnNode(node)
         default:
             throw ErrorType.invalidNodeError
         }
@@ -1688,7 +1732,135 @@ class Interpreter {
     private func processBreakNode(_ node: Node){
     }
  
-    private func processContinueNode(_ node: Node){
+    private func processContinueNode(_ node: Node) {
+    }
+    
+    private func processFunctionNode(_ node: Node) throws {
+        // получить все параметры функции (название, тип, тело, возвращаемый тип)
+        let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let functionName = components[0]
+        let functionSignature = components[1].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let functionBody = node.children
+        var functionReturnType: VariableType = .void
+        switch node.type {
+        case .returnFunction(let type):
+            functionReturnType = type
+        default:
+            throw ErrorType.invalidTypeError
+        }
+
+        // проверка на то, что функция с таким именем уже существует
+        for dictionary in mapOfFunctionStack.reversed(){
+            if let _ = dictionary[functionName]{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.alreadyExistsFunctionError) + "\n"
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
+        }
+
+        // проверка на единый тип возвращаемого значения
+        for child in functionBody{
+            switch child.type {
+            case .returnFunction(let type):
+                if functionReturnType != type{
+                    consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionReturnTypeError) + "\n"
+                    consoleOutput.errorIdArray.append(node.id)
+                    throw consoleOutput
+                }
+            default:
+                if child.type == .whileLoop || child.type == .forLoop || child.type == .ifBlock || child.type == .elifBlock || child.type == .elseBlock{
+                    for childOfChild in child.children{
+                        switch childOfChild.type {
+                        case .returnFunction(let type):
+                            if functionReturnType != type{
+                                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionReturnTypeError) + "\n"
+                                consoleOutput.errorIdArray.append(node.id)
+                                throw consoleOutput
+                            }
+                        default:
+                            print("no return")
+                        }
+                        
+                    }
+                }   
+            }
+        }
+
+        // получение сигнатуры функции
+        let functionParameters = try getFunctionSignature(functionSignature, node.id)
+
+
+        // создание и добавление функции в стек
+        let functionBuilder = FunctionBuilder(functionName, functionReturnType, functionParameters, functionBody, node.id)
+
+        mapOfFunctionStack.append([functionName: functionBuilder])
+
+    }
+
+    private func getFunctionSignature(_ functionParameters: [String],_ nodeId: Int) throws -> [String: VariableType]{
+        var functionSignature = [String: VariableType]()
+
+        for parameter in functionParameters{
+            let parameterComponents = parameter.split(separator: ":").map({String($0.trimmingCharacters(in: .whitespaces))})
+            let parameterName = parameterComponents[0]
+            if parameterName == ""{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionParameterNameError) + "\n"
+                consoleOutput.errorIdArray.append(nodeId)
+                throw consoleOutput
+            }
+            let parameterType = try getVariableType(parameterComponents[1])
+            if functionSignature[parameterName] != nil{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionParameterNameError) + "\n"
+                consoleOutput.errorIdArray.append(nodeId)
+                throw consoleOutput
+            }
+            functionSignature[parameterName] = parameterType
+        }
+        return functionSignature
+    }
+
+    private func getVariableType(_ variableType: String) throws -> VariableType{
+
+        switch variableType {
+        case "Int":
+            return .int
+        case "Bool":
+            return .bool
+        case "String":
+            return .string
+        case "Double":
+            return .double
+        default:
+            if variableType.contains("[]"){
+                let type = variableType.replacingOccurrences(of: "[]", with: "")
+                switch type {
+                case "Int":
+                    return .arrayInt
+                case "Bool":
+                    return .arrayBool
+                case "String":
+                    return .arrayString
+                case "Double":
+                    return .arrayDouble
+                default:
+                    throw ErrorType.invalidTypeError
+                }
+            } else {
+                throw ErrorType.invalidTypeError
+            }
+        }
+    }
+
+    private func processReturnNode(_ node: Node) throws {
+        // эта функция должна возвращать значение из своей области видимости, т.е. просто последний словаь в стеке
+        let returnValue = node.value
+        var returnType = VariableType.void
+        switch node.type {
+        case .returnFunction(let type):
+            returnType = type
+        default:
+            throw ErrorType.invalidTypeError
+        }
     }
  
     private func processAppendNode(_ node: Node) throws{
@@ -1752,6 +1924,10 @@ class Interpreter {
         for child in node.children{
             do{
                 let _ = try traverseTree(child)
+                if child.type == .breakBlock || child.type == .continueBlock{
+                    break
+                }
+                print(mapOfVariableStack, "mapOfVariableStack -----------------------------------------")
             } catch let errorType as ErrorType {
                 consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
                 consoleOutput.errorIdArray.append(node.id)
@@ -1764,9 +1940,13 @@ class Interpreter {
             while mapOfArrayStack.count > 1 {
                 mapOfArrayStack.removeLast()
             }
+            while mapOfFunctionStack.count > 1 {
+                mapOfFunctionStack.removeLast()
+            }
         } 
         print(mapOfVariableStack, "mapOfVariableStack")
         print(mapOfArrayStack, "mapOfArrayStack")
+        print(mapOfFunctionStack, "mapOfFunctionStack")
         for dictionary in mapOfArrayStack{
             for (key, value) in dictionary{
                 print(key, value.getArray())
@@ -1858,10 +2038,11 @@ class Interpreter {
         // print(node.children[0].value, "node.children[0].value")
         let varName = try assignmentVariableInstance.replaceArray(node.children[0].value)
  
-        guard isVariable(varName) else { // проверяем, что мы пытается присвоить значение НЕ числу
+        guard isVariable(varName) else { 
             throw ErrorType.invalidVariableNameError
         }
-        var variableType: VariableType // здесь мы получаем тип переменной, которой присваиваем значение
+
+        var variableType: VariableType 
         if let variableFromStack = try getValueFromStack(varName), variableFromStack != "" {
             variableType = getTypeByStringValue(variableFromStack)
         } else {
@@ -1875,7 +2056,11 @@ class Interpreter {
                 throw ErrorType.invalidSyntaxError
             }
         }
+
+
         let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
+
+
         if (variableType == .void && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             print(assignValue, "assignValue")
@@ -2095,16 +2280,33 @@ class Interpreter {
     private func handleIfBlockNode(_ node: Node) throws {
         do{
             mapOfVariableStack.append([:])
-        for child in node.children{
- 
-            if child.type == .ifBlock {
-                child.setCountWasHere(0)
-                mapOfVariableStack.append([:])
-            }
- 
-            let _ = try traverseTree(child)
-
-            if child.type == .ifBlock {
+            for child in node.children{
+    
+                if child.type == .ifBlock {
+                    child.setCountWasHere(0)
+                    mapOfVariableStack.append([:])
+                } 
+                let _ = try traverseTree(child)
+                if child.type == .ifBlock {
+                    if let lastDictionary = mapOfVariableStack.last {
+                        do {
+                            try setValueFromStack(lastDictionary)
+                        } catch let errorType as ErrorType {
+                            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                            consoleOutput.errorIdArray.append(node.id)
+                            throw consoleOutput
+                        }
+                        mapOfVariableStack.removeLast()
+                    }
+                }else if child.type == .breakBlock {
+                    node.setCountWasHere(-1)
+                    node.parent!.setCountWasHere(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    node.setCountWasHere(-2)
+                    node.parent!.setCountWasHere(-2)
+                    break
+                }
                 if let lastDictionary = mapOfVariableStack.last {
                     do {
                         try setValueFromStack(lastDictionary)
@@ -2113,9 +2315,8 @@ class Interpreter {
                         consoleOutput.errorIdArray.append(node.id)
                         throw consoleOutput
                     }
-                    mapOfVariableStack.removeLast()
                 }
-            }
+            } 
             if let lastDictionary = mapOfVariableStack.last {
                 do {
                     try setValueFromStack(lastDictionary)
@@ -2124,20 +2325,10 @@ class Interpreter {
                     consoleOutput.errorIdArray.append(node.id)
                     throw consoleOutput
                 }
+                mapOfVariableStack.removeLast()
+    
             }
-        } 
-        if let lastDictionary = mapOfVariableStack.last {
-            do {
-                try setValueFromStack(lastDictionary)
-            } catch let errorType as ErrorType {
-                consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
-                consoleOutput.errorIdArray.append(node.id)
-                throw consoleOutput
-            }
-            mapOfVariableStack.removeLast()
- 
-        }
- 
+    
         } catch let errorType as ErrorType {
             consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
             consoleOutput.errorIdArray.append(node.id)
@@ -2153,13 +2344,20 @@ class Interpreter {
         }
         mapOfVariableStack.append([:])
         while try calculateArithmetic(node.value, .bool, node.id) == "true" { 
- 
             for child in node.children {
                 if child.type == .ifBlock {
                     child.setCountWasHere(0)
+                }else if child.type == .breakBlock {
+                    node.setCountWasHere(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    break
                 }
                 let _ = try! traverseTree(child)
             }
+            if node.getCountWasHere() == -1{
+                break
+            } 
         }
         if let lastDictionary = mapOfVariableStack.last {
             try setValueFromStack(lastDictionary)
@@ -2215,20 +2413,32 @@ class Interpreter {
             }
         }
  
- 
         while try calculateArithmetic(components[1], .bool, node.id) == "true" { 
+
             for child in node.children {
+
                 if child.type == .ifBlock {
                     child.setCountWasHere(0)
                 }
+                else if child.type == .breakBlock {
+                    node.setCountWasHere(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    break
+                }
                 let _ = try traverseTree(child)
+                print(mapOfVariableStack, "mapOfVariableStack in for loop in processForLoopNode")
             }
- 
+            
             guard let variable = getStepComponents(components[2]) else{
                 throw ErrorType.invalidSyntaxError
             }
             let assignValue = String(try calculateArithmetic(variable.value, .int, node.id))
             try setValueFromStack([variable.name: assignValue])
+            if node.getCountWasHere() == -1{
+                break
+            }
+
         }
  
         if let lastDictionary = mapOfVariableStack.last {
@@ -2274,6 +2484,7 @@ class Interpreter {
         }
         return components
     }
+
     private func getForLoopInitializationComponents(_ component: String) throws -> (name: String, value: String, wasInitialized: Int) {
         var wasInitialized = 0
  
@@ -2428,25 +2639,27 @@ var array: [IBlock] = []
 // array.append(Variable(id: 0, type: .String, name: "c", value: "“5.7 + 1”", isDebug: false))
 // array.append(Output(id: 2, value: "c", isDebug: false))
  
-//
+
 array.append(Variable(id: 0, type: .arrayInt, name: "c", value: "[5 + 10.7, 13.6, -9.1, 0.1, 1]", isDebug: false))
-array.append(Output(id: 2, value: "c[-1]", isDebug: false))
  
-// array.append(Loop(id: 12, type: .forLoop, value: "int i = 0; i < 5; i += 1", isDebug: false))
-// array.append(Flow(id: 13, type: .begin, isDebug: false))
-// array.append(Loop(id: 14, type: .forLoop, value: "int j = i + 1; j < 5; j += 1", isDebug: false))
-// array.append(Flow(id: 15, type: .begin, isDebug: false))
-// array.append(Condition(id: 16, type: .ifBlock, value: "c[i] > c[j]", isDebug: false))
-// array.append(Flow(id: 17, type: .begin, isDebug: false))
-// array.append(Variable(id: 18, type: .int, name: "temp", value: "c[i]", isDebug: false))
-// array.append(Variable(id: 19, type: .another, name: "c[i]", value: "c[j]", isDebug: false))
-// array.append(Variable(id: 20, type: .another, name: "c[j]", value: "temp", isDebug: false))
- 
-// array.append(Flow(id: 21, type: .end, isDebug: false))
-// array.append(Flow(id: 22, type: .end, isDebug: false))
-// array.append(Output(id: 23, value: "c", isDebug: false))
-// array.append(Flow(id: 24,type: .end, isDebug: false))
-// array.append(Flow(id: 25, type: .end, isDebug: false))
+array.append(Loop(id: 12, type: .forLoop, value: "int i = 0; i < 5; i += 1", isDebug: false))
+array.append(Flow(id: 13, type: .begin, isDebug: false))
+
+array.append(Loop(id: 14, type: .forLoop, value: "int j = i + 1; j < 5; j += 1", isDebug: false))
+array.append(Flow(id: 15, type: .begin, isDebug: false))
+
+array.append(Condition(id: 16, type: .ifBlock, value: "c[i] > c[j]", isDebug: false))
+array.append(Flow(id: 17, type: .begin, isDebug: false))
+array.append(Variable(id: 18, type: .int, name: "temp", value: "c[i]", isDebug: false))
+array.append(Variable(id: 19, type: .void, name: "c[i]", value: "c[j]", isDebug: false))
+array.append(Variable(id: 20, type: .void, name: "c[j]", value: "temp", isDebug: false))
+array.append(Flow(id: 21, type: .end, isDebug: false))
+
+array.append(Flow(id: 22, type: .end, isDebug: false))
+
+array.append(Output(id: 23, value: "c", isDebug: false))
+array.append(Flow(id: 24,type: .end, isDebug: false))
+array.append(Flow(id: 25, type: .end, isDebug: false))
 // array.append(Output(id: 26, value: "c", isDebug: false))
 // array.append(Condition(id: 1, type: .ifBlock,
 //         value: "((1 < 3) || ((12 > 10) && (1 > 0)))", isDebug: false))
