@@ -9,10 +9,12 @@ final class MainTabBarCoordinator: BaseCoordinator {
     
     private let workspaceViewModel: WorkspaceViewModel
     private let mainTabBarController: UITabBarController
+    private let algorithmRepository: AlgorithmRepository
     
     override init(navigationController: UINavigationController) {
         workspaceViewModel = WorkspaceViewModel(interpreterManager: InterpreterManager())
         mainTabBarController = MainTabBarViewController()
+        algorithmRepository = AlgorithmRepositoryImpl()
         super.init(navigationController: navigationController)
     }
     

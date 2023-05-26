@@ -14,7 +14,7 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     var didFinishEditingBlocks = PassthroughSubject<Void, Never>()
     
     var showConsole = PassthroughSubject<Void, Never>()
-    var saveAlgorithm = PassthroughSubject<String?, Never>()
+    var saveAlgorithm = PassthroughSubject<(String?, Data?), Never>()
     var deleteAllBlocks = PassthroughSubject<Void, Never>()
     var didBeginEditingBlocks = PassthroughSubject<Void, Never>()
     var removeBlock = PassthroughSubject<BlockCellViewModel, Never>()
@@ -31,23 +31,23 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     
-    private let dataStore: DataStore
+    private let algorithmRepository: AlgorithmRepository
     private let interpreterManager: InterpreterManager
     
     init(interpreterManager: InterpreterManager) {
         self.interpreterManager = interpreterManager
-        self.dataStore = DataStoreImpl()
+        algorithmRepository = AlgorithmRepositoryImpl()
         bind()
         
-        if dataStore.doFileExist(documentName: "someFile") {
-            dataStore.load(from: "someFile") { (result: Result<[IBlock], Error>) in
-                switch result {
-                case .success(let blocks):
-                    print(blocks)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
+        if algorithmRepository.doFileExist(documentName: "someFile") {
+//            algorithmRepository.loadAlgorithm(from: "someFile") { (result: Result<[AlgorithmDTO], Error>) in
+//                switch result {
+//                case .success(let blocks):
+//                    print(blocks)
+//                case .failure(let error):
+//                    print(error.localizedDescription)
+//                }
+//            }
         } else {
             print("FILE NOT FOUND")
         }
@@ -186,13 +186,15 @@ extension WorkspaceViewModel  {
             .store(in: &subscriptions)
         
         saveAlgorithm
-            .sink { [weak self] docName in
-                guard let self = self else { return }
-                guard let docName = docName else { return }
+            .sink { [weak self] docName, imageData in
+                guard
+                    let self = self,
+                    let docName = docName,
+                    let imageData = imageData
+                else { return }
                 
-                let blocks = getBlocks()
-                dataStore.write(blocks, to: docName)
-                print(blocks)
+                let algorithm = Algorithm(name: docName, blocks: getBlocks(), imageData: imageData)
+                algorithmRepository.addAlgorithm.send(algorithm)
             }
             .store(in: &subscriptions)
     }

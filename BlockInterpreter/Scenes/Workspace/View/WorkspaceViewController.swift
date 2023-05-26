@@ -153,9 +153,10 @@ final class WorkspaceViewController: UIViewController {
             textField.placeholder = "Enter name file"
         }
         
-        let okAction = UIAlertAction(title: "OK", style: .default) {_ in
-            print(saveTextField?.text)
-            self.viewModel.saveAlgorithm.send(saveTextField?.text)
+        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            
+            viewModel.saveAlgorithm.send((saveTextField?.text, workBlocksTableView.takeScreenshot()?.pngData()))
         }
         
         alertController.addAction(okAction)
@@ -615,6 +616,7 @@ private extension WorkspaceViewController {
         saveBarButton.tapPublisher
             .sink { [weak self] in
                 self?.presentAlertToSaveAlgorithm()
+                self?.introImageView.image = self?.workBlocksTableView.takeScreenshot()
             }
             .store(in: &subscriptions)
         
