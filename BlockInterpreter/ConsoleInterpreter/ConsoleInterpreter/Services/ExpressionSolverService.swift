@@ -65,10 +65,8 @@ class ExpressionSolver{
             }
         }
         else if expression.contains("“") || expression.contains("”"){
-            print("here 2")
             throw ErrorType.invalidTokenTypeError
         } else if type == .bool || type == .int || type == .double || type == .string {
-            print("here 3")
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
             let calculatedValue = try calculate.compare()
@@ -88,7 +86,6 @@ class ExpressionSolver{
          else {
             self.solvedExpression =  expression
         }
-        print(solvedExpression, "solvedExpression")
     }
 
 }

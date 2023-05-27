@@ -147,7 +147,6 @@ class Calculate {
         case .eof:
             return 0
         default:
-            print(token.getType(), text)
             throw ErrorType.invalidTokenTypeError
         }
     }
@@ -272,8 +271,6 @@ class Calculate {
             try moveToken(.eof)
             return token.getValue() ?? ""
         default:
-            print(token.getType())
-            print(text)
             throw ErrorType.invalidSyntaxError
         }
     }

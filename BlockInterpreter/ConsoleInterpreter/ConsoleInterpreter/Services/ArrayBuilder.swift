@@ -105,7 +105,6 @@ class ArrayBuilder{
             throw ErrorType.invalidIndexError
         }
         children.removeLast()
-        print(children)
         count -= 1
         self.result = updateArrayResultAfterMethods()
     }

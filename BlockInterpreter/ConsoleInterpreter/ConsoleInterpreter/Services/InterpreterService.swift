@@ -38,7 +38,6 @@ class Interpreter {
         return printResult
     }
 
-    // function that print all the variable in the mapOfVariableStack
     func printMapOfVariableStack() {
         print("Internal storage: \(mapOfVariableStack)" + ":))")
     }
@@ -54,12 +53,6 @@ class Interpreter {
 
     func traverseTree(_ node: Node)throws {
         do {
-            if (node.isDebug == true) {
-                printMapOfVariableStack()
-                parseMapOfArrayStack()
-                print(node.type)
-                print("@!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            }
             switch node.type{
             case .root:
                 try processRootNode(node)
@@ -171,30 +164,18 @@ class Interpreter {
                 mapOfArrayStack.removeLast()
             }
         }
-        print(mapOfVariableStack, "mapOfVariableStack")
-        print(mapOfArrayStack, "mapOfArrayStack")
-        for dictionary in mapOfArrayStack{
-            for (key, value) in dictionary{
-                print(key, value.getArray())
 
-            }
-        }
         // print(consoleOutput.errorOutputValue, "errorOutputValue")
         // print(consoleOutput.errorIdArray, "errorIdArray")
     }
 
     private func processPrintNode(_ node: Node) throws{
-        // fdfsd, "dsadas", 3213 + 1
         let components = getValuesFromExpression(node.value)
-        // let valueTypeDictionary = try getValuesType(components, node.id)
-        print(components, "components")
 
         for component in components {
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
                 let rightQuoteCount = component.filter({$0 == "”"}).count
-
-                print(leftQuoteCount, rightQuoteCount)
                 if leftQuoteCount != rightQuoteCount{
                     throw ErrorType.invalidSyntaxError
                 }
@@ -344,7 +325,6 @@ class Interpreter {
         let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
         if (variableType == .void && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
-            print(assignValue, "assignValue")
             try assignValueToStack([varName: assignValue])
 
         } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
@@ -478,15 +458,11 @@ class Interpreter {
                 } else {
                     mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
                 }
-                // mapOfVariableStack[mapOfVariableStack.count - 1][key] = value
             }
         }
     }
 
     private func setValueFromStack(_ dictionary: [String: String]) throws{
-        // print(dictionary, "dictionary in setValueFromStack")
-        // print(mapOfVariableStack, "mapOfVariableStack in setValueFromStack")
-        // print(mapOfArrayStack, "mapOfArrayStack in setValueFromStack")
         for (key, value) in dictionary {
             if key.contains("[") && key.contains("]"){
                 let arrayName = String(key.split(separator: "[")[0])
@@ -846,11 +822,8 @@ class Interpreter {
             }
         }
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
-        print(expression, "expression", type, "type", nodeId, "nodeId")
-        print(lastDictionary, "lastDictionary")
         do{
             var mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
-            print(mapElement, "mapElement")
             if mapElement.contains("[") && mapElement.contains("]"){
                 return mapElement
             }
