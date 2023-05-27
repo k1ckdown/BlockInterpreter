@@ -18,7 +18,7 @@ final class FunctionBlockCellViewModel: BlockCellViewModel  {
         "\(functionName ?? "")(\(argumentsString ?? ""))"
     }
     
-    private(set) var title = "FUNC"
+    private(set) var title = LocalizedStrings.funcTitle()
     private var returnType: VariableType
     private var allVariableTypes = VariableType.allCases
     private var currentTypeIndex = 0

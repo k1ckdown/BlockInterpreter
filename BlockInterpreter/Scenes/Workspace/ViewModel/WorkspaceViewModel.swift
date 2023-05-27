@@ -26,8 +26,8 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     
     var cellViewModels = CurrentValueSubject<[BlockCellViewModel], Never>([])
     
-    var optionTitle = "Delete all blocks"
-    var introTitle = "Create your first code block!"
+    var optionTitle = LocalizedStrings.deleteAllBlocks()
+    var introTitle = LocalizedStrings.createYourFirstCodeBlock()
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
     private(set) var didShowSavedAlgorithm = PassthroughSubject<[IBlock], Never>()
@@ -100,10 +100,10 @@ extension WorkspaceViewModel  {
         
         for block in blocks {
             switch block {
-            case let block as Returning:
+            case is Returning:
                 updatedCellViewModels.append(ReturningBlockCellViewModel(style: .presentation))
                 
-            case let block as Function:
+            case is Function:
                 updatedCellViewModels.append(FunctionBlockCellViewModel(returnType: .arrayString, style: .work))
             case let block as Variable:
                 updatedCellViewModels.append(VariableBlockCellViewModel(blockType: .assignment,
@@ -142,8 +142,6 @@ extension WorkspaceViewModel  {
     
     private func getConsoleContent() -> String {
         let output = interpreterManager.getConsoleContent(blocks: getBlocks())
-        print("Output = \(output)")
-        
         return output
     }
     
@@ -229,8 +227,8 @@ extension WorkspaceViewModel  {
                     let imageData = imageData
                 else { return }
                 
-                let algorithm = Algorithm(name: docName, imageData: imageData, blocks: getBlocks())
-                print("algorithm.variables - \(algorithm.getBlocks())")
+                var algorithm = Algorithm(name: docName, blocks: getBlocks(), imageData: imageData)
+                algorithm.blocks = getBlocks()
                 algorithmRepository.addAlgorithm.send(algorithm)
             }
             .store(in: &subscriptions)

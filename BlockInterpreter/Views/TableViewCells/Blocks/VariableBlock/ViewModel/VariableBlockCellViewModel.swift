@@ -22,8 +22,8 @@ final class VariableBlockCellViewModel: BlockCellViewModel {
     private var currentTypeIndex = 0
     
     init(blockType: VariableBlockType, variableType: VariableType, style: BlockCellStyle) {
-        variableValuePlaceholder = "value"
-        variableNamePlaceHolder = "name"
+        variableValuePlaceholder = LocalizedStrings.value()
+        variableNamePlaceHolder = LocalizedStrings.name()
         self.blockType = blockType
         self.variableType = variableType
         super.init(type: .variable, style: style)

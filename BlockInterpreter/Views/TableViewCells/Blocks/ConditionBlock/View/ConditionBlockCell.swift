@@ -110,7 +110,7 @@ final class ConditionBlockCell: BlockCell {
     private func setupThenLabel() {
         conditionFieldView.addSubview(thenLabel)
         
-        thenLabel.text = "then"
+        thenLabel.text = LocalizedStrings.then()
         
         thenLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

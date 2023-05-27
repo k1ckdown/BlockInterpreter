@@ -21,7 +21,7 @@ final class ConditionBlockCellViewModel: BlockCellViewModel {
     private(set) var conditionType: ConditionType
     
     init(conditionType: ConditionType, style: BlockCellStyle) {
-        conditionTextPlaceholder = "condition"
+        conditionTextPlaceholder = LocalizedStrings.condition()
         self.conditionType = conditionType
         super.init(type: .condition, style: style)
     }

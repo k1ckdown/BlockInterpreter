@@ -1,34 +1,33 @@
 import Foundation
 
-
 class Calculate {
     private var text: String
     private var position: Int
     private var currentToken: Token?
     private var nodeId: Int = 0
     private var consoleOutput: ConsoleOutput
-
-
+ 
+ 
     init(_ text: String, _ nodeId: Int) {
         self.text = text
         self.position = 0
         self.nodeId = nodeId
         self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
-
+ 
     public func getText() -> String {
         return text
     }
-
+ 
     public func setText(text: String) {
         self.text = text
         self.position = 0
     }
-
-
+ 
+ 
     public func compute() throws -> Double {
         currentToken = try getNextToken()
-
+ 
         var result = try term()
         let possibleTokens: [TokenType] = [
             .plus,
@@ -46,7 +45,7 @@ class Calculate {
             return Double(result)
         }
         while let token = currentToken, possibleTokens.contains(token.getType()) {
-
+ 
             if token.getType() == .plus {
                 try  moveToken(.plus)
                 result += try term()
@@ -56,7 +55,7 @@ class Calculate {
             } else if possibleTokens.contains(token.getType()){
                 try  moveToken(token.getType())
                 let factorValue =  try factor()
-
+ 
                 switch token.getType() {
                 case .equal:
                     result = result == factorValue ? 1 : 0
@@ -81,9 +80,9 @@ class Calculate {
         }
         return Double(result)
     }
-
-
-
+ 
+ 
+ 
     private func term() throws -> Double {
         var result = try factor()
         let possibleTokens: [TokenType] = [
@@ -102,24 +101,24 @@ class Calculate {
             case .multiply:
                 try moveToken(.multiply)
                 result *= try factor()
-
+ 
             case .divide:
                 try moveToken(.divide)
                 result /= try factor()
-
+ 
             default:
                 throw ErrorType.invalidTokenTypeError
             }
         }
         return result
     }
-
-
-    private func factor()throws -> Double {
+ 
+ 
+    private func factor() throws -> Double {
         guard let token = currentToken else{
             throw ErrorType.invalidTokenTypeError
         }
-
+ 
         switch token.getType() {
         case .integer:
             try moveToken(.integer)
@@ -150,12 +149,12 @@ class Calculate {
             throw ErrorType.invalidTokenTypeError
         }
     }
-
+ 
     public func computeString() throws -> String{
         currentToken = try getNextToken()
         var result = ""
         result += try termString()
-
+ 
         let possibleTokens: [TokenType] = [
             .leftQuote,
             .rightQuote,
@@ -185,7 +184,7 @@ class Calculate {
             } else if possibleTokens.contains(token.getType()){
                 try moveToken(token.getType())
                 let factorValue = try factorString()
-
+ 
                 switch token.getType() {
                 case .equal:
                     result = result == factorValue ? "true" : "false"
@@ -210,7 +209,7 @@ class Calculate {
         }
         return result
     }
-
+ 
     private func termString() throws -> String {
         var result = try factorString()
         if currentToken == nil {
@@ -239,19 +238,19 @@ class Calculate {
                 } else {
                     throw ErrorType.invalidSyntaxError
                 }
-
+ 
             default:
                 throw ErrorType.invalidTokenTypeError
             }
         }
         return result
     }
-
+ 
     private func factorString() throws -> String {
         guard let token = currentToken else{
             throw ErrorType.nilTokenError
         }
-
+ 
         switch token.getType() {
         case .integer:
             try moveToken(.integer)
@@ -274,15 +273,15 @@ class Calculate {
             throw ErrorType.invalidSyntaxError
         }
     }
-
-
+ 
+ 
     private func getNextToken()throws -> Token? {
         guard position < text.count else {
             return Token(.eof, nil)
         }
-
+ 
         let currentChar = text[text.index(text.startIndex, offsetBy: position)]
-
+ 
         if isSpace(currentChar) {
             var nextChar = text[text.index(text.startIndex, offsetBy: position)]
             while isSpace(nextChar) {
@@ -297,7 +296,7 @@ class Calculate {
         } else if isNumber(currentChar) {
             var integerString = String(currentChar), isDouble = false
             position += 1
-
+ 
             while position < text.count {
                 let nextChar = text[text.index(text.startIndex, offsetBy: position)]
                 if isNumber(nextChar) {
@@ -311,13 +310,13 @@ class Calculate {
                     break
                 }
             }
-
+ 
             if isDouble {
                 return Token(.double, integerString)
             } else {
                 return Token(.integer, integerString)
             }
-
+ 
         } else if currentChar == "“"{
             var string = ""
             position += 1
@@ -334,18 +333,18 @@ class Calculate {
         } else if currentChar == "." {
             position += 1
         }
-
+ 
         position += 1
         do {
             return try getToken(currentChar)
         } catch let errorType as ErrorType {
-            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
-
+ 
     }
-
+ 
     private func getToken(_ currentChar: Character)throws -> Token{
         switch currentChar {
         case "“":
@@ -398,7 +397,7 @@ class Calculate {
                     } else {
                         throw ErrorType.invalidSyntaxError
                     }
-
+ 
                 case "|":
                     if self.position < self.text.count && self.text[self.text.index(self.text.startIndex, offsetBy: self.position)] == "|" {
                         self.position += 1
@@ -423,16 +422,16 @@ class Calculate {
             throw ErrorType.invalidSyntaxError
         }
     }
-
+ 
     private func isNumber(_ char: Character) -> Bool {
         return char >= "0" && char <= "9"
     }
-
+ 
     private func isChar(_ char: Character) -> Bool {
         return char >= "a" && char <= "z" || char >= "A" && char <= "Z"
     }
-
-
+ 
+ 
     private func isSpace(_ char: Character) -> Bool {
         return char == " "
     }

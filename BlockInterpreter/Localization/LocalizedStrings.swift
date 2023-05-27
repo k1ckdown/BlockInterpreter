@@ -8,6 +8,20 @@
 import Foundation
 
 enum LocalizedStrings: String, Localizable {
-    case blockPaceholder
+    
+    case value
     case saveAlgorithm
+    case funcTitle 
+    case output
+    case name
+    case then
+    case condition
+    case enterNameFile
+    case ok
+    case deleteAllBlocks
+    case createYourFirstCodeBlock
+    case endProgramm
+    case codeblocks
+    case workspace
+    case hub
 }

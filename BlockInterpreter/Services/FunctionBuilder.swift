@@ -6,7 +6,7 @@ class FunctionBuilder{
     private var parameters: [String: VariableType]
     private var children: [Node]
     private var nodeId: Int
-
+ 
     init(_ functionName: String, _ functionReturnType: VariableType, _ parameters: [String: VariableType], _ children: [Node], _ nodeId: Int){
         self.functionName = functionName
         self.functionReturnType = functionReturnType
@@ -14,15 +14,15 @@ class FunctionBuilder{
         self.children = children
         self.nodeId = nodeId
     }
-
+ 
     public func getFunctionName() -> String{
         return functionName
     }
-
+ 
     public func getFunctionReturnType() -> VariableType{
         return functionReturnType
     }
-
+ 
     public func getFunctionParameters() -> [String: VariableType]{
         return parameters
     }

@@ -143,17 +143,17 @@ final class WorkspaceViewController: UIViewController {
     }
     
     private func presentAlertToSaveAlgorithm() {
-        let alertController = UIAlertController(title: "Save Algorithm", message: "", preferredStyle: .alert)
+        let alertController = UIAlertController(title: LocalizedStrings.saveAlgorithm(), message: "", preferredStyle: .alert)
         alertController.overrideUserInterfaceStyle = .dark
         
         var saveTextField: UITextField?
         
         alertController.addTextField() { textField in
             saveTextField = textField
-            textField.placeholder = "Enter name file"
+            textField.placeholder = LocalizedStrings.enterNameFile()
         }
         
-        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+        let okAction = UIAlertAction(title: LocalizedStrings.ok(), style: .default) { [weak self] _ in
             guard let self = self else { return }
             
             viewModel.saveAlgorithm.send((saveTextField?.text, workBlocksTableView.takeScreenshot()?.pngData()))

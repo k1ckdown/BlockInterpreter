@@ -36,6 +36,7 @@ final class HubViewController: UIViewController {
     private func setupUI() {
         setupSuperView()
         setupSavedAlgorithmsCollectionView()
+        setupBarButton()
     }
     
     private func setupSuperView() {
@@ -57,6 +58,15 @@ final class HubViewController: UIViewController {
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             make.bottom.equalToSuperview()
         }
+    }
+    
+    private func setupBarButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "seal.fill"),
+                                                            style: .done,
+                                                            target: nil,
+                                                            action: nil)
+        
+        navigationItem.rightBarButtonItem?.tintColor = .appWhite
     }
 
 }

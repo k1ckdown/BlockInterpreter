@@ -9,6 +9,7 @@ import Combine
 final class AlgorithmRepositoryImpl: AlgorithmRepository {
     
     var algorithms = CurrentValueSubject<[Algorithm], Never>([])
+    var blocks = [IBlock]()
     
     var removeAlgorithm = PassthroughSubject<Void, Never>()
     var updateAlgorithm = PassthroughSubject<Void, Never>()
@@ -79,7 +80,6 @@ final class AlgorithmRepositoryImpl: AlgorithmRepository {
             
             for url in fileUrls {
                 let documentName = url.lastPathComponent
-//                removeAlgorithm(from: documentName)
                 loadAlgorithm(from: documentName) { result in
                     switch result {
                     case .success(let algorithm):
@@ -141,5 +141,4 @@ private extension AlgorithmRepositoryImpl {
         .store(in: &subscriptions)
     }
 }
-
 

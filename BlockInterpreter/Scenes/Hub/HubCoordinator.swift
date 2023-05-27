@@ -32,7 +32,6 @@ final class HubCoordinator: BaseCoordinator {
             }
             .store(in: &subscriptions)
         
-        navigationController.navigationBar.isHidden = true
         navigationController.pushViewController(hubViewController, animated: true)
     }
 }

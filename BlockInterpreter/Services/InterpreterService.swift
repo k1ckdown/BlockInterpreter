@@ -10,19 +10,19 @@ class Interpreter {
     private var arrayOfIntVariable = [String: String]()
     private var printResult = ""
     private var consoleOutput: ConsoleOutput
-
+ 
     init() {
         treeAST = Node(value: "", type: .root, id: 0)
         self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
         assignmentVariableInstance = .init([:])
     }
-
-    func setTreeAST(_ treeAST: Node) throws {
+ 
+    func setTreeAST(_ treeAST: Node) throws{
         printResult = ""
         self.treeAST = treeAST
         self.mapOfVariableStack = [[String: String]]()
         self.assignmentVariableInstance = .init([:])
-
+ 
         mapOfVariableStack.removeAll()
         mapOfArrayStack.removeAll()
         do{
@@ -32,18 +32,18 @@ class Interpreter {
             consoleOutput.errorIdArray.append(treeAST.id)
             throw consoleOutput
         }
-
+ 
     }
-
+ 
     func getPrintResult() -> String {
         return printResult
     }
-
-
+ 
+ 
     public func setPrintResult(_ printResult: String){
         self.printResult = printResult
     }
-
+ 
     func traverseTree(_ node: Node)throws -> (String, VariableType) {
         do{
             switch node.type{
@@ -83,7 +83,7 @@ class Interpreter {
                 return try processReturnNode(node)
             default:
                 throw ErrorType.invalidNodeError
-            
+ 
             }
         return ("", .void)
         } catch let errorType as ErrorType {
@@ -92,10 +92,10 @@ class Interpreter {
             throw consoleOutput
         }
     }
-
+ 
     private func processRootNode(_ node: Node)throws{
         mapOfVariableStack.append([:])
-
+ 
         for child in node.children{
             do{
                 let _ = try traverseTree(child)
@@ -107,7 +107,7 @@ class Interpreter {
                 consoleOutput.errorIdArray.append(node.id)
                 throw consoleOutput
             }
-
+ 
             while mapOfVariableStack.count > 1 {
                 mapOfVariableStack.removeLast()
             }
@@ -118,38 +118,39 @@ class Interpreter {
                 mapOfFunctionStack.removeLast()
             }
         }
-
+ 
     }
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
     private func processPrintNode(_ node: Node) throws{
-          
-          do{
-              try handlePrintNode(node, isPrintln: false)
-          } catch let errorType as ErrorType{
-              consoleOutput.errorOutputValue += String(describing: errorType)
-              consoleOutput.errorIdArray.append(treeAST.id)
-              throw consoleOutput
-          }
-      }
-
-      private func processPrintlnNode(_ node: Node) throws{
-                  
-          do{
-              try handlePrintNode(node, isPrintln: true)
-          } catch let errorType as ErrorType{
-              consoleOutput.errorOutputValue += String(describing: errorType)
-              consoleOutput.errorIdArray.append(treeAST.id)
-              throw consoleOutput
-          }
-      }
-    private func handlePrintNode(_ node: Node, isPrintln: Bool) throws{
+ 
+        do{
+            try handlePrintNode(node, false)
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType)
+            consoleOutput.errorIdArray.append(treeAST.id)
+            throw consoleOutput
+        }
+    }
+ 
+    private func processPrintlnNode(_ node: Node) throws{
+ 
+        do{
+            try handlePrintNode(node, true)
+        } catch let errorType as ErrorType{
+            consoleOutput.errorOutputValue += String(describing: errorType)
+            consoleOutput.errorIdArray.append(treeAST.id)
+            throw consoleOutput
+        }
+    }
+ 
+    private func handlePrintNode(_ node: Node,_  isPrintln: Bool) throws{
         let components = getValuesFromExpression(node.value)
-
+ 
         for component in components {
             if component.contains("“") && component.contains("”"){
                 let leftQuoteCount = component.filter({$0 == "“"}).count
@@ -175,13 +176,13 @@ class Interpreter {
                         }
                         continue
                     }
-
+ 
                     let currentIntValue = getArrayOfIntByName(component)
                     if (currentIntValue != "") {
                         printResult += getIntPartFromString(currentIntValue)
                         continue
                     }
-
+ 
                     let calculatedValue = try calculateArithmetic(component, .string, node.id)
                     printResult += "\(calculatedValue) "
                 } catch let errorType as ErrorType {
@@ -191,15 +192,15 @@ class Interpreter {
                 }
             }
         }
-        if isPrintln {
+        if !isPrintln {
             printResult += "\n"
         }
     }
-
-
+ 
+ 
     private func processAssignNode(_ node: Node) throws{
         let varName = try assignmentVariableInstance.fixArrayBracketIndex(node.children[0].value)
-
+ 
         guard isVariable(varName) else {
             throw ErrorType.invalidVariableNameError
         }
@@ -217,11 +218,12 @@ class Interpreter {
                 throw ErrorType.invalidSyntaxError
             }
         }
+        print("variableType: \(variableType), varName: \(varName)")
         let arrayTypes = [VariableType.arrayInt, VariableType.arrayString, VariableType.arrayDouble]
         if (variableType == .void && !node.children[1].value.contains("[") && !node.children[1].value.contains("]")) {
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             try assignValueToStack([varName: assignValue])
-
+ 
         } else if (varName.contains("[") && varName.contains("]")) || !arrayTypes.contains(variableType){
             let assignValue = try calculateArithmetic(node.children[1].value, variableType, node.id)
             guard isSameType(variableName: varName, value: assignValue, typeInput: variableType) else {
@@ -232,6 +234,7 @@ class Interpreter {
                 arrayOfBoolVariable[varName] = assignValue
             }
             else if (variableType == .int) {
+                print("assignValue: \(assignValue)")
                 arrayOfIntVariable[varName] = assignValue
             }
         } else {
@@ -239,8 +242,8 @@ class Interpreter {
             updateMapArrayOfStack([varName: arrayBuilder])
         }
     }
-
-   
+ 
+ 
     private func processIfBlockNode(_ node: Node) throws{
         do{
             let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
@@ -259,10 +262,10 @@ class Interpreter {
             consoleOutput.errorIdArray.append(node.id)
             throw consoleOutput
         }
-
-
+ 
+ 
     }
-
+ 
     private func processElifBlockNode(_ node: Node) throws{
         do{
             let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
@@ -277,11 +280,11 @@ class Interpreter {
             consoleOutput.errorIdArray.append(node.id)
             throw consoleOutput
         }
-
-
-
+ 
+ 
+ 
     }
-
+ 
     private func processElseBlockNode(_ node: Node)throws{
         if (node.getCountVisitedNode() == 1){
             do{
@@ -291,15 +294,15 @@ class Interpreter {
                 consoleOutput.errorIdArray.append(node.id)
                 throw consoleOutput
             }
-
+ 
         }
     }
-
+ 
     private func handleIfBlockNode(_ node: Node) throws {
         do{
             mapOfVariableStack.append([:])
             for child in node.children{
-
+ 
                 if child.type == .ifBlock {
                     child.setCountVisitedNode(0)
                     mapOfVariableStack.append([:])
@@ -344,18 +347,18 @@ class Interpreter {
                     throw consoleOutput
                 }
                 mapOfVariableStack.removeLast()
-
+ 
             }
-
+ 
         } catch let errorType as ErrorType {
             consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(node.id)
             throw consoleOutput
         }
-
+ 
     }
-
-
+ 
+ 
     private func processWhileLoopNode(_ node: Node) throws {
         let condition = node.value
         if condition == "" {
@@ -383,15 +386,15 @@ class Interpreter {
             mapOfVariableStack.removeLast()
         }
     }
-
+ 
     private func processForLoopNode(_ node: Node) throws{
-
+ 
         guard let components = try getForLoopComponents(node.value) else {
             throw ErrorType.invalidSyntaxError
         }
         mapOfVariableStack.append([:])
-
-
+ 
+ 
         if components[0] != "" {
             let variableComponents = try getForLoopInitializationComponents(components[0])
             guard variableComponents.name != "", variableComponents.value != ""  else {
@@ -401,17 +404,17 @@ class Interpreter {
                 throw ErrorType.invalidVariableNameError
             }
             var isThereVariable = false
-
+ 
             if let valueFromStack = try getValueFromStack(variableComponents.name), valueFromStack != "" {
                 isThereVariable = true
             }
             if isThereVariable && variableComponents.wasInitialized == 1 {
                 throw ErrorType.alreadyExistsVariableError
-
+ 
             } else if !isThereVariable && variableComponents.wasInitialized == 0{
                 throw ErrorType.variableNotFoundError
             }
-
+ 
             do {
                 let normalizedVariableValue = try assignmentVariableInstance.normalize(variableComponents.value, node.id)
                 mapOfVariableStack[mapOfVariableStack.count - 1][variableComponents.name] = normalizedVariableValue
@@ -420,10 +423,10 @@ class Interpreter {
                 consoleOutput.errorIdArray.append(node.id)
                 throw consoleOutput
             }
-
+ 
         } else if let variable = getConditionVariable(components[1]){
             let valueFromStack = try getValueFromStack(variable)
-
+ 
             if valueFromStack != "" {
                 mapOfVariableStack[mapOfVariableStack.count - 1][variable] = valueFromStack
             }
@@ -431,11 +434,11 @@ class Interpreter {
                 throw ErrorType.variableNotFoundError
             }
         }
-
+ 
         while try calculateArithmetic(components[1], .bool, node.id) == "true" {
-
+ 
             for child in node.children {
-
+ 
                 if child.type == .ifBlock {
                     child.setCountVisitedNode(0)
                 }
@@ -447,7 +450,7 @@ class Interpreter {
                 }
                 let _ = try traverseTree(child)
             }
-
+ 
             guard let variable = getStepComponents(components[2]) else{
                 throw ErrorType.invalidSyntaxError
             }
@@ -456,25 +459,25 @@ class Interpreter {
             if node.getCountVisitedNode() == -1{
                 break
             }
-
+ 
         }
-
+ 
         if let lastDictionary = mapOfVariableStack.last {
             try setValueFromStack(lastDictionary)
             mapOfVariableStack.removeLast()
         }
     }
-
-
+ 
+ 
     private func processAppendNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
-
+ 
         let arrayName = components[0]
         let appendValues = getValuesFromExpression(components[1])
         if appendValues.count > 1{
             throw ErrorType.invalidAppendValueError
         }
-
+ 
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
                 try arrayBuilder.append(appendValues[0])
@@ -482,13 +485,13 @@ class Interpreter {
                 break
             }
         }
-
+ 
     }
-
+ 
     private func processPopNode(_ node: Node)throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
         let arrayName = components[0]
-
+ 
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
                 do{
@@ -503,12 +506,12 @@ class Interpreter {
             }
         }
     }
-
+ 
     private func processRemoveNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
         let arrayName = components[0]
         let index = components[1]
-
+ 
         for dictionary in mapOfArrayStack.reversed(){
             if let arrayBuilder = dictionary[arrayName]{
                 guard let removeIndex =  Int(index) else{
@@ -520,29 +523,29 @@ class Interpreter {
             }
         }
     }
-
+ 
     private func processBreakNode(_ node: Node){
     }
-
+ 
     private func processContinueNode(_ node: Node){
     }
-
+ 
     private func updateMapArrayOfStack(_ lastDictionary: [String: ArrayBuilder]) {
         if mapOfArrayStack.isEmpty {
             mapOfArrayStack.append(lastDictionary)
         } else {
             var variableFound = false
-
+ 
             for (key, value) in lastDictionary {
                 for index in (0..<mapOfArrayStack.count).reversed() {
-
+ 
                     let dictionary = mapOfArrayStack[index]
-
+ 
                     if dictionary[key] != nil {
                         mapOfArrayStack[index][key] = value
                         variableFound = true
                         break
-
+ 
                     } else if index == 0 {
                         mapOfArrayStack.append([key: value])
                         variableFound = true
@@ -555,7 +558,7 @@ class Interpreter {
             }
         }
     }
-
+ 
     private func getForLoopComponents(_ value: String)throws -> [String]? {
         let components = value.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
         guard components.count == 3 else {
@@ -563,10 +566,10 @@ class Interpreter {
         }
         return components
     }
-    
+ 
     private func getForLoopInitializationComponents(_ component: String) throws -> (name: String, value: String, wasInitialized: Int) {
         var wasInitialized = 0
-
+ 
         if component.contains("int") || component.contains("string") {
             wasInitialized = 1
         }
@@ -574,13 +577,13 @@ class Interpreter {
         guard variable.count >= 3 + wasInitialized, variable[1 + wasInitialized] == "=" else {
             throw ErrorType.invalidSyntaxError
         }
-
+ 
         let variableName = variable[wasInitialized]
         let variableValue = variable[2 + wasInitialized]
-
+ 
         return (variableName, variableValue, wasInitialized)
     }
-
+ 
     private func getConditionVariable(_ component: String) -> String? {
         let condition = component.split(separator: " ").map { $0.trimmingCharacters(in: .whitespaces) }
         guard condition.count == 3 && [">", "<", "==", ">=", "<="].contains(condition[1]) else {
@@ -588,7 +591,7 @@ class Interpreter {
         }
         return condition[0]
     }
-
+ 
     private func getStepComponents(_ component: String) -> (name: String, value: String)? {
         var parseString = component
         for sign in ["++","--","+=","-=","*=","/=","%="]{
@@ -597,36 +600,36 @@ class Interpreter {
             }
         }
         let components = parseString.split(separator: "=").map { $0.trimmingCharacters(in: .whitespaces) }
-
+ 
         guard components.count == 2 else {
             return nil
         }
         let variableName = components[0]
         let variableValue = components[1]
-
+ 
         return (variableName, variableValue)
     }
-
+ 
     private func getUpdatedString(_ expression: String, _ sign: String) -> String {
-
+ 
         var updatedExpression = ""
-
+ 
         if expression.contains("++"){
             let str = expression.split(separator: "+")
             updatedExpression += "\(str[0]) = \(str[0]) + 1"
         } else if expression.contains("--"){
             let str = expression.split(separator: "-")
             updatedExpression += "\(str[0]) = \(str[0]) - 1"
-
+ 
         } else {
             guard let firstSign = sign.first else {
                 return expression
             }
-
+ 
             var str = expression.split(separator: firstSign)
             str[1].removeFirst()
             updatedExpression += "\(str[0]) = \(str[0]) \(firstSign) \(str[1])"
-
+ 
             if str.count > 2 {
                 for i in 2..<str.count{
                     updatedExpression += " \(firstSign) \(str[i])"
@@ -634,7 +637,7 @@ class Interpreter {
             }
         }
         return updatedExpression
-
+ 
     }
     private func getIntPartFromString(_ value: String) -> String {
         if let doubleValue = Double(value) {
@@ -643,7 +646,7 @@ class Interpreter {
         }
         return ""
     }
-
+ 
     private func getArrayOfIntByName(_ component: String) -> String {
         for (key, value ) in arrayOfIntVariable {
             if key == component {
@@ -652,7 +655,7 @@ class Interpreter {
         }
         return ""
     }
-
+ 
     private func isFalseValue(_ component: String) -> Int {
         for dictionary in mapOfVariableStack.reversed() {
              if (dictionary[component] == "0") {
@@ -671,13 +674,13 @@ class Interpreter {
         }
         return false
     }
-
-
+ 
+ 
     private func getValuesFromExpression(_ expression: String) -> [String]{
         var result = [String]()
         var index = 0
         var currentString = ""
-
+ 
         while index < expression.count {
             let char = expression[expression.index(expression.startIndex, offsetBy: index)]
             if char == "“" {
@@ -692,7 +695,7 @@ class Interpreter {
                         index += 1
                     }
                 }
-
+ 
             } else if char == ","{
                 result.append(currentString)
                 currentString = ""
@@ -708,11 +711,11 @@ class Interpreter {
     }
     private func calculateArithmetic(_ expression: String, _ type: VariableType, _ nodeId: Int)throws -> String {
         var lastDictionary: [String: String] = [:]
-
+ 
         for dictionary in mapOfVariableStack {
             lastDictionary.merge(dictionary) { (_, new) in new }
         }
-
+ 
         for dictionary in mapOfArrayStack {
             for (key, value) in dictionary {
                 let children = value.getArrayChildren()
@@ -723,7 +726,7 @@ class Interpreter {
         }
         for dictionary in mapOfArrayStack {
             for (key, value) in dictionary {
-
+ 
                 lastDictionary[key] = value.getArray()
             }
         }
@@ -733,7 +736,7 @@ class Interpreter {
             if mapElement.contains("[") && mapElement.contains("]"){
                 return mapElement
             }
-
+ 
             let expressionSolver = ExpressionSolver()
             try expressionSolver.setExpressionAndType(mapElement, type, nodeId)
             return expressionSolver.getSolvedExpression()
@@ -742,21 +745,21 @@ class Interpreter {
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
-
+ 
     }
-
+ 
     private func isVariable(_ expression: String) -> Bool{
         let regularValue = #"^[a-zA-Z]+[\w_]*(\[\s*(([a-zA-Z]+[\w_]*(\[\s*(([a-zA-Z]+[\w_]*)|([1-9]\d*)|([0]))\s*\])?)|([1-9]\d*)|([0]))\s*\])?$"#
         let arithmeticRegex = try! NSRegularExpression(pattern: regularValue, options: [])
         let isCondition = arithmeticRegex.firstMatch(in: expression, options: [], range: NSRange(location: 0, length: expression.utf16.count)) != nil
-
+ 
         return isCondition
     }
-
+ 
     private func isSameType(variableName: String, value: String, typeInput: VariableType) -> Bool{
-
+ 
         let type = getTypeByStringValue(value)
-
+ 
         if type == .int {
             return Int(value) != nil && typeInput == .int
         } else if type == .double {
@@ -771,7 +774,7 @@ class Interpreter {
             return false
         }
     }
-
+ 
     private func getTypeByStringValue(_ value: String) -> VariableType{
         if Int(value) != nil {
             return .int
@@ -787,7 +790,7 @@ class Interpreter {
             return .void
         }
     }
-
+ 
     private func getValueFromStack(_ name: String)throws -> String? {
         for dictionary in mapOfVariableStack.reversed(){
             if let value = dictionary[name]{
@@ -797,7 +800,7 @@ class Interpreter {
         if name.contains("[") && name.contains("]"){
             let arrayName = String(name.split(separator: "[")[0])
             let arrayIndex = name.split(separator: "[")[1].split(separator: "]")[0]
-
+ 
             for array in mapOfArrayStack.reversed() {
                 if let arrayBuilder = array[arrayName] {
                     let index = Int(arrayIndex) ?? -1
@@ -808,21 +811,21 @@ class Interpreter {
                 }
             }
         }
-
-
+ 
+ 
         return ""
     }
-
+ 
     private func assignValueToStack(_ dictionary: [String: String])throws{
         for (key, value) in dictionary {
             var isAssigned = false
             if key.contains("[") && key.contains("]"){
                 let arrayName = String(key.split(separator: "[")[0])
                 let arrayIndex = key.split(separator: "[")[1].split(separator: "]")[0]
-
+ 
                 for (index, array) in mapOfArrayStack.enumerated().reversed() {
                     if let arrayBuilder = array[arrayName] {
-
+ 
                         let updatedValueIndex = Int(arrayIndex) ?? -1
                         if updatedValueIndex >= arrayBuilder.getArrayCount() || updatedValueIndex < 0 {
                             throw ErrorType.invalidIndexError
@@ -852,16 +855,16 @@ class Interpreter {
             }
         }
     }
-
+ 
     private func setValueFromStack(_ dictionary: [String: String]) throws{
         for (key, value) in dictionary {
             if key.contains("[") && key.contains("]"){
                 let arrayName = String(key.split(separator: "[")[0])
                 let arrayIndex = key.split(separator: "[")[1].split(separator: "]")[0]
-
+ 
                 for (index, array) in mapOfArrayStack.enumerated().reversed() {
                     if let arrayBuilder = array[arrayName] {
-
+ 
                         let updatedValueIndex = Int(arrayIndex) ?? -1
                         if updatedValueIndex >= arrayBuilder.getArrayCount() || updatedValueIndex < 0 {
                             throw ErrorType.invalidIndexError
@@ -881,14 +884,14 @@ class Interpreter {
             }
         }
     }
-    
+ 
     private func handleFunction(_ expression: String,_ type: VariableType, _ nodeId: Int) throws -> String{
         var linkVariables = [String]()
         let components = expression.split(separator: "(").map({String($0.trimmingCharacters(in: .whitespaces))})
         let functionName = components[0]
         let parameters = components[1].split(separator: ")").map({String($0.trimmingCharacters(in: .whitespaces))})[0].split(separator: ",")
         var functionParameters = [String]()
-
+        print(parameters)
         for parameter in parameters {
             if parameter.hasPrefix("&") {
                 let parameterName = String(parameter.dropFirst())
@@ -915,35 +918,36 @@ class Interpreter {
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
-
+ 
         let sygnatureParameters = functionBuilder!.getFunctionParameters()
         var sygnatureVariableMap = [String: String]()
         var connectionDictionary = [String: String]()
-
-
+ 
+ 
         var index = 0
-
+ 
         for (key, _) in sygnatureParameters{
-
+ 
             sygnatureVariableMap[key] = functionParameters[index]
             connectionDictionary[key] = String(functionParameters[index])
             index += 1
         }
-
+        print(sygnatureVariableMap)
+ 
         let functionBody = functionBuilder!.getChidren()
         let _ = functionBuilder!.getFunctionReturnType()
-
+ 
         let tempMapOfArrayStack = mapOfArrayStack
         let tempMapOfVariableStack = mapOfVariableStack
-
+ 
         mapOfVariableStack.removeAll()
-
+ 
         mapOfVariableStack.append(sygnatureVariableMap)
-
+ 
         var returnValue: String = ""
         var returnType = VariableType.int
-
-
+ 
+ 
         for child in functionBody{
             switch child.type {
             case .returnFunction(let type):
@@ -957,9 +961,9 @@ class Interpreter {
             default:
                 let _ = try traverseTree(child)
             }
-
-
-
+ 
+ 
+ 
             while mapOfVariableStack.count > 1 {
                 mapOfVariableStack.removeLast()
             }
@@ -977,7 +981,7 @@ class Interpreter {
             }
         }
         mapOfVariableStack.removeAll()
-
+ 
         mapOfArrayStack = tempMapOfArrayStack
         mapOfVariableStack = tempMapOfVariableStack
         try assignValueToStack(sygnatureReturnVariableMap)
@@ -985,9 +989,9 @@ class Interpreter {
         try assignValueToStack(sygnatureReturnVariableMap)
         return finalReturnValue ?? ""
     }
-    
+ 
     private func getVariableType(_ variableType: String) throws -> VariableType{
-
+ 
         switch variableType {
         case "Int":
             return .int
@@ -1018,7 +1022,7 @@ class Interpreter {
         }
     }
     private func processVariableNode(_ node: Node) throws -> (String, VariableType){
-
+ 
         let expression = node.value
         var returnType = VariableType.void
         switch node.type {
@@ -1075,9 +1079,9 @@ class Interpreter {
                 }
             }
         }
-
+ 
         let functionParameters = try getFunctionSignature(functionSignature, node.id)
-
+ 
         let functionBuilder = FunctionBuilder(functionName, functionReturnType, functionParameters, functionBody, node.id)
         if mapOfFunctionStack.isEmpty{
             mapOfFunctionStack.append([functionName: functionBuilder])
@@ -1085,10 +1089,10 @@ class Interpreter {
             mapOfFunctionStack[mapOfFunctionStack.count - 1][functionName] = functionBuilder
         }
     }
-
+ 
     private func getFunctionSignature(_ functionParameters: [String],_ nodeId: Int) throws -> [String: VariableType]{
         var functionSignature = [String: VariableType]()
-
+ 
         for parameter in functionParameters{
             let parameterComponents = parameter.split(separator: ":").map({String($0.trimmingCharacters(in: .whitespaces))})
             let parameterName = parameterComponents[0]
@@ -1107,7 +1111,7 @@ class Interpreter {
         }
         return functionSignature
     }
-
+ 
     private func processReturnNode(_ node: Node) throws -> (String, VariableType){
         let returnValue = node.value
         var returnType = VariableType.void
@@ -1116,11 +1120,12 @@ class Interpreter {
             returnType = type
         case .variable(let type):
             returnType = type
-            
+ 
         default:
             throw ErrorType.invalidTypeError
         }
         return (returnValue, returnType)
     }
-
+ 
 }
+ 

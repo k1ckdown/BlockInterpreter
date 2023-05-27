@@ -27,10 +27,9 @@ extension HubViewModel {
         updateSavedAlgorithms
             .sink { [weak self] algorithms in
                 guard let self = self else { return }
-                
                 algorithms.forEach {
                     self.cellViewModels.append(AlgorithmPreviewCellViewModel(documentName: $0.name, imageData: $0.imageData))
-                    self.algorithmBlocks.append($0.getBlocks())
+                    self.algorithmBlocks.append($0.blocks)
                 }
                 
                 didUpdateCollection.send()
@@ -40,8 +39,6 @@ extension HubViewModel {
         didSelectedAlgorithm
             .sink { [weak self] in
                 guard let self = self else { return }
-//                print("didSelectedAlgorithm \(algorithmBlocks)")
-                print("didSelectedAlgorithm \(algorithmBlocks[$0.item])")
                 didUpdateWorkspace.send(algorithmBlocks[$0.item])
             }
             .store(in: &subscriptions)

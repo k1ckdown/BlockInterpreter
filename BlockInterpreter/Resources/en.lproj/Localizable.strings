@@ -5,3 +5,19 @@
   Created by Ivan Semenov on 27.05.2023.
   
 */
+
+"value" = "value";
+"saveAlgorithm" = "Save Algorithm";
+"funcTitle" = "FUNC";
+"output" = "output";
+"name" = "name";
+"then" = "then";
+"condition" = "condition";
+"enterNameFile" = "Enter name file";
+"ok" = "OK";
+"deleteAllBlocks" = "Delete all blocks";
+"createYourFirstCodeBlock" = "Create your first code block!";
+"endProgramm" = "Program ended with exit code: 0";
+"codeblocks" = "CodeBlocks";
+"Workspace" = "Workspace";
+"hub" = "Hub";

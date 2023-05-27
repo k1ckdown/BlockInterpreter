@@ -20,9 +20,11 @@ final class InterpreterManager {
         tree.buildTree()
         
         do {
-            try interpreter.traverseTree(tree.rootNode)
+            try interpreter.setTreeAST(tree.rootNode)
+        } catch let errorType as ErrorType {
+            interpreter.setPrintResult(String(describing: errorType))
         } catch {
-            print(error.localizedDescription)
+            interpreter.setPrintResult(String(describing: error))
         }
         
         return interpreter.getPrintResult()

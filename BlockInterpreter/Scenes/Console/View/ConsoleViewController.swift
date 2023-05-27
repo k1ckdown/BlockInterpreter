@@ -76,7 +76,7 @@ private extension ConsoleViewController {
         viewModel.didUpdateConsoleContent
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.outputTextView.text = $0 + "\nProgram ended with exit code: 0"
+                self?.outputTextView.text = $0 + "\n\(LocalizedStrings.endProgramm())"
             }
             .store(in: &subscriptions)
         

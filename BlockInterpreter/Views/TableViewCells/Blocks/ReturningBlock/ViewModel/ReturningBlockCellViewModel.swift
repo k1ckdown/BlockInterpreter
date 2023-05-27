@@ -14,7 +14,7 @@ final class ReturningBlockCellViewModel: BlockCellViewModel {
     
     init(style: BlockCellStyle) {
         title = "RETURN"
-        placeholder = "value"
+        placeholder = LocalizedStrings.value()
         super.init(type: .returnBlock, style: style)
     }
     

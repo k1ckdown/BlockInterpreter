@@ -11,11 +11,11 @@ enum TabFlow: CaseIterable {
     var title: String {
         switch self {
         case .codeblocks:
-            return "CodeBlocks"
+            return LocalizedStrings.codeblocks()
         case .workspace:
-            return "Workspace"
+            return LocalizedStrings.workspace()
         case .hub:
-            return "Hub"
+            return LocalizedStrings.hub()
         }
     }
     

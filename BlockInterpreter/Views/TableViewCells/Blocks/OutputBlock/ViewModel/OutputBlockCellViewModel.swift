@@ -18,7 +18,7 @@ final class OutputBlockCellViewModel: BlockCellViewModel {
     
     init(outputType: OutputType, style: BlockCellStyle) {
         self.outputType = outputType
-        placeholder = "output"
+        placeholder = LocalizedStrings.output()
         super.init(type: .output, style: style)
     }
     

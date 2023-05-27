@@ -1,6 +1,5 @@
 import Foundation
 
-
 class ArrayBuilder{
     private var expression: String
     private var arrayType: VariableType
@@ -11,17 +10,17 @@ class ArrayBuilder{
     private var expressionSolver: ExpressionSolver = .init()
     private var consoleOutput: ConsoleOutput
     private var nodeId: Int
-
+ 
     init(_ expression: String, _ arrayType: VariableType, _ nodeId: Int) throws {
         self.expression = expression
         self.arrayType = arrayType
         self.nodeId = nodeId
-
+ 
         self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
         self.childrenType = .int
         self.count = 0
         self.children = []
-
+ 
         self.result = ""
         do {
             try initializeValues()
@@ -29,16 +28,18 @@ class ArrayBuilder{
             self.consoleOutput.errorOutputValue += String(describing: errorType)
             self.consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
+        }  catch {
+            print(error.localizedDescription)
         }
     }
-
+ 
     public func getArrayElement(_ index: Int) throws -> String {
         if index >= children.count {
             throw ErrorType.invalidIndexError
         }
         return children[index]
     }
-
+ 
     public func getArray() -> String{
         var result = "["
         for i in 0..<children.count{
@@ -50,23 +51,23 @@ class ArrayBuilder{
         result += "]"
         return result
     }
-
+ 
     public func getChildrenType() -> VariableType {
         return self.arrayType
     }
-
+ 
     public func getArrayCount() -> Int {
         return self.count
     }
-
+ 
     public func getArrayChildren() -> [String] {
         return self.children
     }
-
+ 
     public func setArrayChildren(_ children: [String]) {
         self.children = children
     }
-
+ 
     public func setArrayValue(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
@@ -76,7 +77,7 @@ class ArrayBuilder{
         }
         children[index] = value
     }
-
+ 
     public func append(_ value: String) throws{
         if value == "" {
             throw ErrorType.invalidValueError
@@ -87,7 +88,7 @@ class ArrayBuilder{
         children.append(value)
         count += 1
     }
-
+ 
     public func insert(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
@@ -99,7 +100,7 @@ class ArrayBuilder{
         count += 1
         self.result = updateArrayResultAfterMethods()
     }
-
+ 
     public func pop() throws {
         if children.count == 0 {
             throw ErrorType.invalidIndexError
@@ -108,7 +109,7 @@ class ArrayBuilder{
         count -= 1
         self.result = updateArrayResultAfterMethods()
     }
-
+ 
     public func remove(_ index: Int) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
@@ -117,7 +118,7 @@ class ArrayBuilder{
         count -= 1
         self.result = updateArrayResultAfterMethods()
     }
-
+ 
     private func initializeValues() throws{
         do{
             self.childrenType = try self.updateChildrenType()
@@ -129,14 +130,14 @@ class ArrayBuilder{
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
-
+ 
     }
-
+ 
     private func handleExpression() throws -> String{
         if expression.first != "[" || expression.last != "]" || !isCorrectBrackets(expression){
             throw ErrorType.invalidArrayValueError
         }
-
+ 
         if count == 0 && children.count == 0 {
             result += "]"
             return result
@@ -152,7 +153,7 @@ class ArrayBuilder{
         result += "]"
         return result
     }
-
+ 
     private func isCorrectBrackets(_ expression: String) -> Bool{
         var count = 0
         for char in expression{
@@ -184,19 +185,19 @@ class ArrayBuilder{
                 throw ErrorType.unsupportedArrayError
             }
             try expressionSolver.setExpressionAndType(String(component), childrenType, nodeId)
-
+ 
             let solvedExpression = expressionSolver.getSolvedExpression()
             let valueType = getTypeByStringValue(solvedExpression)
-
+ 
             if valueType != childrenType {
                 throw ErrorType.invalidTypeError
             }
             result.append(String(solvedExpression))
         }
-
+ 
         return result
     }
-
+ 
     private func updateArrayCount() throws -> Int{
         let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",")
         var count = 0
@@ -209,7 +210,7 @@ class ArrayBuilder{
         }
         return count
     }
-
+ 
     private func updateChildrenType()throws -> VariableType{
         switch arrayType {
         case .arrayString:
@@ -224,7 +225,7 @@ class ArrayBuilder{
             throw ErrorType.invalidArrayValueError
         }
     }
-
+ 
     private func getTypeByStringValue(_ expression: String) -> VariableType{
         if Int(expression) != nil {
             return .int
