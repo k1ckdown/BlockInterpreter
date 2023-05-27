@@ -30,6 +30,7 @@ final class WorkspaceViewModel: WorkspaceViewModelType {
     var introTitle = "Create your first code block!"
     private var subscriptions = Set<AnyCancellable>()
     private(set) var didGoToConsole = PassthroughSubject<String, Never>()
+    private(set) var didShowSavedAlgorithm = PassthroughSubject<[IBlock], Never>()
     
     private let algorithmRepository: AlgorithmRepository
     private let interpreterManager: InterpreterManager
@@ -64,6 +65,7 @@ extension WorkspaceViewModel  {
                 
             case let outputBlockViewModel as OutputBlockCellViewModel:
                 blocks.append(Output(id: index,
+                                     type: outputBlockViewModel.outputType,
                                      value: outputBlockViewModel.outputValue ?? ""))
                 
             case let whileLoopBlockViewModel as WhileLoopBlockCellViewModel:
@@ -82,6 +84,8 @@ extension WorkspaceViewModel  {
                                             name: arrayMethodViewModel.arrayName ?? "",
                                             value: arrayMethodViewModel.value ?? "",
                                             isDebug: false))
+            case let returningViewModel as ReturningBlockCellViewModel:
+                blocks.append(Returning(id: index, value: returningViewModel.returnValue ?? ""))
                 
             default: break
             }
@@ -89,6 +93,51 @@ extension WorkspaceViewModel  {
 
         
         return blocks
+    }
+    
+    private func updateBlockViewModels(_ blocks: [IBlock]) {
+        var updatedCellViewModels = [BlockCellViewModel]()
+        
+        for block in blocks {
+            switch block {
+            case let block as Returning:
+                updatedCellViewModels.append(ReturningBlockCellViewModel(style: .presentation))
+                
+            case let block as Function:
+                updatedCellViewModels.append(FunctionBlockCellViewModel(returnType: .arrayString, style: .work))
+            case let block as Variable:
+                updatedCellViewModels.append(VariableBlockCellViewModel(blockType: .assignment,
+                                                                        variableType: block.type,
+                                                                        style: .work))
+                
+            case let block as Condition:
+                updatedCellViewModels.append(ConditionBlockCellViewModel(conditionType: block.type,
+                                                                         style: .work))
+                
+            case let block as Output:
+                updatedCellViewModels.append(OutputBlockCellViewModel(outputType: block.type, style: .work))
+                
+            case let block as Flow:
+                updatedCellViewModels.append(FlowBlockCellViewModel(flowType: block.type,
+                                                                    style: .work))
+                
+            case let block as Loop:
+                
+                if block.type == .forLoop {
+                    updatedCellViewModels.append(ForLoopBlockCellViewModel(style: .work))
+                } else {
+                    updatedCellViewModels.append(WhileLoopBlockCellViewModel(style: .work))
+                }
+                
+            case let block as ArrayMethod:
+                updatedCellViewModels.append(ArrayMethodBlockCellViewModel(methodType: block.type,
+                                                                           style: .work))
+                
+            default: continue
+            }
+        }
+        
+        cellViewModels.value = updatedCellViewModels
     }
     
     private func getConsoleContent() -> String {
@@ -180,8 +229,18 @@ extension WorkspaceViewModel  {
                     let imageData = imageData
                 else { return }
                 
-                let algorithm = Algorithm(name: docName, blocks: getBlocks(), imageData: imageData)
+                let algorithm = Algorithm(name: docName, imageData: imageData, blocks: getBlocks())
+                print("algorithm.variables - \(algorithm.getBlocks())")
                 algorithmRepository.addAlgorithm.send(algorithm)
+            }
+            .store(in: &subscriptions)
+        
+        didShowSavedAlgorithm
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                updateBlockViewModels($0)
+                didUpdateBlocksTable.send()
             }
             .store(in: &subscriptions)
     }

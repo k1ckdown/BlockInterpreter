@@ -8,17 +8,11 @@ enum FlowType: CaseIterable, Codable {
 }
 
 class Flow: IBlock {
-    let id: Int
     let type: FlowType
     
     init(id: Int, type: FlowType) {
-        self.id = id
         self.type = type
-        super.init()
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        super.init(id: id)
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -26,10 +20,19 @@ class Flow: IBlock {
         case type
       }
     
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(FlowType.self, forKey: .type)
+        
+        try super.init(from: decoder)
+    }
+    
     override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(type, forKey: .type)
+        
+        try super.encode(to: encoder)
       }
 }
 

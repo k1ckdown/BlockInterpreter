@@ -9,17 +9,21 @@ final class OutputBlockCellViewModel: BlockCellViewModel {
     
     var outputValue: String?
     
-    private(set) var title: String
+    var title: String {
+        outputType.rawValue.uppercased()
+    }
+    
+    private(set) var outputType: OutputType
     private(set) var placeholder: String
     
-    init(style: BlockCellStyle) {
-        title = "PRINT"
+    init(outputType: OutputType, style: BlockCellStyle) {
+        self.outputType = outputType
         placeholder = "output"
         super.init(type: .output, style: style)
     }
     
     override func copyToWork() -> OutputBlockCellViewModel {
-        let copy = OutputBlockCellViewModel(style: .work)
+        let copy = OutputBlockCellViewModel(outputType: outputType, style: .work)
         copy.outputValue = outputValue
         
         return copy

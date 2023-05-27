@@ -19,9 +19,9 @@ final class FunctionBlockCell: BlockCell {
             }
             
             enum FunctionNameTextField {
-                static let insetLeading: CGFloat = 10
+                static let insetLeading: CGFloat = 7
                 static let insetTopBottom: CGFloat = 17
-                static let multiplierWidth: CGFloat = 0.18
+                static let multiplierWidth: CGFloat = 0.16
             }
             
             enum OpenBracketLabel {
@@ -31,7 +31,7 @@ final class FunctionBlockCell: BlockCell {
             enum ArgumentsTextField {
                 static let insetLeading: CGFloat = 2
                 static let insetTopBottom: CGFloat = 17
-                static let multiplierWidth: CGFloat = 0.25
+                static let multiplierWidth: CGFloat = 0.22
             }
             
             enum CloseBracketLabel {
@@ -42,14 +42,14 @@ final class FunctionBlockCell: BlockCell {
                 static let insetLeading: CGFloat = 2
             }
             
-            enum ReturnTypeLabel {
+            enum ReturnTypeButton {
                 static let insetLeading: CGFloat = 2
             }
         
     }
 
     private let blockTitleLabel = BlockTitleLabel()
-    private let returnTypeLabel = BlockTitleLabel()
+    private let returnTypeButton = VariableTypeButton()
     private lazy var arrowImageView = UIImageView()
     
     private(set) var argumentsTextField = BlockTextField()
@@ -57,6 +57,12 @@ final class FunctionBlockCell: BlockCell {
     
     private let openBracketLabel = BlockSeparatorLabel(separatorType: .bracket(.open))
     private let closeBracketLabel = BlockSeparatorLabel(separatorType: .bracket(.close))
+    
+    private var viewModel: FunctionBlockCellViewModel? {
+        didSet {
+            setupBindings()
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -78,10 +84,23 @@ final class FunctionBlockCell: BlockCell {
     func configure(with viewModel: FunctionBlockCellViewModel) {
         super.configure(with: viewModel)
         
+        self.viewModel = viewModel
         blockTitleLabel.text = viewModel.title
+        returnTypeButton.title = viewModel.typeTitle
         argumentsTextField.text = viewModel.argumentsString
         functionNameTextField.text = viewModel.functionName
     }
+    
+    private func updateAppearanceTypeButton() {
+        UIView.transition(
+            with: returnTypeButton,
+            duration: 0.4,
+            options: [.transitionFlipFromRight]
+        ) {
+            self.returnTypeButton.title = self.viewModel?.typeTitle
+        }
+    }
+
     
     private func setup() {
         setupContainerView()
@@ -91,7 +110,7 @@ final class FunctionBlockCell: BlockCell {
         setupArgumentsTextField()
         setupCloseBracketLabel()
         setupArrowImageView()
-        setupReturnTypeLabel()
+        setupReturnTypeButton()
     }
     
     private func setupContainerView() {
@@ -158,15 +177,25 @@ final class FunctionBlockCell: BlockCell {
         }
     }
     
-    private func setupReturnTypeLabel() {
-        containerView.addSubview(returnTypeLabel)
+    private func setupReturnTypeButton() {
+        containerView.addSubview(returnTypeButton)
         
-        returnTypeLabel.text = "Void"
-        
-        returnTypeLabel.snp.makeConstraints { make in
-            make.leading.equalTo(arrowImageView.snp.trailing).offset(Constants.ReturnTypeLabel.insetLeading)
+        returnTypeButton.snp.makeConstraints { make in
+            make.width.equalTo(60)
+            make.leading.equalTo(arrowImageView.snp.trailing).offset(Constants.ReturnTypeButton.insetLeading)
             make.centerY.equalToSuperview()
         }
     }
     
+}
+
+private extension FunctionBlockCell {
+    func setupBindings() {
+        returnTypeButton.tapPublisher
+            .sink { [weak self] in
+                self?.viewModel?.didChangeType()
+                self?.updateAppearanceTypeButton()
+            }
+            .store(in: &subscriptions)
+    }
 }

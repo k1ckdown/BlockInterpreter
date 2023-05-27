@@ -105,6 +105,7 @@ final class CodeBlocksViewController: UIViewController {
         
         blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
         blocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
+        blocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.identifier)
         blocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
         blocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
         blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
@@ -305,30 +306,56 @@ extension CodeBlocksViewController: UITableViewDataSource {
             }
             
         case .functions:
-            guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
-                let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
-            else { return .init() }
-            
-            cell.configure(with: cellViewModel)
-            
-            cell.functionNameTextField.textPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] text in
-                    guard let text = text else { return }
-                    cellViewModel?.functionName = text
-                }
-                .store(in: &subscriptions)
-            
-            cell.argumentsTextField.textPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak cellViewModel] text in
-                    guard let text = text else { return }
-                    cellViewModel?.argumentsString = text
-                }
-                .store(in: &subscriptions)
-            
-            return cell
+            if cellViewModel.type.isEqualTo(.function) {
+                guard
+                    let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
+                    let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
+                else { return .init() }
+                
+                cell.configure(with: cellViewModel)
+                
+                cell.functionNameTextField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.functionName = text
+                    }
+                    .store(in: &subscriptions)
+                
+                cell.argumentsTextField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.argumentsString = text
+                    }
+                    .store(in: &subscriptions)
+                
+                return cell
+                
+            } else if cellViewModel.type.isEqualTo(.returnBlock) {
+                guard
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: ReturningBlockCell.identifier,
+                        for: indexPath
+                    ) as? ReturningBlockCell,
+                    let cellViewModel = cellViewModel as? ReturningBlockCellViewModel
+                else { return .init() }
+                
+                cell.configure(with: cellViewModel)
+                
+                cell.textField.textPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak cellViewModel] text in
+                        guard let text = text else { return }
+                        cellViewModel?.returnValue = text
+                    }
+                    .store(in: &cell.subscriptions)
+                
+                return cell
+                
+            } else {
+                return .init()
+            }
             
         case .arrayMethods:
             guard

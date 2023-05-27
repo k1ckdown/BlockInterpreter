@@ -83,6 +83,12 @@ extension HubViewController: UICollectionViewDataSource {
 
 private extension HubViewController {
     func setupBindings() {
+        savedAlgorithmsCollectionView.didSelectItemPublisher
+            .sink { [weak self] in
+                self?.viewModel.didSelectedAlgorithm.send($0)
+            }
+            .store(in: &subscriptions)
+        
         viewModel.didUpdateCollection
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in

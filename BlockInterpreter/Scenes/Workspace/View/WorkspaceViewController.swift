@@ -108,7 +108,7 @@ final class WorkspaceViewController: UIViewController {
     private func enableEditingMode() {
         hideTabBar()
         showOptions()
-        navigationController?.setNavigationBarHidden(true, animated: true)
+        navigationController?.navigationBar.isHidden = true
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -119,7 +119,7 @@ final class WorkspaceViewController: UIViewController {
     private func disableEditMode() {
         showTabBar()
         hideOptions()
-        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.isHidden = false
         
         workBlocksTableView.visibleCells.forEach {
             guard let cell = $0 as? BlockCell else { return }
@@ -201,6 +201,7 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
         workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
         workBlocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.identifier)
+        workBlocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.identifier)
         
         workBlocksTableView.addGestureRecognizer(workBlocksTapGesture)
         workBlocksTableView.addGestureRecognizer(workBlocksLongPressGesture)
@@ -485,6 +486,33 @@ extension WorkspaceViewController: UITableViewDataSource {
             
             return cell
             
+        case .returnBlock:
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ReturningBlockCell.identifier,
+                    for: indexPath
+                ) as? ReturningBlockCell,
+                let cellViewModel = cellViewModel as? ReturningBlockCellViewModel
+            else { return .init() }
+            
+            cell.configure(with: cellViewModel)
+            
+            cell.textField.textPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak cellViewModel] text in
+                    guard let text = text else { return }
+                    cellViewModel?.returnValue = text
+                }
+                .store(in: &cell.subscriptions)
+            
+            cell.deleteButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.removeBlock.send(cellViewModel)
+                }
+                .store(in: &cell.subscriptions)
+            
+            return cell
+            
         case .arrayMethod:
             guard
                 let cell = tableView.dequeueReusableCell(
@@ -616,7 +644,6 @@ private extension WorkspaceViewController {
         saveBarButton.tapPublisher
             .sink { [weak self] in
                 self?.presentAlertToSaveAlgorithm()
-                self?.introImageView.image = self?.workBlocksTableView.takeScreenshot()
             }
             .store(in: &subscriptions)
         

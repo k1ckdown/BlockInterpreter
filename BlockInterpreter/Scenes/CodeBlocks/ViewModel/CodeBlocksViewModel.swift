@@ -68,7 +68,9 @@ extension CodeBlocksViewModel {
     }
     
     private func updateCellViewModels() {
-        cellViewModels[BlocksSection.output.rawValue] = [OutputBlockCellViewModel(style: .presentation)]
+        cellViewModels[BlocksSection.output.rawValue] = OutputType.allCases.map {
+            OutputBlockCellViewModel(outputType: $0, style: .presentation)
+        }
         
         cellViewModels[BlocksSection.commonFlow.rawValue] = [
             FlowBlockCellViewModel(flowType: .begin, style: .presentation),
@@ -93,7 +95,10 @@ extension CodeBlocksViewModel {
             ForLoopBlockCellViewModel(style: .presentation)
         ]
         
-        cellViewModels[BlocksSection.functions.rawValue] = [FunctionBlockCellViewModel(style: .presentation)]
+        cellViewModels[BlocksSection.functions.rawValue] = [
+            FunctionBlockCellViewModel(returnType: .void, style: .presentation),
+            ReturningBlockCellViewModel(style: .presentation)
+        ]
         
         cellViewModels[BlocksSection.arrayMethods.rawValue] = ArrayMethodType.allCases.map {
             ArrayMethodBlockCellViewModel(methodType: $0, style: .presentation)

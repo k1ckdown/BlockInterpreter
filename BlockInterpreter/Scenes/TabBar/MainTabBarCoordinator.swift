@@ -78,15 +78,24 @@ final class MainTabBarCoordinator: BaseCoordinator {
 
 extension MainTabBarCoordinator: CodeBlocksCoordinatorDelegate {
     func goToWorkspace(blocks: [BlockCellViewModel]) {
-        showWorkspace(blocks: blocks)
+        workspaceViewModel.addBlocks.send(blocks)
+        showWorkspace()
+    }
+}
+
+// MARK: - HubCoordinatorDelegate
+
+extension MainTabBarCoordinator: HubCoordinatorDelegate {
+    func goToWorkspaceWithAlgorithm(_ algorithm: [IBlock]) {
+        workspaceViewModel.didShowSavedAlgorithm.send(algorithm)
+        showWorkspace()
     }
 }
 
 // MARK: - Navigation
 
 private extension MainTabBarCoordinator {
-    func showWorkspace(blocks: [BlockCellViewModel]) {
-        workspaceViewModel.addBlocks.send(blocks)
+    func showWorkspace() {
         mainTabBarController.tabBar(mainTabBarController.tabBar,
                                     didSelect: mainTabBarController.viewControllers?[TabFlow.workspace.orderNumber].tabBarItem ?? .init())
         selectTab(with: .workspace)

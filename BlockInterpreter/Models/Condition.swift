@@ -18,19 +18,21 @@ enum ConditionType: String, CaseIterable, Codable {
 
 
 class Condition: IBlock {
-    let id: Int
     let type: ConditionType
     let value: String
     
     init(id: Int, type: ConditionType, value: String) {
-        self.id = id
         self.type = type
         self.value = value
-        super.init()
+        super.init(id: id)
     }
     
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(ConditionType.self, forKey: .type)
+        value = try container.decode(String.self, forKey: .value)
+        
+        try super.init(from: decoder)
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -44,6 +46,8 @@ class Condition: IBlock {
         try container.encode(id, forKey: .id)
         try container.encode(type, forKey: .type)
         try container.encode(value, forKey: .value)
+        
+        try super.encode(to: encoder)
       }
 }
 

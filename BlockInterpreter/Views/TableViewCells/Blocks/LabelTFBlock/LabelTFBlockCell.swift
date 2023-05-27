@@ -10,13 +10,13 @@ class LabelTFBlockCell: BlockCell {
     private enum Constants {
         
             enum Label {
-                static let insetLeading: CGFloat = 19
+                static let insetLeading: CGFloat = 15
             }
         
             enum TextField {
-                static let insetTrailing: CGFloat = 22
+                static let insetTrailing: CGFloat = -7
                 static let insetTopBottom: CGFloat = 12
-                static let multiplierWidth: CGFloat = 0.63
+                static let multiplierWidth: CGFloat = 0.6
             }
         
     }
@@ -39,7 +39,7 @@ class LabelTFBlockCell: BlockCell {
         }
     }
     
-    private let label = BlockTitleLabel()
+    private(set) var label = BlockTitleLabel()
     private(set) var textField = BlockTextField()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -69,7 +69,7 @@ class LabelTFBlockCell: BlockCell {
         textField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(Constants.TextField.insetTopBottom)
             make.width.equalToSuperview().multipliedBy(Constants.TextField.multiplierWidth)
-            make.trailing.equalToSuperview().inset(Constants.TextField.insetTrailing)
+            make.trailing.equalToSuperview().offset(Constants.TextField.insetTrailing)
         }
     }
     

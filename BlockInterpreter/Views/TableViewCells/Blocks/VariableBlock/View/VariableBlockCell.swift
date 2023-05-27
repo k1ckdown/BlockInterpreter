@@ -106,6 +106,17 @@ final class VariableBlockCell: BlockCell {
         }
     }
     
+    private func updateAppearanceTypeButton() {
+        UIView.transition(
+            with: variableTypeButton,
+            duration: 0.4,
+            options: [.transitionFlipFromLeft]
+        ) {
+            self.variableTypeButton.title = self.viewModel?.typeTitle
+        }
+    }
+
+    
     private func setup() {
         setupContainerView()
         setupVariableTypeButton()
@@ -173,17 +184,6 @@ final class VariableBlockCell: BlockCell {
             make.height.equalToSuperview().multipliedBy(Constants.VariableValueTextField.multiplierHeight)
         }
     }
-    
-    private func updateAppearance() {
-        UIView.transition(
-            with: variableTypeButton,
-            duration: 0.4,
-            options: [.transitionFlipFromLeft]
-        ) {
-            self.variableTypeButton.title = self.viewModel?.typeTitle
-        }
-    }
-
 }
 
 private extension VariableBlockCell {
@@ -191,7 +191,7 @@ private extension VariableBlockCell {
         variableTypeButton.tapPublisher
             .sink { [weak self] in
                 self?.viewModel?.didChangeType()
-                self?.updateAppearance()
+                self?.updateAppearanceTypeButton()
             }
             .store(in: &subscriptions)
     }

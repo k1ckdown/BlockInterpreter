@@ -52,6 +52,8 @@ enum BlockCellStyle {
             return 0.97
         case .arrayMethod:
             return 0.87
+        case .returnBlock:
+            return 0.93
         }
     }
 }

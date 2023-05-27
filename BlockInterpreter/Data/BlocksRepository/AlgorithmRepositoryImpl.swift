@@ -36,9 +36,7 @@ final class AlgorithmRepositoryImpl: AlgorithmRepository {
         let encoder = JSONEncoder()
         
         do {
-            let dto = AlgorithmDTO(name: algorithm.name, blocks: algorithm.blocks, imageData: algorithm.imageData)
-            
-            let data = try encoder.encode(dto)
+            let data = try encoder.encode(algorithm)
             let jsonString = String(decoding: data, as: UTF8.self)
             
             saveDocument(contents: jsonString, documentName: documentName) { error in
@@ -59,8 +57,8 @@ final class AlgorithmRepositoryImpl: AlgorithmRepository {
             case .success(let data):
                 
                 do {
-                    let algorithmDto = try decoder.decode(AlgorithmDTO.self, from: data)
-                    completion(.success(algorithmDto.toAlgorithm()))
+                    let algorithm = try decoder.decode(Algorithm.self, from: data)
+                    completion(.success(algorithm))
                 } catch {
                     completion(.failure(error))
                 }
@@ -81,8 +79,7 @@ final class AlgorithmRepositoryImpl: AlgorithmRepository {
             
             for url in fileUrls {
                 let documentName = url.lastPathComponent
-                print(documentName)
-                
+//                removeAlgorithm(from: documentName)
                 loadAlgorithm(from: documentName) { result in
                     switch result {
                     case .success(let algorithm):

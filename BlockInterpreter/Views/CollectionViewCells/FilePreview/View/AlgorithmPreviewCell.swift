@@ -27,24 +27,29 @@ final class AlgorithmPreviewCell: UICollectionViewCell {
     }
     
     private func setup() {
+        setupSuperView()
         setupDocumentNameTitleLabel()
         setupPreviewImageView()
     }
     
     private func setupSuperView() {
         backgroundColor = .appMain
+        layer.cornerRadius = 15
     }
     
     private func setupDocumentNameTitleLabel() {
         addSubview(documentNameTitleLabel)
         
-        documentNameTitleLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
+        documentNameTitleLabel.font = .documentTitle
         documentNameTitleLabel.textColor = .appWhite
         documentNameTitleLabel.textAlignment = .center
         documentNameTitleLabel.backgroundColor = .appGray
+        layer.cornerRadius = 8
+        clipsToBounds = true
         
         documentNameTitleLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(10)
+            make.height.equalTo(30)
             make.top.equalToSuperview().offset(8)
         }
     }
@@ -56,8 +61,8 @@ final class AlgorithmPreviewCell: UICollectionViewCell {
         
         previewImageView.snp.makeConstraints { make in
             make.top.equalTo(documentNameTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(25)
-            make.bottom.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview().inset(5)
         }
     }
 }

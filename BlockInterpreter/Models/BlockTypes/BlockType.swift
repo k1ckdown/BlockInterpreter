@@ -12,6 +12,7 @@ enum BlockType {
     case condition
     case loop(LoopType)
     case function
+    case returnBlock
     case arrayMethod
     
     func isEqualTo(_ otherType: BlockType) -> Bool {
@@ -19,6 +20,10 @@ enum BlockType {
         case (.output, .output):
             return true
         case (.flow, .flow):
+            return true
+        case (.function, .function):
+            return true
+        case (.returnBlock, .returnBlock):
             return true
         case (.arrayMethod, .arrayMethod):
             return true

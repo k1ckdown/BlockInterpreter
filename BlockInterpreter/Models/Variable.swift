@@ -30,21 +30,24 @@ enum VariableType: String, CaseIterable, Codable {
 
 
 class Variable: IBlock {
-    let id: Int
     let type: VariableType
     let name: String
     let value: String
     
     init(id: Int, type: VariableType, name: String, value: String) {
-        self.id = id
         self.type = type
         self.name = name
         self.value = value
-        super.init()
+        super.init(id: id)
     }
     
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(VariableType.self, forKey: .type)
+        name = try container.decode(String.self, forKey: .name)
+        value = try container.decode(String.self, forKey: .value)
+        
+        try super.init(from: decoder)
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -60,6 +63,8 @@ class Variable: IBlock {
         try container.encode(type, forKey: .type)
         try container.encode(name, forKey: .name)
         try container.encode(value, forKey: .value)
+        
+        try super.encode(to: encoder)
       }
 }
 

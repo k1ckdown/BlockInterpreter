@@ -13,23 +13,24 @@ enum ArrayMethodType: String, CaseIterable, Codable {
 }
 
 class ArrayMethod: IBlock {
-    let id: Int
     let type: ArrayMethodType
     let name: String
     let value: String
-    let isDebug: Bool
     
     init(id: Int, type: ArrayMethodType, name: String, value: String, isDebug: Bool) {
-        self.id = id
         self.type = type
         self.name = name
         self.value = value
-        self.isDebug = isDebug
-        super.init()
+        super.init(id: id)
     }
     
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(ArrayMethodType.self, forKey: .type)
+        name = try container.decode(String.self, forKey: .name)
+        value = try container.decode(String.self, forKey: .value)
+        
+        try super.init(from: decoder)
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -46,7 +47,8 @@ class ArrayMethod: IBlock {
         try container.encode(type, forKey: .type)
         try container.encode(name, forKey: .name)
         try container.encode(value, forKey: .value)
-        try container.encode(isDebug, forKey: .isDebug)
+        
+        try super.encode(to: encoder)
       }
 }
 
