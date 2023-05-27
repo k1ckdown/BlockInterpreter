@@ -992,7 +992,6 @@ class Calculate {
             return Token(.string, string)
         } else if currentChar == "." {
             position += 1
-            //           return Token(.double, ".")
         }
 
         position += 1
@@ -1006,7 +1005,7 @@ class Calculate {
 
     }
 
-    private func getToken(_ currentChar: Character)throws -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
+    private func getToken(_ currentChar: Character)throws -> Token{
         switch currentChar {
         case "“":
             return Token(.leftQuote, "“")
@@ -1618,7 +1617,6 @@ class ArrayBuilder{
 }
 
 class FunctionBuilder{
-    // хранит в себе: имя функции, тип возвращаемого значения, типы аргументов и их имена, тело функции
     private var functionName: String
     private var functionReturnType: VariableType
     private var parameters: [String: VariableType]
@@ -1897,7 +1895,7 @@ class Interpreter {
             }
         }
         var functionBuilder: FunctionBuilder? = nil
-        for dictionary in mapOfFunctionStack.reversed(){  // достать subtree по названию
+        for dictionary in mapOfFunctionStack.reversed(){
             if let builder = dictionary[functionName]{
                 functionBuilder = builder
                 break
@@ -2799,5 +2797,3 @@ do {
 }
 print(interpreter.getPrintResult())
 
-
-//“ ”
