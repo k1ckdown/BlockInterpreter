@@ -74,7 +74,7 @@ enum ErrorType: Error {
             return "Invalid function parameters count"
         case .invalidFunctionParameterTypeError:
             return "Invalid function parameter type"
-        case invalidParseValueError:
+        case .invalidParseValueError:
             return "Invalid Parse Value Error"
 
         }
