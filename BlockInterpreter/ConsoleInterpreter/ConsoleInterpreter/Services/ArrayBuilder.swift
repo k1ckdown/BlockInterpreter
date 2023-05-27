@@ -26,7 +26,7 @@ class ArrayBuilder{
         do {
             try initializeValues()
         } catch let errorType as ErrorType {
-            self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            self.consoleOutput.errorOutputValue += String(describing: errorType)
             self.consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
@@ -125,7 +125,7 @@ class ArrayBuilder{
             self.count = try self.updateArrayCount()
             self.result = try self.handleExpression()
         } catch let errorType as ErrorType {
-            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
@@ -183,7 +183,6 @@ class ArrayBuilder{
             if component.first == "[" {
                 throw ErrorType.unsupportedArrayError
             }
-            print(childrenType, component,"childrenType, component")
             try expressionSolver.setExpressionAndType(String(component), childrenType, nodeId)
 
             let solvedExpression = expressionSolver.getSolvedExpression()

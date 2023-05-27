@@ -23,7 +23,7 @@ class Tree {
                 rootNode.addChild(variableNode)
                 index += 1
             case let printBlock as Output:
-                let printingNode = buildPrintingNode(printing: printBlock)
+                let printingNode = buildOutputNode(printing: printBlock)
                 rootNode.addChild(printingNode)
                 index += 1
             case is Loop:
@@ -106,13 +106,11 @@ class Tree {
         return nil
     }
 
-    private func getMatchingDelimiterIndex() -> Int? {
+    private func getMatchingFlowIndex() -> Int? {
         var countBegin = 0
         for i in (index + 1)..<blocks.count {
-            guard let block = blocks[i] as? Flow else {
-                continue
-            }
-            countBegin += countForMatchingDelimiter(block)
+            guard let block = blocks[i] as? Flow else { continue }
+            countBegin += countForMatchingFlow(block)
             if countBegin == 0 {
                 return i
             }
@@ -120,27 +118,27 @@ class Tree {
         return nil
     }
 
-    private func countForMatchingDelimiter(_ block: Flow) -> Int {
-        if isEndDelimiter(block) {
+    private func countForMatchingFlow(_ block: Flow) -> Int {
+        if isEnd(block) {
             return -1
-        } else if isBeginDelimiter(block) {
+        } else if isBegin(block) {
             return 1
         }
         return 0
     }
 
-    private func isBeginDelimiter(_ block: Flow) -> Bool {
+    private func isBegin(_ block: Flow) -> Bool {
         block.type == FlowType.begin
     }
 
-    private func isEndDelimiter(_ block: Flow) -> Bool {
+    private func isEnd(_ block: Flow) -> Bool {
         block.type == FlowType.end
     }
 
 
     private func getBlockAndMoveIndex() -> [IBlock] {
         var wholeBlock: [IBlock] = []
-        guard let endIndex = getMatchingDelimiterIndex() else {
+        guard let endIndex = getMatchingFlowIndex() else {
             return wholeBlock
         }
         wholeBlock.append(blocks[index])
@@ -162,7 +160,7 @@ class Tree {
     }
 
 
-    private func buildPrintingNode(printing: Output) -> Node {
+    private func buildOutputNode(printing: Output) -> Node {
         let node = Node(value: printing.value, type: AllTypes.print,
                 id: printing.id, isDebug: printing.isDebug)
         return node
@@ -273,7 +271,7 @@ class Tree {
                 let variableNode = buildVariableNode(variable: variableBlock)
                 node?.addChild(variableNode)
             } else if let printBlock = block[index] as? Output {
-                let printingNode = buildPrintingNode(printing: printBlock)
+                let printingNode = buildOutputNode(printing: printBlock)
                 node?.addChild(printingNode)
             } else if let method = block[index] as? ArrayMethod {
                 let methodNode = buildMethodsOfList(method: method)
@@ -295,7 +293,7 @@ class Tree {
                             nestedBlocks.append(block[additionIndex])
                         }
 
-                        countBegin += countForMatchingDelimiter(blockEnd)
+                        countBegin += countForMatchingFlow(blockEnd)
                         if countBegin == 0 {
                             break
                         }
@@ -328,7 +326,7 @@ class Tree {
                 var countBegin: Int = 0
                 while additionIndex < block.count {
                     if let blockEnd = block[additionIndex] as? Flow {
-                        countBegin += countForMatchingDelimiter(blockEnd)
+                        countBegin += countForMatchingFlow(blockEnd)
                         if countBegin == 0 {
                             break
                         }
@@ -349,7 +347,7 @@ class Tree {
                 var countBegin: Int = 0
                 while additionIndex < block.count {
                     if let blockEnd = block[additionIndex] as? Flow {
-                        countBegin += countForMatchingDelimiter(blockEnd)
+                        countBegin += countForMatchingFlow(blockEnd)
                         if countBegin == 0 {
                             break
                         }

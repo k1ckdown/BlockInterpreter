@@ -23,7 +23,7 @@ class StringNormalizer {
         do{
             return try normalizeString(expression)
         } catch let errorType as ErrorType {
-            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
@@ -60,7 +60,6 @@ class StringNormalizer {
     private func normalizeString(_ expression: String)throws -> String {
         var result = ""
         do {
-            //let components = try getFixedString(expression).split(whereSeparator: { String($0) == " " })
             let components = splitStringBySpace(try getFixedString(expression))
             for component in components {
                 if let intValue = Int(component) {
@@ -73,7 +72,7 @@ class StringNormalizer {
             }
             return result
         } catch let errorType as ErrorType{
-            consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
@@ -88,7 +87,7 @@ class StringNormalizer {
                 do {
                     return try replaceSigns(expression, sign)
                 } catch let errorType as ErrorType {
-                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorOutputValue += String(describing: errorType)
                     consoleOutput.errorIdArray.append(nodeId)
                     throw consoleOutput
                 }
@@ -97,7 +96,7 @@ class StringNormalizer {
         }
         var updatedExpression = expression
         if expression.contains("[") && expression.contains("]"){
-            updatedExpression = try replaceArray(expression)
+            updatedExpression = try fixArrayBracketIndex(expression)
         }
 
         return addWhitespaces(updatedExpression)
@@ -160,7 +159,7 @@ class StringNormalizer {
         return updatedExpression
     }
 
-    public func replaceArray(_ expression: String) throws -> String{
+    public func fixArrayBracketIndex(_ expression: String) throws -> String{
 
         var updatedExpression = ""
         var index = 0
@@ -182,11 +181,11 @@ class StringNormalizer {
                 do {
                     let normalizedString = try normalizeString(String(str))
                     let calculate = Calculate(normalizedString, nodeId)
-                    let computedValue = try calculate.compare()
+                    let computedValue = try calculate.compute()
 
                     updatedExpression += "[\(Int(computedValue))]"
                 } catch let errorType as ErrorType {
-                    consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+                    consoleOutput.errorOutputValue += String(describing: errorType)
                     consoleOutput.errorIdArray.append(nodeId)
                     throw consoleOutput
                 }

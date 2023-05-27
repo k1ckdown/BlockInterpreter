@@ -26,7 +26,7 @@ class Node {
     private(set) var type: AllTypes
     private(set) var parent: Node?
     private(set) var children: [Node]
-    private var countWasHere: Int
+    private var countVisitedNode: Int
     private(set) var id: Int
     private(set) var isDebug: Bool
 
@@ -35,7 +35,7 @@ class Node {
         self.type = type
         self.id = id
         self.isDebug = isDebug
-        countWasHere = 0
+        countVisitedNode = 0
         children = []
     }
 
@@ -43,10 +43,10 @@ class Node {
         children.append(child)
         child.parent = self
     }
-    func getCountWasHere() -> Int {
-        return countWasHere
+    func getCountVisitedNode() -> Int {
+        return countVisitedNode
     }
-    func setCountWasHere(_ countWasHere: Int) {
-        self.countWasHere = countWasHere
+    func setCountVisitedNode(_ countVisitedNode: Int) {
+        self.countVisitedNode = countVisitedNode
     }
 }

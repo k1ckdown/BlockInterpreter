@@ -28,7 +28,7 @@ class ExpressionSolver{
         do {
             try updateSolvedExpression()
         } catch let errorType as ErrorType {
-            self.consoleOutput.errorOutputValue += String(describing: errorType) + "\n"
+            self.consoleOutput.errorOutputValue += String(describing: errorType)
             self.consoleOutput.errorIdArray.append(nodeId)
             throw consoleOutput
         }
@@ -37,11 +37,10 @@ class ExpressionSolver{
     private func updateSolvedExpression() throws{
         let calculate = Calculate("", nodeId)
         var updatedExpression = expression
-        // && first instead ||
         if type == .string && (expression.contains("“") && expression.contains("”")) {
             updatedExpression = updatedExpression.replacingOccurrences(of: "” ", with: "”").replacingOccurrences(of: " “", with: "“")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = try calculate.compareString()
+            let calculatedValue = try calculate.computeString()
             if expression.contains("“") && expression.contains("”") {
                 self.solvedExpression = "“" +  calculatedValue + "”"
             } else {
@@ -52,7 +51,7 @@ class ExpressionSolver{
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
                     .replacingOccurrences(of: "“", with: "").replacingOccurrences(of: "”", with: "")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = try calculate.compare()
+            let calculatedValue = try calculate.compute()
 
             if type == .int {
                 self.solvedExpression = String(Int(calculatedValue))
@@ -69,7 +68,7 @@ class ExpressionSolver{
         } else if type == .bool || type == .int || type == .double || type == .string {
             updatedExpression = updatedExpression.replacingOccurrences(of: "true", with: "1").replacingOccurrences(of: "false", with: "0")
             calculate.setText(text: updatedExpression)
-            let calculatedValue = try calculate.compare()
+            let calculatedValue = try calculate.compute()
 
             if type == .int {
                 self.solvedExpression = String(Int(calculatedValue))

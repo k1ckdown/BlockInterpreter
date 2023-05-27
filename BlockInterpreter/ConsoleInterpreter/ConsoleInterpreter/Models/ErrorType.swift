@@ -3,7 +3,9 @@ import Foundation
 enum ErrorType: Error {
     case nilTokenError
     case isNotDeclaredVariableError
+    case isNotDeclaredFunctionError
     case alreadyExistsVariableError
+    case alreadyExistsFunctionError
     case variableNotFoundError
     case integerOwerflowError
     case invalidSyntaxError
@@ -17,6 +19,11 @@ enum ErrorType: Error {
     case invalidArrayValueError
     case invalidVariableNameError
     case invalidNodeError
+    case invalidFunctionReturnTypeError
+    case invalidFunctionParameterNameError
+    case invalidFunctionParametersCountError
+    case invalidFunctionParameterTypeError
+
 
 
 
@@ -54,6 +61,19 @@ enum ErrorType: Error {
             return "Variable not found"
         case .invalidNodeError:
             return "Invalid node"
+        case .alreadyExistsFunctionError:
+            return "Already exists function"
+        case .invalidFunctionReturnTypeError:
+            return "Invalid function return type"
+        case .invalidFunctionParameterNameError:
+            return "Invalid function parameter name"
+        case .isNotDeclaredFunctionError:
+            return "Is not declared function"
+        case .invalidFunctionParametersCountError:
+            return "Invalid function parameters count"
+        case .invalidFunctionParameterTypeError:
+            return "Invalid function parameter type"
+
         }
     }
     var value: ErrorType {

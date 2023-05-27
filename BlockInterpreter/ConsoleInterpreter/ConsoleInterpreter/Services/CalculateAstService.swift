@@ -26,7 +26,7 @@ class Calculate {
     }
 
 
-    public func compare() throws -> Double {
+    public func compute() throws -> Double {
         currentToken = try getNextToken()
 
         var result = try term()
@@ -141,7 +141,7 @@ class Calculate {
             return try factor() * -1
         case .leftBrace:
             try moveToken(.leftBrace)
-            let result = try compare()
+            let result = try compute()
             try moveToken(.rightBrace)
             return Double(result)
         case .eof:
@@ -151,7 +151,7 @@ class Calculate {
         }
     }
 
-    public func compareString() throws -> String{
+    public func computeString() throws -> String{
         currentToken = try getNextToken()
         var result = ""
         result += try termString()
@@ -264,7 +264,7 @@ class Calculate {
             return token.getValue() ?? ""
         case .leftBrace:
             try moveToken(.leftBrace)
-            let result = try compareString()
+            let result = try computeString()
             try moveToken(.rightBrace)
             return result
         case .eof:
@@ -333,7 +333,6 @@ class Calculate {
             return Token(.string, string)
         } else if currentChar == "." {
             position += 1
-            //           return Token(.double, ".")
         }
 
         position += 1
@@ -347,7 +346,7 @@ class Calculate {
 
     }
 
-    private func getToken(_ currentChar: Character)throws -> Token{ // функция для получения токена в виде TokenType и его символа (только арифметические операции)
+    private func getToken(_ currentChar: Character)throws -> Token{
         switch currentChar {
         case "“":
             return Token(.leftQuote, "“")
@@ -412,7 +411,6 @@ class Calculate {
                 }
             }
         default:
-            print(currentChar)
             throw ErrorType.invalidSyntaxError
         }
     }
