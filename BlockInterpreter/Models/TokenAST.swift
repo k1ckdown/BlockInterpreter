@@ -1,8 +1,10 @@
 import Foundation
- 
+
 
 enum TokenType {
     case integer
+    case double
+    case string
     case plus
     case minus
     case multiply
@@ -19,30 +21,32 @@ enum TokenType {
     case lessEqual
     case logicalAnd
     case logicalOr
+    case leftQuote
+    case rightQuote
 }
 
 
 class Token {
     private var type: TokenType
     private var value: String?
- 
+
     init(_ type: TokenType, _ value: String?) {
         self.type = type
         self.value = value
     }
- 
+
     func getType() -> TokenType {
         return self.type
     }
- 
+
     func setType(type: TokenType) {
         self.type = type
     }
- 
+
     func setValue(value: String?) {
         self.value = value
     }
- 
+
     func getValue() -> String? {
         return value
     }

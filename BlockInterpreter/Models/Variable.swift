@@ -33,11 +33,13 @@ class Variable: IBlock {
     let type: VariableType
     let name: String
     let value: String
+    var isDebug: Bool
     
     init(id: Int, type: VariableType, name: String, value: String) {
         self.type = type
         self.name = name
         self.value = value
+        isDebug = false
         super.init(id: id)
     }
     
@@ -46,6 +48,7 @@ class Variable: IBlock {
         type = try container.decode(VariableType.self, forKey: .type)
         name = try container.decode(String.self, forKey: .name)
         value = try container.decode(String.self, forKey: .value)
+        isDebug = try container.decode(Bool.self, forKey: .isDebug)
         
         try super.init(from: decoder)
     }
@@ -55,6 +58,7 @@ class Variable: IBlock {
         case type
         case name
         case value
+        case isDebug
       }
     
     override func encode(to encoder: Encoder) throws {

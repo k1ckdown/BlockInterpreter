@@ -16,11 +16,13 @@ class ArrayMethod: IBlock {
     let type: ArrayMethodType
     let name: String
     let value: String
+    var isDebug: Bool
     
     init(id: Int, type: ArrayMethodType, name: String, value: String, isDebug: Bool) {
         self.type = type
         self.name = name
         self.value = value
+        self.isDebug = false
         super.init(id: id)
     }
     
@@ -29,6 +31,7 @@ class ArrayMethod: IBlock {
         type = try container.decode(ArrayMethodType.self, forKey: .type)
         name = try container.decode(String.self, forKey: .name)
         value = try container.decode(String.self, forKey: .value)
+        isDebug = try container.decode(Bool.self, forKey: .isDebug)
         
         try super.init(from: decoder)
     }

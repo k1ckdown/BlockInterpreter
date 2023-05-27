@@ -22,9 +22,9 @@ final class FlowBlockCellViewModel: BlockCellViewModel {
             flowBlockStyle = .begin
         case .end:
             flowBlockStyle = .end
-        case .continueCondition:
+        case .continueFlow:
             flowBlockStyle = .continueСondition
-        case .breakCondition:
+        case .breakFlow:
             flowBlockStyle = .breakCondition
         }
         

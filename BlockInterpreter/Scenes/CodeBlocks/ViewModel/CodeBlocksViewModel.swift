@@ -78,8 +78,8 @@ extension CodeBlocksViewModel {
         ]
         
         cellViewModels[BlocksSection.conditionFlow.rawValue] = [
-            FlowBlockCellViewModel(flowType: .breakCondition, style: .presentation),
-            FlowBlockCellViewModel(flowType: .continueCondition, style: .presentation)
+            FlowBlockCellViewModel(flowType: .breakFlow, style: .presentation),
+            FlowBlockCellViewModel(flowType: .continueFlow, style: .presentation)
         ]
         
         cellViewModels[BlocksSection.variables.rawValue] = VariableBlockType.allCases.map {

@@ -20,10 +20,12 @@ enum ConditionType: String, CaseIterable, Codable {
 class Condition: IBlock {
     let type: ConditionType
     let value: String
+    var isDebug: Bool
     
     init(id: Int, type: ConditionType, value: String) {
         self.type = type
         self.value = value
+        isDebug = false
         super.init(id: id)
     }
     
@@ -31,6 +33,7 @@ class Condition: IBlock {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         type = try container.decode(ConditionType.self, forKey: .type)
         value = try container.decode(String.self, forKey: .value)
+        isDebug = try container.decode(Bool.self, forKey: .isDebug)
         
         try super.init(from: decoder)
     }
@@ -38,6 +41,7 @@ class Condition: IBlock {
     private enum CodingKeys: String, CodingKey {
         case id
         case type
+        case isDebug
         case value
       }
     

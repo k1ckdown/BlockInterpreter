@@ -18,7 +18,13 @@ final class InterpreterManager {
     func getConsoleContent(blocks: [IBlock]) -> String {
         tree.setBlocks(blocks)
         tree.buildTree()
-        interpreter.setTreeAST(tree.rootNode)
+        
+        do {
+            try interpreter.traverseTree(tree.rootNode)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
         return interpreter.getPrintResult()
     }
     

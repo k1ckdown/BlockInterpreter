@@ -18,10 +18,12 @@ enum LoopType: Codable {
 class Loop: IBlock {
     let type: LoopType
     let value: String
+    var isDebug: Bool
     
     init(id: Int, type: LoopType, value: String) {
         self.type = type
         self.value = value
+        isDebug = false
         super.init(id: id)
     }
     
@@ -29,6 +31,7 @@ class Loop: IBlock {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         type = try container.decode(LoopType.self, forKey: .type)
         value = try container.decode(String.self, forKey: .value)
+        isDebug = try container.decode(Bool.self, forKey: .isDebug)
         
         try super.init(from: decoder)
     }
@@ -37,6 +40,7 @@ class Loop: IBlock {
         case id
         case type
         case value
+        case isDebug
       }
     
     override func encode(to encoder: Encoder) throws {
