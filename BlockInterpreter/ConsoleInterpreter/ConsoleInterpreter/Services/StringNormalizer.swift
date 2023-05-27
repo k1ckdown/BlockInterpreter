@@ -159,6 +159,55 @@ class StringNormalizer {
         return updatedExpression
     }
 
+
+    private func isCorrectType(_ type: VariableType, _ expression: String) -> Bool{
+        switch type {
+        case .int:
+            return Int(expression) != nil
+        case .bool:
+            return expression == "true" || expression == "false"
+        case .string:
+            return expression.first == "“" && expression.last == "”"
+        case .double:
+            return Double(expression) != nil
+        case .void:
+            return expression == ""
+        case .arrayInt:
+            let elements = expression.split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+            for element in elements{
+                if Int(element) == nil{
+                    return false
+                }
+            }
+            return expression.first == "[" && expression.last == "]"
+
+        case .arrayBool:
+            let elements = expression.split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+            for element in elements{
+                if element != "true" && element != "false"{
+                    return false
+                }
+            }
+            return expression.first == "[" && expression.last == "]"
+        case .arrayString:
+            let elements = expression.split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+            for element in elements{
+                if element.first != "“" || element.last != "”"{
+                    return false
+                }
+            }
+            return expression.first == "[" && expression.last == "]"
+        case .arrayDouble:
+            let elements = expression.split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+            for element in elements{
+                if Double(element) == nil{
+                    return false
+                }
+            }
+            return expression.first == "[" && expression.last == "]"
+        }
+    }
+
     public func fixArrayBracketIndex(_ expression: String) throws -> String{
 
         var updatedExpression = ""

@@ -111,3 +111,4 @@ backup
 *.lib
 .idea/ 
 ConsoleInterpreter/tempCodeRunnerFile.swift
+/BlockInterpreter/ConsoleInterpreter/ConsoleInterpreter/test.swift

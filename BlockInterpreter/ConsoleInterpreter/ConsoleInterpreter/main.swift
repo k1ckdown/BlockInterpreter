@@ -1,10 +1,9 @@
 import Foundation
-
 var array: [IBlock] = []
 
 array.append(Variable(id: 0, type: .int, name: "n", value: "5", isDebug: false))
 array.append(Variable(id: 0, type: .arrayInt, name: "c", value: "[107, 136, 91, 1, 1]", isDebug: false))
-array.append(Loop(id: 3, type: .forLoop, value: "int i = 0; i < 5; i += 1", isDebug: false))
+array.append(Loop(id: 3, type: .forLoop, value: "int i = 0 - n; i < 5; i += 1", isDebug: false))
 array.append(Flow(id: 4, type: .begin, isDebug: false))
 array.append(Loop(id: 5, type: .forLoop, value: "int j = i + 1; j < 5; j += 1", isDebug: false))
 array.append(Flow(id: 6, type: .begin, isDebug: false))
@@ -36,7 +35,7 @@ tree.buildTree()
 let interpreter = Interpreter()
 do {
     try interpreter.setTreeAST(tree.rootNode)
-} catch {
-    print(error)
+} catch let errorType as ErrorType {
+    interpreter.setPrintResult(String(describing: errorType))
 }
 print(interpreter.getPrintResult())

@@ -4,6 +4,7 @@ class Interpreter {
     private var treeAST: Node
     internal var mapOfVariableStack = [[String: String]]()
     internal var mapOfArrayStack = [[String: ArrayBuilder]]()
+    internal var mapOfFunctionStack = [[String: FunctionBuilder]]()
     private var assignmentVariableInstance: StringNormalizer
     private var arrayOfBoolVariable = [String: String]()
     private var arrayOfIntVariable = [String: String]()
@@ -39,8 +40,12 @@ class Interpreter {
     }
 
 
-    func traverseTree(_ node: Node)throws {
-        do {
+    public func setPrintResult(_ printResult: String){
+        self.printResult = printResult
+    }
+
+    func traverseTree(_ node: Node)throws -> (String, VariableType) {
+        do{
             switch node.type{
             case .root:
                 try processRootNode(node)
@@ -68,21 +73,33 @@ class Interpreter {
                 processBreakNode(node)
             case .continueBlock:
                 processContinueNode(node)
+            case .function:
+                try processFunctionNode(node)
+            case .variable:
+                return try processVariableNode(node)
+            case .returnFunction:
+                return try processReturnNode(node)
             default:
                 throw ErrorType.invalidNodeError
+            
             }
+        return ("", .void)
         } catch let errorType as ErrorType {
             consoleOutput.errorOutputValue += String(describing: errorType)
             consoleOutput.errorIdArray.append(node.id)
             throw consoleOutput
         }
     }
+
     private func processRootNode(_ node: Node)throws{
         mapOfVariableStack.append([:])
 
         for child in node.children{
             do{
                 let _ = try traverseTree(child)
+                if child.type == .breakBlock || child.type == .continueBlock{
+                    break
+                }
             } catch let errorType as ErrorType {
                 consoleOutput.errorOutputValue += String(describing: errorType)
                 consoleOutput.errorIdArray.append(node.id)
@@ -95,8 +112,13 @@ class Interpreter {
             while mapOfArrayStack.count > 1 {
                 mapOfArrayStack.removeLast()
             }
+            while mapOfFunctionStack.count > 1 {
+                mapOfFunctionStack.removeLast()
+            }
         }
+
     }
+
 
 
 
@@ -197,11 +219,11 @@ class Interpreter {
     private func processIfBlockNode(_ node: Node) throws{
         do{
             let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
-            if (calculatedValue == "true" && node.getCountWasHere() == 0){
+            if (calculatedValue == "true" && node.getCountVisitedNode() == 0){
                 try handleIfBlockNode(node)
-                node.setCountWasHere(2)
+                node.setCountVisitedNode(2)
             } else{
-                node.setCountWasHere(1)
+                node.setCountVisitedNode(1)
             }
         } catch let errorType as ErrorType{
             consoleOutput.errorOutputValue += String(describing: errorType)
@@ -219,11 +241,11 @@ class Interpreter {
     private func processElifBlockNode(_ node: Node) throws{
         do{
             let calculatedValue = try calculateArithmetic(node.value, .bool, node.id)
-            if (calculatedValue == "true" && node.getCountWasHere() == 0){
+            if (calculatedValue == "true" && node.getCountVisitedNode() == 0){
                 try handleIfBlockNode(node)
-                node.setCountWasHere(2)
+                node.setCountVisitedNode(2)
             } else{
-                node.setCountWasHere(1)
+                node.setCountVisitedNode(1)
             }
         } catch let errorType as ErrorType{
             consoleOutput.errorOutputValue += String(describing: errorType)
@@ -236,7 +258,7 @@ class Interpreter {
     }
 
     private func processElseBlockNode(_ node: Node)throws{
-        if (node.getCountWasHere() == 1){
+        if (node.getCountVisitedNode() == 1){
             do{
                 try handleIfBlockNode(node)
             } catch let errorType as ErrorType {
@@ -254,12 +276,10 @@ class Interpreter {
             for child in node.children{
 
                 if child.type == .ifBlock {
-                    child.setCountWasHere(0)
+                    child.setCountVisitedNode(0)
                     mapOfVariableStack.append([:])
                 }
-
                 let _ = try traverseTree(child)
-
                 if child.type == .ifBlock {
                     if let lastDictionary = mapOfVariableStack.last {
                         do {
@@ -271,6 +291,14 @@ class Interpreter {
                         }
                         mapOfVariableStack.removeLast()
                     }
+                }else if child.type == .breakBlock {
+                    node.setCountVisitedNode(-1)
+                    node.parent!.setCountVisitedNode(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    node.setCountVisitedNode(-2)
+                    node.parent!.setCountVisitedNode(-2)
+                    break
                 }
                 if let lastDictionary = mapOfVariableStack.last {
                     do {
@@ -302,6 +330,7 @@ class Interpreter {
 
     }
 
+
     private func processWhileLoopNode(_ node: Node) throws {
         let condition = node.value
         if condition == "" {
@@ -309,12 +338,19 @@ class Interpreter {
         }
         mapOfVariableStack.append([:])
         while try calculateArithmetic(node.value, .bool, node.id) == "true" {
-
             for child in node.children {
                 if child.type == .ifBlock {
-                    child.setCountWasHere(0)
+                    child.setCountVisitedNode(0)
+                }else if child.type == .breakBlock {
+                    node.setCountVisitedNode(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    break
                 }
                 let _ = try! traverseTree(child)
+            }
+            if node.getCountVisitedNode() == -1{
+                break
             }
         }
         if let lastDictionary = mapOfVariableStack.last {
@@ -371,11 +407,18 @@ class Interpreter {
             }
         }
 
-
         while try calculateArithmetic(components[1], .bool, node.id) == "true" {
+
             for child in node.children {
+
                 if child.type == .ifBlock {
-                    child.setCountWasHere(0)
+                    child.setCountVisitedNode(0)
+                }
+                else if child.type == .breakBlock {
+                    node.setCountVisitedNode(-1)
+                    break
+                } else if child.type == .continueBlock {
+                    break
                 }
                 let _ = try traverseTree(child)
             }
@@ -385,6 +428,10 @@ class Interpreter {
             }
             let assignValue = String(try calculateArithmetic(variable.value, .int, node.id))
             try setValueFromStack([variable.name: assignValue])
+            if node.getCountVisitedNode() == -1{
+                break
+            }
+
         }
 
         if let lastDictionary = mapOfVariableStack.last {
@@ -392,6 +439,7 @@ class Interpreter {
             mapOfVariableStack.removeLast()
         }
     }
+
 
     private func processAppendNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
@@ -656,7 +704,7 @@ class Interpreter {
         }
         assignmentVariableInstance.setMapOfVariable(lastDictionary)
         do{
-            var mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
+            let mapElement = try assignmentVariableInstance.normalize(expression, nodeId)
             if mapElement.contains("[") && mapElement.contains("]"){
                 return mapElement
             }
@@ -681,13 +729,6 @@ class Interpreter {
     }
 
     private func isSameType(variableName: String, value: String, typeInput: VariableType) -> Bool{
-        var variableValue = ""
-        do{
-            variableValue = try getValueFromStack(variableName) ?? ""
-
-        } catch {
-            return false
-        }
 
         let type = getTypeByStringValue(value)
 
@@ -814,6 +855,247 @@ class Interpreter {
                 }
             }
         }
+    }
+    
+    private func handleFunction(_ expression: String,_ type: VariableType, _ nodeId: Int) throws -> String{
+        var linkVariables = [String]()
+        let components = expression.split(separator: "(").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let functionName = components[0]
+        let parameters = components[1].split(separator: ")").map({String($0.trimmingCharacters(in: .whitespaces))})[0].split(separator: ",")
+        var functionParameters = [String]()
+
+        for parameter in parameters {
+            if parameter.hasPrefix("&") {
+                let parameterName = String(parameter.dropFirst())
+                linkVariables.append(parameterName)
+                functionParameters.append(String(parameter.split(separator: "&")[1]))
+            } else {
+                functionParameters.append(String(parameter))
+            }
+        }
+        var functionBuilder: FunctionBuilder? = nil
+        for dictionary in mapOfFunctionStack.reversed(){
+            if let builder = dictionary[functionName]{
+                functionBuilder = builder
+                break
+            }
+        }
+        if functionBuilder == nil{
+            consoleOutput.errorOutputValue += String(describing: ErrorType.isNotDeclaredFunctionError)
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
+        if functionParameters.count != functionBuilder!.getParametersCount(){
+            consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionParametersCountError)
+            consoleOutput.errorIdArray.append(nodeId)
+            throw consoleOutput
+        }
+
+        let sygnatureParameters = functionBuilder!.getFunctionParameters()
+        var sygnatureVariableMap = [String: String]()
+        var connectionDictionary = [String: String]()
+
+
+        var index = 0
+
+        for (key, _) in sygnatureParameters{
+
+            sygnatureVariableMap[key] = functionParameters[index]
+            connectionDictionary[key] = String(functionParameters[index])
+            index += 1
+        }
+
+        let functionBody = functionBuilder!.getChidren()
+        let _ = functionBuilder!.getFunctionReturnType()
+
+        let tempMapOfArrayStack = mapOfArrayStack
+        let tempMapOfVariableStack = mapOfVariableStack
+
+        mapOfVariableStack.removeAll()
+
+        mapOfVariableStack.append(sygnatureVariableMap)
+
+        var returnValue: String = ""
+        var returnType = VariableType.int
+
+
+        for child in functionBody{
+            switch child.type {
+            case .returnFunction(let type):
+                let (value, _) = try processReturnNode(child)
+                returnValue = value
+                returnType = type
+            case .variable(let type):
+                let (value, _) = try processReturnNode(child)
+                returnValue = value
+                returnType = type
+            default:
+                let _ = try traverseTree(child)
+            }
+
+
+
+            while mapOfVariableStack.count > 1 {
+                mapOfVariableStack.removeLast()
+            }
+            while mapOfArrayStack.count > 1 {
+                mapOfArrayStack.removeLast()
+            }
+        }
+        linkVariables.append(returnValue)
+        var sygnatureReturnVariableMap = [String: String]()
+        for dictionary in mapOfVariableStack{
+            for (key, _) in dictionary{
+                if connectionDictionary[key] != nil{
+                    sygnatureReturnVariableMap[key] = connectionDictionary[key]
+                }
+            }
+        }
+        mapOfVariableStack.removeAll()
+
+        mapOfArrayStack = tempMapOfArrayStack
+        mapOfVariableStack = tempMapOfVariableStack
+        try assignValueToStack(sygnatureReturnVariableMap)
+        let finalReturnValue = try getValueFromStack(returnValue)
+        try assignValueToStack(sygnatureReturnVariableMap)
+        return finalReturnValue ?? ""
+    }
+    
+    private func getVariableType(_ variableType: String) throws -> VariableType{
+
+        switch variableType {
+        case "Int":
+            return .int
+        case "Bool":
+            return .bool
+        case "String":
+            return .string
+        case "Double":
+            return .double
+        default:
+            if variableType.contains("[]"){
+                let type = variableType.replacingOccurrences(of: "[]", with: "")
+                switch type {
+                case "Int":
+                    return .arrayInt
+                case "Bool":
+                    return .arrayBool
+                case "String":
+                    return .arrayString
+                case "Double":
+                    return .arrayDouble
+                default:
+                    throw ErrorType.invalidTypeError
+                }
+            } else {
+                throw ErrorType.invalidTypeError
+            }
+        }
+    }
+    private func processVariableNode(_ node: Node) throws -> (String, VariableType){
+
+        let expression = node.value
+        var returnType = VariableType.void
+        switch node.type {
+        case .variable(let type):
+            returnType = type
+        default:
+            throw ErrorType.invalidTypeError
+        }
+        return (expression, returnType)
+    }
+    private func processFunctionNode(_ node: Node) throws {
+        let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let functionName = components[0]
+        let functionSignature = components[1].split(separator: "(")[0].split(separator: ")")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
+        let functionBody = node.children
+        var functionReturnType: VariableType = .void
+        switch node.type {
+        case .returnFunction(let type):
+            functionReturnType = type
+        case .function(let type):
+            functionReturnType = type
+        default:
+            throw ErrorType.invalidTypeError
+        }
+        for dictionary in mapOfFunctionStack.reversed(){
+            if let _ = dictionary[functionName]{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.alreadyExistsFunctionError)
+                consoleOutput.errorIdArray.append(node.id)
+                throw consoleOutput
+            }
+        }
+        for child in functionBody{
+            switch child.type {
+            case .returnFunction(let type):
+                if functionReturnType != type{
+                    consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionReturnTypeError)
+                    consoleOutput.errorIdArray.append(node.id)
+                    throw consoleOutput
+                }
+            default:
+                if child.type == .whileLoop || child.type == .forLoop || child.type == .ifBlock || child.type == .elifBlock || child.type == .elseBlock{
+                    for childOfChild in child.children{
+                        switch childOfChild.type {
+                        case .returnFunction(let type):
+                            if functionReturnType != type{
+                                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionReturnTypeError)
+                                consoleOutput.errorIdArray.append(node.id)
+                                throw consoleOutput
+                            }
+                        default:
+                            print("no return")
+                        }
+                    }
+                }
+            }
+        }
+
+        let functionParameters = try getFunctionSignature(functionSignature, node.id)
+
+        let functionBuilder = FunctionBuilder(functionName, functionReturnType, functionParameters, functionBody, node.id)
+        if mapOfFunctionStack.isEmpty{
+            mapOfFunctionStack.append([functionName: functionBuilder])
+        } else {
+            mapOfFunctionStack[mapOfFunctionStack.count - 1][functionName] = functionBuilder
+        }
+    }
+
+    private func getFunctionSignature(_ functionParameters: [String],_ nodeId: Int) throws -> [String: VariableType]{
+        var functionSignature = [String: VariableType]()
+
+        for parameter in functionParameters{
+            let parameterComponents = parameter.split(separator: ":").map({String($0.trimmingCharacters(in: .whitespaces))})
+            let parameterName = parameterComponents[0]
+            if parameterName == ""{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionParameterNameError) + "\n"
+                consoleOutput.errorIdArray.append(nodeId)
+                throw consoleOutput
+            }
+            let parameterType = try getVariableType(parameterComponents[1])
+            if functionSignature[parameterName] != nil{
+                consoleOutput.errorOutputValue += String(describing: ErrorType.invalidFunctionParameterNameError) + "\n"
+                consoleOutput.errorIdArray.append(nodeId)
+                throw consoleOutput
+            }
+            functionSignature[parameterName] = parameterType
+        }
+        return functionSignature
+    }
+
+    private func processReturnNode(_ node: Node) throws -> (String, VariableType){
+        let returnValue = node.value
+        var returnType = VariableType.void
+        switch node.type {
+        case .returnFunction(let type):
+            returnType = type
+        case .variable(let type):
+            returnType = type
+            
+        default:
+            throw ErrorType.invalidTypeError
+        }
+        return (returnValue, returnType)
     }
 
 }
