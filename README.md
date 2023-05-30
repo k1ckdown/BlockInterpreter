@@ -2,11 +2,6 @@
 
 [![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/pchelnikov/TheMovies)
 
-## Demo ##
-<p align="center">
-  <img src="demo.gif" alt="demo"  width="240" height="520">
-</p>
-
 ## 🛠 Used Tech
 - Swift
 - UIKit
@@ -20,6 +15,11 @@
 ### 🎓 This project was completed as part of the educational module at the Higher IT School of TSU (Tomsk State University) on mobile development
 
 ### 📱 It was necessary to implement an algorithm interpreter in the form of a mobile application 
+
+## Demo ##
+<p align="center">
+  <img src="demo.gif" alt="demo"  width="240" height="520">
+</p>
 
 ### ✅ App Features:
 
