@@ -5,9 +5,7 @@
 
 import UIKit
 
-final class AlgorithmPreviewCell: UICollectionViewCell {
-    
-    static let identifier = "AlgorithmPreviewCell"
+final class AlgorithmPreviewCell: UICollectionViewCell, ReuseIdentifier {
     
     private enum Constants {
         

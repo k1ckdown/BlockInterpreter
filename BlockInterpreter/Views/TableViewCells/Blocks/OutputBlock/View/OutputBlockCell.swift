@@ -8,8 +8,6 @@ import Combine
 
 final class OutputBlockCell: LabelTFBlockCell {
     
-    static let identifier = "OutputBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

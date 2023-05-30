@@ -52,7 +52,7 @@ final class HubViewController: UIViewController {
         savedAlgorithmsCollectionView.showsHorizontalScrollIndicator = false
         savedAlgorithmsCollectionView.register(
             AlgorithmPreviewCell.self,
-            forCellWithReuseIdentifier: AlgorithmPreviewCell.identifier)
+            forCellWithReuseIdentifier: AlgorithmPreviewCell.reuseIdentifier)
         
         savedAlgorithmsCollectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -80,7 +80,7 @@ extension HubViewController: UICollectionViewDataSource {
         let cellViewModel = viewModel.cellViewModels[indexPath.item]
         
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: AlgorithmPreviewCell.identifier,
+            withReuseIdentifier: AlgorithmPreviewCell.reuseIdentifier,
             for: indexPath
         ) as? AlgorithmPreviewCell
         else { return .init() }

@@ -9,8 +9,6 @@ import Combine
 
 final class VariableBlockCell: BlockCell {
     
-    static let identifier = "VariableBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {

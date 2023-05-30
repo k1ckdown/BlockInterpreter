@@ -7,8 +7,6 @@ import UIKit
 import Combine
 
 final class ReturningBlockCell: LabelTFBlockCell {
-
-    static let identifier = "ReturningBlockCell"
     
     var subscriptions = Set<AnyCancellable>()
     

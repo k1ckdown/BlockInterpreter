@@ -8,8 +8,6 @@ import Combine
 
 final class FlowBlockCell: BlockCell {
     
-    static let identifier = "FlowBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {

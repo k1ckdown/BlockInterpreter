@@ -80,17 +80,17 @@ extension WorkspaceViewModel  {
                 
             case let arrayMethodViewModel as ArrayMethodBlockCellViewModel:
                 blocks.append(ArrayMethod(id: index,
-                                        type: arrayMethodViewModel.methodType,
-                                            name: arrayMethodViewModel.arrayName ?? "",
-                                            value: arrayMethodViewModel.value ?? "",
-                                            isDebug: false))
+                                          type: arrayMethodViewModel.methodType,
+                                          name: arrayMethodViewModel.arrayName ?? "",
+                                          value: arrayMethodViewModel.value ?? "",
+                                          isDebug: false))
             case let returningViewModel as ReturningBlockCellViewModel:
                 blocks.append(Returning(id: index, value: returningViewModel.returnValue ?? ""))
                 
             default: break
             }
         }
-
+        
         
         return blocks
     }

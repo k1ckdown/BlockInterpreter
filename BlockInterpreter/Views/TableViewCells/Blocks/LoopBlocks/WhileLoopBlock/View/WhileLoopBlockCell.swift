@@ -8,8 +8,6 @@ import Combine
 
 final class WhileLoopBlockCell: LabelTFBlockCell {
     
-    static let identifier = "LoopBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

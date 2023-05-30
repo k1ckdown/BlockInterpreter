@@ -8,8 +8,6 @@ import Combine
 
 final class ConditionBlockCell: BlockCell {
     
-    static let identifier = "ConditionBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {

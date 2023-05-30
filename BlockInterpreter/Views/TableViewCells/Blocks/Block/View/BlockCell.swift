@@ -6,7 +6,7 @@
 import UIKit
 import SnapKit
 
-class BlockCell: UITableViewCell {
+class BlockCell: UITableViewCell, ReuseIdentifier {
     
     var isSelectedState = false {
         didSet {

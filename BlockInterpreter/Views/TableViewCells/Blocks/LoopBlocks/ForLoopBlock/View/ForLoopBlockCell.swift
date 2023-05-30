@@ -8,8 +8,6 @@ import Combine
 
 final class ForLoopBlockCell: BlockCell {
     
-    static let identifier = "ForLoopBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {

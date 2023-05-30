@@ -193,15 +193,15 @@ final class WorkspaceViewController: UIViewController {
         workBlocksTableView.contentInset.top = Constants.WorkBlocksTableView.insetTop
         workBlocksTableView.contentInset.bottom = Constants.WorkBlocksTableView.insetBottom
         
-        workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
-        workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
-        workBlocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
-        workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
-        workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
-        workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
-        workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
-        workBlocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.identifier)
-        workBlocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.identifier)
+        workBlocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.reuseIdentifier)
+        workBlocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.reuseIdentifier)
+        workBlocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.reuseIdentifier)
+        workBlocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.reuseIdentifier)
+        workBlocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.reuseIdentifier)
+        workBlocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.reuseIdentifier)
+        workBlocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.reuseIdentifier)
+        workBlocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.reuseIdentifier)
+        workBlocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.reuseIdentifier)
         
         workBlocksTableView.addGestureRecognizer(workBlocksTapGesture)
         workBlocksTableView.addGestureRecognizer(workBlocksLongPressGesture)
@@ -288,7 +288,7 @@ extension WorkspaceViewController: UITableViewDataSource {
         case .output:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: OutputBlockCell.identifier,
+                    withIdentifier: OutputBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? OutputBlockCell,
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
@@ -314,7 +314,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             
         case .flow:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: FlowBlockCell.identifier, for: indexPath) as? FlowBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: FlowBlockCell.reuseIdentifier,
+                    for: indexPath
+                ) as? FlowBlockCell,
                 let cellViewModel = cellViewModel as? FlowBlockCellViewModel
             else { return .init() }
             
@@ -331,7 +334,7 @@ extension WorkspaceViewController: UITableViewDataSource {
         case .variable:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: VariableBlockCell.identifier,
+                    withIdentifier: VariableBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? VariableBlockCell,
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
@@ -366,7 +369,7 @@ extension WorkspaceViewController: UITableViewDataSource {
         case .condition:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ConditionBlockCell.identifier,
+                    withIdentifier: ConditionBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
@@ -392,7 +395,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             
         case .loop(.whileLoop):
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: WhileLoopBlockCell.identifier, for: indexPath) as? WhileLoopBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: WhileLoopBlockCell.reuseIdentifier,
+                    for: indexPath
+                ) as? WhileLoopBlockCell,
                 let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
             else { return .init() }
             
@@ -416,7 +422,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             
         case .loop(.forLoop):
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: ForLoopBlockCell.identifier, for: indexPath) as? ForLoopBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ForLoopBlockCell.reuseIdentifier,
+                    for: indexPath
+                ) as? ForLoopBlockCell,
                 let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
             else { return .init() }
             
@@ -456,7 +465,10 @@ extension WorkspaceViewController: UITableViewDataSource {
             
         case .function:
             guard
-                let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: FunctionBlockCell.reuseIdentifier,
+                    for: indexPath
+                ) as? FunctionBlockCell,
                 let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
             else { return .init() }
             
@@ -489,7 +501,7 @@ extension WorkspaceViewController: UITableViewDataSource {
         case .returnBlock:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ReturningBlockCell.identifier,
+                    withIdentifier: ReturningBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? ReturningBlockCell,
                 let cellViewModel = cellViewModel as? ReturningBlockCellViewModel
@@ -516,7 +528,7 @@ extension WorkspaceViewController: UITableViewDataSource {
         case .arrayMethod:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ArrayMethodBlockCell.identifier,
+                    withIdentifier: ArrayMethodBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? ArrayMethodBlockCell,
                 let cellViewModel = cellViewModel as? ArrayMethodBlockCellViewModel

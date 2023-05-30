@@ -8,8 +8,6 @@ import Combine
 
 final class FunctionBlockCell: BlockCell {
     
-    static let identifier = "FunctionBlockCell"
-    
     var subscriptions = Set<AnyCancellable>()
     
     private enum Constants {

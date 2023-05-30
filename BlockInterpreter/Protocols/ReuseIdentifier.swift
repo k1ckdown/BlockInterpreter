@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+protocol ReuseIdentifier: AnyObject {
+    
+}
+
+extension ReuseIdentifier {
+    static var reuseIdentifier: String {
+        String(describing: self)
+    }
+}

@@ -103,15 +103,15 @@ final class CodeBlocksViewController: UIViewController {
         blocksTableView.contentInset.bottom = 50
         blocksTableView.showsVerticalScrollIndicator = false
         
-        blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.identifier)
-        blocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.identifier)
-        blocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.identifier)
-        blocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.identifier)
-        blocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.identifier)
-        blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.identifier)
-        blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.identifier)
-        blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.identifier)
-        blocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.identifier)
+        blocksTableView.register(FlowBlockCell.self, forCellReuseIdentifier: FlowBlockCell.reuseIdentifier)
+        blocksTableView.register(ForLoopBlockCell.self, forCellReuseIdentifier: ForLoopBlockCell.reuseIdentifier)
+        blocksTableView.register(ReturningBlockCell.self, forCellReuseIdentifier: ReturningBlockCell.reuseIdentifier)
+        blocksTableView.register(WhileLoopBlockCell.self, forCellReuseIdentifier: WhileLoopBlockCell.reuseIdentifier)
+        blocksTableView.register(FunctionBlockCell.self, forCellReuseIdentifier: FunctionBlockCell.reuseIdentifier)
+        blocksTableView.register(OutputBlockCell.self, forCellReuseIdentifier: OutputBlockCell.reuseIdentifier)
+        blocksTableView.register(VariableBlockCell.self, forCellReuseIdentifier: VariableBlockCell.reuseIdentifier)
+        blocksTableView.register(ConditionBlockCell.self, forCellReuseIdentifier: ConditionBlockCell.reuseIdentifier)
+        blocksTableView.register(ArrayMethodBlockCell.self, forCellReuseIdentifier: ArrayMethodBlockCell.reuseIdentifier)
         
         blocksTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -150,7 +150,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .output:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: OutputBlockCell.identifier,
+                    withIdentifier: OutputBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? OutputBlockCell,
                 let cellViewModel = cellViewModel as? OutputBlockCellViewModel
@@ -171,7 +171,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .commonFlow:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: FlowBlockCell.identifier,
+                    withIdentifier: FlowBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? FlowBlockCell,
                 let cellViewModel = cellViewModel as? FlowBlockCellViewModel
@@ -183,7 +183,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .variables:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: VariableBlockCell.identifier,
+                    withIdentifier: VariableBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? VariableBlockCell,
                 let cellViewModel = cellViewModel as? VariableBlockCellViewModel
@@ -212,7 +212,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .conditions:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ConditionBlockCell.identifier,
+                    withIdentifier: ConditionBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? ConditionBlockCell,
                 let cellViewModel = cellViewModel as? ConditionBlockCellViewModel
@@ -233,7 +233,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .conditionFlow:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: FlowBlockCell.identifier,
+                    withIdentifier: FlowBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? FlowBlockCell,
                 let cellViewModel = cellViewModel as? FlowBlockCellViewModel
@@ -248,7 +248,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
             if cellViewModel.type.isEqualTo(.loop(.whileLoop)) {
                 guard
                     let cell = tableView.dequeueReusableCell(
-                        withIdentifier: WhileLoopBlockCell.identifier,
+                        withIdentifier: WhileLoopBlockCell.reuseIdentifier,
                         for: indexPath
                     ) as? WhileLoopBlockCell,
                     let cellViewModel = cellViewModel as? WhileLoopBlockCellViewModel
@@ -268,7 +268,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
             } else if cellViewModel.type.isEqualTo(.loop(.forLoop)) {
                 guard
                     let cell = tableView.dequeueReusableCell(
-                        withIdentifier: ForLoopBlockCell.identifier,
+                        withIdentifier: ForLoopBlockCell.reuseIdentifier,
                         for: indexPath
                     ) as? ForLoopBlockCell,
                     let cellViewModel = cellViewModel as? ForLoopBlockCellViewModel
@@ -308,7 +308,10 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .functions:
             if cellViewModel.type.isEqualTo(.function) {
                 guard
-                    let cell = tableView.dequeueReusableCell(withIdentifier: FunctionBlockCell.identifier, for: indexPath) as? FunctionBlockCell,
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: FunctionBlockCell.reuseIdentifier,
+                        for: indexPath
+                    ) as? FunctionBlockCell,
                     let cellViewModel = cellViewModel as? FunctionBlockCellViewModel
                 else { return .init() }
                 
@@ -335,7 +338,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
             } else if cellViewModel.type.isEqualTo(.returnBlock) {
                 guard
                     let cell = tableView.dequeueReusableCell(
-                        withIdentifier: ReturningBlockCell.identifier,
+                        withIdentifier: ReturningBlockCell.reuseIdentifier,
                         for: indexPath
                     ) as? ReturningBlockCell,
                     let cellViewModel = cellViewModel as? ReturningBlockCellViewModel
@@ -360,7 +363,7 @@ extension CodeBlocksViewController: UITableViewDataSource {
         case .arrayMethods:
             guard
                 let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ArrayMethodBlockCell.identifier,
+                    withIdentifier: ArrayMethodBlockCell.reuseIdentifier,
                     for: indexPath
                 ) as? ArrayMethodBlockCell,
                 let cellViewModel = cellViewModel as? ArrayMethodBlockCellViewModel
