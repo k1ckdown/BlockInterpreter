@@ -276,10 +276,6 @@ final class WorkspaceViewController: UIViewController {
     
 }
 
-// MARK: - UITableViewDataSource
-
-
-
 // MARK: - UITableViewDragDelegate
 
 extension WorkspaceViewController: UITableViewDragDelegate {
