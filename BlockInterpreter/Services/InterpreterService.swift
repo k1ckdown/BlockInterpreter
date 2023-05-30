@@ -74,10 +74,6 @@ class Interpreter {
                 try processPopNode(node)
             case .remove:
                 try processRemoveNode(node)
-            case .breakBlock:
-                processBreakNode(node)
-            case .continueBlock:
-                processContinueNode(node)
             case .function:
                 try processFunctionNode(node)
             case .variable:
@@ -512,12 +508,6 @@ class Interpreter {
                 break
             }
         }
-    }
- 
-    private func processBreakNode(_ node: Node){
-    }
- 
-    private func processContinueNode(_ node: Node){
     }
  
     private func updateMapArrayOfStack(_ lastDictionary: [String: ArrayBuilder]) {
