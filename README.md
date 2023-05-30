@@ -4,7 +4,7 @@
 
 ## Demo ##
 <p align="center">
-  <img src="demo.gif" alt="demo"  width="225" height="466">
+  <img src="demo.gif" alt="demo"  width="240" height="520">
 </p>
 
 ## 🛠 Used Tech
