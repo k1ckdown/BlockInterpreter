@@ -3,10 +3,10 @@
 [![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/pchelnikov/TheMovies)
 
 ## Workspace ##
-<p>
-    <img src="IMG/workspace-demo3.png" width="230" height="500">
-    <img src="IMG/workspace-demo3.png" width="230" height="500">
-    <img src="IMG/workspace-demo3.png" width="230" height="500">
+<p align="center">
+    <img src="IMG/workspace-demo1.png" width="200" height="370">
+    <img src="IMG/workspace-demo2.png" width="200" height="370">
+    <img src="IMG/workspace-demo3.png" width="200" height="370">
 </p>
 
 <!--## List of blocks ##-->
