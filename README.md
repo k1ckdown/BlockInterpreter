@@ -32,8 +32,6 @@
 * The preview of the saved algorithm uses its image
 * Preview on the workspace
 * Table of blocks with sections of block types
-* User can select multiple blocks at the same time from the list 
-* When selecting blocks user sees current number of selected blocks
 
 ### ✅ Interpreter:
 #### We utilized an [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) to construct and execute commands.
