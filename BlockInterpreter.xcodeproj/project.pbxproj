@@ -101,8 +101,6 @@
 		49EA38252A26695B00E02F32 /* ReuseIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38242A26695B00E02F32 /* ReuseIdentifier.swift */; };
 		49EA38272A266DD100E02F32 /* CodeBlocksDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38262A266DD100E02F32 /* CodeBlocksDataSource.swift */; };
 		49EA38292A26707800E02F32 /* WorkspaceDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */; };
-		49EA38322A267F8200E02F32 /* workspace-demo2.png in Resources */ = {isa = PBXBuildFile; fileRef = 49EA38312A267F8200E02F32 /* workspace-demo2.png */; };
-		49EA38342A267F9900E02F32 /* workspace-demo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 49EA38332A267F9900E02F32 /* workspace-demo1.png */; };
 		49F2B3B62A1A771A003817C0 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */; };
 		5860313221A5CDD0534CFC0E /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
 		5860313E164A77C8DA2CF868 /* IBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860332FDA63AB55FFB71FEB /* IBlock.swift */; };
@@ -206,8 +204,11 @@
 		49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDataSource.swift; sourceTree = "<group>"; };
 		49EA382D2A267E6300E02F32 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		49EA38302A267EB200E02F32 /* workspace-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo3.png"; sourceTree = "<group>"; };
-		49EA38312A267F8200E02F32 /* workspace-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "workspace-demo2.png"; path = "../../Downloads/p7ai0M-8TSq4somqVS-kxQ/workspace-demo2.png"; sourceTree = "<group>"; };
-		49EA38332A267F9900E02F32 /* workspace-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "workspace-demo1.png"; path = "../../Downloads/H_cvCHjjRCiq-XAKPW4wBg/workspace-demo1.png"; sourceTree = "<group>"; };
+		49EA38352A26832700E02F32 /* workspace-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo1.png"; sourceTree = "<group>"; };
+		49EA38362A26834A00E02F32 /* workspace-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo2.png"; sourceTree = "<group>"; };
+		49EA383B2A2683E800E02F32 /* blocks-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo3.png"; sourceTree = "<group>"; };
+		49EA383C2A26843500E02F32 /* blocks-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo2.png"; sourceTree = "<group>"; };
+		49EA383D2A26845100E02F32 /* blocks-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo1.png"; sourceTree = "<group>"; };
 		49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		5860332FDA63AB55FFB71FEB /* IBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBlock.swift; sourceTree = "<group>"; };
 		5860385DC8E3125440F9BC09 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
@@ -967,9 +968,12 @@
 		49EA382A2A267C5F00E02F32 /* IMG */ = {
 			isa = PBXGroup;
 			children = (
+				49EA383D2A26845100E02F32 /* blocks-demo1.png */,
+				49EA383C2A26843500E02F32 /* blocks-demo2.png */,
+				49EA383B2A2683E800E02F32 /* blocks-demo3.png */,
 				49EA38302A267EB200E02F32 /* workspace-demo3.png */,
-				49EA38312A267F8200E02F32 /* workspace-demo2.png */,
-				49EA38332A267F9900E02F32 /* workspace-demo1.png */,
+				49EA38362A26834A00E02F32 /* workspace-demo2.png */,
+				49EA38352A26832700E02F32 /* workspace-demo1.png */,
 			);
 			path = IMG;
 			sourceTree = "<group>";
@@ -1054,8 +1058,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				495B417829FCEFD400DEF375 /* LaunchScreen.storyboard in Resources */,
-				49EA38322A267F8200E02F32 /* workspace-demo2.png in Resources */,
-				49EA38342A267F9900E02F32 /* workspace-demo1.png in Resources */,
 				49D9DAC42A21C41600E7C8A9 /* Localizable.strings in Resources */,
 				495B417529FCEFD400DEF375 /* Assets.xcassets in Resources */,
 			);

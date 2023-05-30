@@ -4,24 +4,24 @@
 
 ## Workspace ##
 <p align="center">
-    <img src="IMG/workspace-demo1.png" width="200" height="370">
-    <img src="IMG/workspace-demo2.png" width="200" height="370">
-    <img src="IMG/workspace-demo3.png" width="200" height="370">
+    <img src="IMG/workspace-demo1.png" width="200" height="392">
+    <img src="IMG/workspace-demo2.png" width="200" height="392">
+    <img src="IMG/workspace-demo3.png" width="200" height="392">
 </p>
 
-<!--## List of blocks ##-->
-<!--<p>-->
-<!--    <img src="IMG/workspace-demo3.png" width="230" height="500">-->
-<!--    <img src="IMG/workspace-demo3.png" width="230" height="500">-->
-<!--    <img src="IMG/workspace-demo3.png" width="230" height="500">-->
-<!--</p>-->
-<!---->
-<!--## Hub ##-->
-<!--<p>-->
-<!--    <img src="IMG/IMG_3110.PNG" width="230" height="500">-->
-<!--    <img src="img/IMG_3111.PNG" width="230" height="500">-->
-<!--    <img src="img/IMG_3112.PNG" width="230" height="500">-->
-<!--</p>-->
+## List of blocks ##
+<p>
+    <img src="IMG/blocks-demo1.png" width="200" height="392">
+    <img src="IMG/blocks-demo2.png" width="200" height="392">
+    <img src="IMG/blocks-demo3.png" width="200" height="392">
+</p>
+
+## Hub ##
+<p>
+    <img src="IMG/IMG_3110.PNG" width="200" height="392">
+    <img src="img/IMG_3111.PNG" width="200" height="392">
+    <img src="img/IMG_3112.PNG" width="200" height="392">
+</p>
 
 ## 🛠 Used Tech
 - Swift
