@@ -39,6 +39,7 @@ class Interpreter {
     }
  
     func getPrintResult() -> String {
+        printResult.removeAll(where: { $0 == "“" || $0 == "”" })
         return printResult
     }
  

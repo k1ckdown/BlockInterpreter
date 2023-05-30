@@ -142,7 +142,6 @@ extension WorkspaceViewModel  {
     
     private func getConsoleContent() -> String {
         let output = interpreterManager.getConsoleContent(blocks: getBlocks())
-        
         return output
     }
     

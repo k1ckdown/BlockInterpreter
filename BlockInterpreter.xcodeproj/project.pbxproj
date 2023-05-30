@@ -99,6 +99,8 @@
 		49E30E2B2A03A78700BB869A /* BlocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2A2A03A78700BB869A /* BlocksSection.swift */; };
 		49E30E2D2A03A9F500BB869A /* VariableBlockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */; };
 		49EA38252A26695B00E02F32 /* ReuseIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38242A26695B00E02F32 /* ReuseIdentifier.swift */; };
+		49EA38272A266DD100E02F32 /* CodeBlocksDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38262A266DD100E02F32 /* CodeBlocksDataSource.swift */; };
+		49EA38292A26707800E02F32 /* WorkspaceDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */; };
 		49F2B3B62A1A771A003817C0 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */; };
 		5860313221A5CDD0534CFC0E /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860385DC8E3125440F9BC09 /* Loop.swift */; };
 		5860313E164A77C8DA2CF868 /* IBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860332FDA63AB55FFB71FEB /* IBlock.swift */; };
@@ -198,6 +200,8 @@
 		49E30E2A2A03A78700BB869A /* BlocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksSection.swift; sourceTree = "<group>"; };
 		49E30E2C2A03A9F500BB869A /* VariableBlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlockType.swift; sourceTree = "<group>"; };
 		49EA38242A26695B00E02F32 /* ReuseIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifier.swift; sourceTree = "<group>"; };
+		49EA38262A266DD100E02F32 /* CodeBlocksDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksDataSource.swift; sourceTree = "<group>"; };
+		49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDataSource.swift; sourceTree = "<group>"; };
 		49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		5860332FDA63AB55FFB71FEB /* IBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBlock.swift; sourceTree = "<group>"; };
 		5860385DC8E3125440F9BC09 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
@@ -784,6 +788,7 @@
 				49D8A2D129FEC6B100DF5B8E /* View */,
 				49D8A2D329FEC6BF00DF5B8E /* ViewModel */,
 				496A95B62A01529C007F1C17 /* WorkspaceCoordinator.swift */,
+				49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -794,6 +799,7 @@
 				49D8A2CB29FEC4E300DF5B8E /* View */,
 				49D8A2CC29FEC4EA00DF5B8E /* ViewModel */,
 				496A95B42A0151F3007F1C17 /* CodeBlocksCoordinator.swift */,
+				49EA38262A266DD100E02F32 /* CodeBlocksDataSource.swift */,
 			);
 			path = CodeBlocks;
 			sourceTree = "<group>";
@@ -1139,6 +1145,7 @@
 				49D8A2D029FEC5D100DF5B8E /* CodeBlocksViewModelType.swift in Sources */,
 				49B67C522A0F9FCC00B70F25 /* FlowBlockCellViewModel.swift in Sources */,
 				490351AE2A0D448900B3693B /* Flow.swift in Sources */,
+				49EA38272A266DD100E02F32 /* CodeBlocksDataSource.swift in Sources */,
 				4952B0B32A12303300F7FEFC /* ForLoopBlockCell.swift in Sources */,
 				49D9DABA2A21B99A00E7C8A9 /* ArrayBuilder.swift in Sources */,
 				49D8A2CE29FEC5C000DF5B8E /* CodeBlocksViewModel.swift in Sources */,
@@ -1173,6 +1180,7 @@
 				49D8A2DD29FEC76100DF5B8E /* ConsoleViewModelType.swift in Sources */,
 				49D9DAC02A21B99A00E7C8A9 /* ExpressionSolverService.swift in Sources */,
 				5860313221A5CDD0534CFC0E /* Loop.swift in Sources */,
+				49EA38292A26707800E02F32 /* WorkspaceDataSource.swift in Sources */,
 				49C9AA792A21995C001198FD /* ReturningBlockCellViewModel.swift in Sources */,
 				5860313E164A77C8DA2CF868 /* IBlock.swift in Sources */,
 				49D9DABB2A21B99A00E7C8A9 /* CalculateAstService.swift in Sources */,
