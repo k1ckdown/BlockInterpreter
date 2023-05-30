@@ -203,12 +203,6 @@
 		49EA38262A266DD100E02F32 /* CodeBlocksDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlocksDataSource.swift; sourceTree = "<group>"; };
 		49EA38282A26707800E02F32 /* WorkspaceDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDataSource.swift; sourceTree = "<group>"; };
 		49EA382D2A267E6300E02F32 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		49EA38302A267EB200E02F32 /* workspace-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo3.png"; sourceTree = "<group>"; };
-		49EA38352A26832700E02F32 /* workspace-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo1.png"; sourceTree = "<group>"; };
-		49EA38362A26834A00E02F32 /* workspace-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo2.png"; sourceTree = "<group>"; };
-		49EA383B2A2683E800E02F32 /* blocks-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo3.png"; sourceTree = "<group>"; };
-		49EA383C2A26843500E02F32 /* blocks-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo2.png"; sourceTree = "<group>"; };
-		49EA383D2A26845100E02F32 /* blocks-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo1.png"; sourceTree = "<group>"; };
 		49EA38482A26950A00E02F32 /* demo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = demo.gif; sourceTree = "<group>"; };
 		49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		5860332FDA63AB55FFB71FEB /* IBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBlock.swift; sourceTree = "<group>"; };
@@ -414,7 +408,6 @@
 			children = (
 				49EA38482A26950A00E02F32 /* demo.gif */,
 				49EA382D2A267E6300E02F32 /* README.md */,
-				49EA382A2A267C5F00E02F32 /* IMG */,
 				495B416A29FCEFD300DEF375 /* BlockInterpreter */,
 				495B416929FCEFD300DEF375 /* Products */,
 				668EBE5A9857539E292171E1 /* Pods */,
@@ -965,19 +958,6 @@
 				49D9DACB2A21C45300E7C8A9 /* Localizable.swift */,
 			);
 			path = Localization;
-			sourceTree = "<group>";
-		};
-		49EA382A2A267C5F00E02F32 /* IMG */ = {
-			isa = PBXGroup;
-			children = (
-				49EA383D2A26845100E02F32 /* blocks-demo1.png */,
-				49EA383C2A26843500E02F32 /* blocks-demo2.png */,
-				49EA383B2A2683E800E02F32 /* blocks-demo3.png */,
-				49EA38302A267EB200E02F32 /* workspace-demo3.png */,
-				49EA38362A26834A00E02F32 /* workspace-demo2.png */,
-				49EA38352A26832700E02F32 /* workspace-demo1.png */,
-			);
-			path = IMG;
 			sourceTree = "<group>";
 		};
 		49F2B3B42A1A557A003817C0 /* OptionsView */ = {

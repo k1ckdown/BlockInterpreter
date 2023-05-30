@@ -3,7 +3,9 @@
 [![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/pchelnikov/TheMovies)
 
 ## Demo ##
-![demo](demo.gif)
+<p align="center">
+  <img src="demo.gif" alt="demo"  width="225" height="466">
+</p>
 
 ## 🛠 Used Tech
 - Swift
