@@ -1,6 +1,6 @@
 # 🔳 Block Interpreter
 
-[![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/pchelnikov/TheMovies)
+[![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/hackv01d/BlockInterpreter)
 
 ## 🛠 Used Tech
 - Swift
