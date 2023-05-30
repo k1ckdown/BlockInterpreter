@@ -14,9 +14,9 @@ class LabelTFBlockCell: BlockCell {
             }
         
             enum TextField {
-                static let insetTrailing: CGFloat = -7
+                static let insetTrailing: CGFloat = 15
                 static let insetTopBottom: CGFloat = 12
-                static let multiplierWidth: CGFloat = 0.6
+                static let multiplierWidth: CGFloat = 0.63
             }
         
     }
@@ -69,7 +69,7 @@ class LabelTFBlockCell: BlockCell {
         textField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(Constants.TextField.insetTopBottom)
             make.width.equalToSuperview().multipliedBy(Constants.TextField.multiplierWidth)
-            make.trailing.equalToSuperview().offset(Constants.TextField.insetTrailing)
+            make.trailing.equalToSuperview().inset(Constants.TextField.insetTrailing)
         }
     }
     
