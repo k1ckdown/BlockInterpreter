@@ -209,6 +209,7 @@
 		49EA383B2A2683E800E02F32 /* blocks-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo3.png"; sourceTree = "<group>"; };
 		49EA383C2A26843500E02F32 /* blocks-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo2.png"; sourceTree = "<group>"; };
 		49EA383D2A26845100E02F32 /* blocks-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo1.png"; sourceTree = "<group>"; };
+		49EA38482A26950A00E02F32 /* demo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = demo.gif; sourceTree = "<group>"; };
 		49F2B3B52A1A771A003817C0 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		5860332FDA63AB55FFB71FEB /* IBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBlock.swift; sourceTree = "<group>"; };
 		5860385DC8E3125440F9BC09 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
@@ -411,6 +412,7 @@
 		495B415F29FCEFD300DEF375 = {
 			isa = PBXGroup;
 			children = (
+				49EA38482A26950A00E02F32 /* demo.gif */,
 				49EA382D2A267E6300E02F32 /* README.md */,
 				49EA382A2A267C5F00E02F32 /* IMG */,
 				495B416A29FCEFD300DEF375 /* BlockInterpreter */,

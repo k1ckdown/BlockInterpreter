@@ -1,27 +1,9 @@
-# 🔳 The Block Interpreter
+# 🔳 Block Interpreter
 
 [![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/pchelnikov/TheMovies)
 
-## Workspace ##
-<p align="center">
-    <img src="IMG/workspace-demo1.png" width="240" height="450">
-    <img src="IMG/workspace-demo2.png" width="240" height="450">
-    <img src="IMG/workspace-demo3.png" width="240" height="450">
-</p>
-
-## List of blocks ##
-<p align="center">
-    <img src="IMG/blocks-demo1.png" width="240" height="450">
-    <img src="IMG/blocks-demo2.png" width="240" height="450">
-    <img src="IMG/blocks-demo3.png" width="240" height="450">
-</p>
-
-## Hub ##
-<p>
-    <img src="IMG/IMG_3110.PNG" width="200" height="392">
-    <img src="img/IMG_3111.PNG" width="200" height="392">
-    <img src="img/IMG_3112.PNG" width="200" height="392">
-</p>
+## Demo ##
+![demo](demo.gif)
 
 ## 🛠 Used Tech
 - Swift
