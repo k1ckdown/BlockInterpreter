@@ -80,7 +80,7 @@ extension WorkspaceViewModel  {
                 
             case let arrayMethodViewModel as ArrayMethodBlockCellViewModel:
                 blocks.append(ArrayMethod(id: index,
-                                            type: arrayMethodViewModel.methodType,
+                                        type: arrayMethodViewModel.methodType,
                                             name: arrayMethodViewModel.arrayName ?? "",
                                             value: arrayMethodViewModel.value ?? "",
                                             isDebug: false))
@@ -142,6 +142,7 @@ extension WorkspaceViewModel  {
     
     private func getConsoleContent() -> String {
         let output = interpreterManager.getConsoleContent(blocks: getBlocks())
+        
         return output
     }
     

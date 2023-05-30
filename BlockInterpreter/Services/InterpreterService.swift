@@ -1,15 +1,18 @@
 import Foundation
 
 class Interpreter {
+    
     private var treeAST: Node
-    internal var mapOfVariableStack = [[String: String]]()
-    internal var mapOfArrayStack = [[String: ArrayBuilder]]()
-    internal var mapOfFunctionStack = [[String: FunctionBuilder]]()
-    private var assignmentVariableInstance: StringNormalizer
-    private var arrayOfBoolVariable = [String: String]()
-    private var arrayOfIntVariable = [String: String]()
     private var printResult = ""
     private var consoleOutput: ConsoleOutput
+    private var assignmentVariableInstance: StringNormalizer
+    
+    private var arrayOfBoolVariable = [String: String]()
+    private var arrayOfIntVariable = [String: String]()
+    
+    private var mapOfVariableStack = [[String: String]]()
+    private var mapOfArrayStack = [[String: ArrayBuilder]]()
+    private var mapOfFunctionStack = [[String: FunctionBuilder]]()
  
     init() {
         treeAST = Node(value: "", type: .root, id: 0)
@@ -40,7 +43,7 @@ class Interpreter {
     }
  
  
-    public func setPrintResult(_ printResult: String){
+    func setPrintResult(_ printResult: String){
         self.printResult = printResult
     }
  
@@ -120,14 +123,8 @@ class Interpreter {
         }
  
     }
- 
- 
- 
- 
- 
- 
+    
     private func processPrintNode(_ node: Node) throws{
- 
         do{
             try handlePrintNode(node, false)
         } catch let errorType as ErrorType{
@@ -138,7 +135,6 @@ class Interpreter {
     }
  
     private func processPrintlnNode(_ node: Node) throws{
- 
         do{
             try handlePrintNode(node, true)
         } catch let errorType as ErrorType{
@@ -280,9 +276,6 @@ class Interpreter {
             consoleOutput.errorIdArray.append(node.id)
             throw consoleOutput
         }
- 
- 
- 
     }
  
     private func processElseBlockNode(_ node: Node)throws{
@@ -358,7 +351,6 @@ class Interpreter {
  
     }
  
- 
     private func processWhileLoopNode(_ node: Node) throws {
         let condition = node.value
         if condition == "" {
@@ -393,7 +385,6 @@ class Interpreter {
             throw ErrorType.invalidSyntaxError
         }
         mapOfVariableStack.append([:])
- 
  
         if components[0] != "" {
             let variableComponents = try getForLoopInitializationComponents(components[0])
@@ -467,7 +458,6 @@ class Interpreter {
             mapOfVariableStack.removeLast()
         }
     }
- 
  
     private func processAppendNode(_ node: Node) throws{
         let components = node.value.split(separator: ";").map({String($0.trimmingCharacters(in: .whitespaces))})
@@ -639,6 +629,7 @@ class Interpreter {
         return updatedExpression
  
     }
+    
     private func getIntPartFromString(_ value: String) -> String {
         if let doubleValue = Double(value) {
             let intValue = Int(doubleValue)
@@ -666,6 +657,7 @@ class Interpreter {
         }
         return 3
     }
+    
     private func getArrayOfBoolByName(_ component: String) -> Bool {
         for (key, _ ) in arrayOfBoolVariable {
             if key == component {
@@ -674,7 +666,6 @@ class Interpreter {
         }
         return false
     }
- 
  
     private func getValuesFromExpression(_ expression: String) -> [String]{
         var result = [String]()
@@ -709,6 +700,7 @@ class Interpreter {
         }
         return result
     }
+    
     private func calculateArithmetic(_ expression: String, _ type: VariableType, _ nodeId: Int)throws -> String {
         var lastDictionary: [String: String] = [:]
  
@@ -797,6 +789,7 @@ class Interpreter {
                 return value
             }
         }
+        
         if name.contains("[") && name.contains("]"){
             let arrayName = String(name.split(separator: "[")[0])
             let arrayIndex = name.split(separator: "[")[1].split(separator: "]")[0]
@@ -811,8 +804,7 @@ class Interpreter {
                 }
             }
         }
- 
- 
+        
         return ""
     }
  
@@ -961,8 +953,6 @@ class Interpreter {
             default:
                 let _ = try traverseTree(child)
             }
- 
- 
  
             while mapOfVariableStack.count > 1 {
                 mapOfVariableStack.removeLast()

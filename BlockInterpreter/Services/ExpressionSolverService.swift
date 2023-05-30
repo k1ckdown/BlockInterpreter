@@ -15,11 +15,11 @@ class ExpressionSolver{
         self.consoleOutput = ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
  
-    public func getSolvedExpression() -> String {
+    func getSolvedExpression() -> String {
         return solvedExpression
     }
  
-    public func setExpressionAndType(_ expression: String, _ type: VariableType, _ nodeId: Int) throws{
+    func setExpressionAndType(_ expression: String, _ type: VariableType, _ nodeId: Int) throws{
         self.expression = expression
         self.type = type
         self.nodeId = nodeId

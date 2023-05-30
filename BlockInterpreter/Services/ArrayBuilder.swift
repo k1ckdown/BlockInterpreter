@@ -33,14 +33,14 @@ class ArrayBuilder{
         }
     }
  
-    public func getArrayElement(_ index: Int) throws -> String {
+    func getArrayElement(_ index: Int) throws -> String {
         if index >= children.count {
             throw ErrorType.invalidIndexError
         }
         return children[index]
     }
  
-    public func getArray() -> String{
+    func getArray() -> String{
         var result = "["
         for i in 0..<children.count{
             result += children[i]
@@ -52,23 +52,23 @@ class ArrayBuilder{
         return result
     }
  
-    public func getChildrenType() -> VariableType {
+    func getChildrenType() -> VariableType {
         return self.arrayType
     }
  
-    public func getArrayCount() -> Int {
+    func getArrayCount() -> Int {
         return self.count
     }
  
-    public func getArrayChildren() -> [String] {
+    func getArrayChildren() -> [String] {
         return self.children
     }
  
-    public func setArrayChildren(_ children: [String]) {
+    func setArrayChildren(_ children: [String]) {
         self.children = children
     }
  
-    public func setArrayValue(_ index: Int, _ value: String) throws {
+    func setArrayValue(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
         }
@@ -78,7 +78,7 @@ class ArrayBuilder{
         children[index] = value
     }
  
-    public func append(_ value: String) throws{
+    func append(_ value: String) throws{
         if value == "" {
             throw ErrorType.invalidValueError
         }
@@ -89,7 +89,7 @@ class ArrayBuilder{
         count += 1
     }
  
-    public func insert(_ index: Int, _ value: String) throws {
+    func insert(_ index: Int, _ value: String) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
         }
@@ -101,7 +101,7 @@ class ArrayBuilder{
         self.result = updateArrayResultAfterMethods()
     }
  
-    public func pop() throws {
+    func pop() throws {
         if children.count == 0 {
             throw ErrorType.invalidIndexError
         }
@@ -110,7 +110,7 @@ class ArrayBuilder{
         self.result = updateArrayResultAfterMethods()
     }
  
-    public func remove(_ index: Int) throws {
+    func remove(_ index: Int) throws {
         if index >= children.count || index < 0{
             throw ErrorType.invalidIndexError
         }
@@ -177,6 +177,7 @@ class ArrayBuilder{
         str += "]"
         return str
     }
+    
     private func updateArrayChildren() throws -> [String]{
         let components = expression.split(separator: "[")[0].split(separator: "]")[0].split(separator: ",").map({String($0.trimmingCharacters(in: .whitespaces))})
         var result = [String]()

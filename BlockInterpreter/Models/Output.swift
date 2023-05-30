@@ -2,7 +2,6 @@ import Foundation
 
 enum OutputType: String, CaseIterable, Codable {
     case print
-    case println
 }
 
 class Output: IBlock {

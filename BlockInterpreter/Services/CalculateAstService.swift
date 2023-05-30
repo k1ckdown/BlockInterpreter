@@ -15,17 +15,17 @@ class Calculate {
         self.consoleOutput =  ConsoleOutput(errorOutputValue: "", errorIdArray: [])
     }
  
-    public func getText() -> String {
+    func getText() -> String {
         return text
     }
  
-    public func setText(text: String) {
+    func setText(text: String) {
         self.text = text
         self.position = 0
     }
  
  
-    public func compute() throws -> Double {
+    func compute() throws -> Double {
         currentToken = try getNextToken()
  
         var result = try term()
@@ -80,8 +80,66 @@ class Calculate {
         }
         return Double(result)
     }
+    
+    func computeString() throws -> String{
+        currentToken = try getNextToken()
+        var result = ""
+        result += try termString()
  
+        let possibleTokens: [TokenType] = [
+            .leftQuote,
+            .rightQuote,
+            .plus,
+            .equal,
+            .less,
+            .greater,
+            .notEqual,
+            .lessEqual,
+            .greaterEqual,
+            .logicalAnd,
+            .logicalOr
+        ]
+        if currentToken == nil {
+            return result
+        }
+        while let token = currentToken, possibleTokens.contains(token.getType()) {
+            if token.getType() == .leftQuote {
+                try moveToken(.leftQuote)
+                result += try termString()
+            } else if token.getType() == .rightQuote {
+                try moveToken(.rightQuote)
+                result += try termString()
+            } else if token.getType() == .plus {
+                try moveToken(.plus)
+                result += try termString()
+            } else if possibleTokens.contains(token.getType()){
+                try moveToken(token.getType())
+                let factorValue = try factorString()
  
+                switch token.getType() {
+                case .equal:
+                    result = result == factorValue ? "true" : "false"
+                case .notEqual:
+                    result = result != factorValue ? "true" : "false"
+                case .greater:
+                    result = result > factorValue ? "true" : "false"
+                case .less:
+                    result = result < factorValue ? "true" : "false"
+                case .greaterEqual:
+                    result = result >= factorValue ? "true" : "false"
+                case .lessEqual:
+                    result = result <= factorValue ? "true" : "false"
+                case .logicalAnd:
+                    result = result != ""  && factorValue != ""  ? "true" : "false"
+                case .logicalOr:
+                    result = result != "" || factorValue != ""  ? "true" : "false"
+                default:
+                    throw ErrorType.invalidTokenTypeError
+                }
+            }
+        }
+        return result
+    }
  
     private func term() throws -> Double {
         var result = try factor()
@@ -148,66 +206,6 @@ class Calculate {
         default:
             throw ErrorType.invalidTokenTypeError
         }
-    }
- 
-    public func computeString() throws -> String{
-        currentToken = try getNextToken()
-        var result = ""
-        result += try termString()
- 
-        let possibleTokens: [TokenType] = [
-            .leftQuote,
-            .rightQuote,
-            .plus,
-            .equal,
-            .less,
-            .greater,
-            .notEqual,
-            .lessEqual,
-            .greaterEqual,
-            .logicalAnd,
-            .logicalOr
-        ]
-        if currentToken == nil {
-            return result
-        }
-        while let token = currentToken, possibleTokens.contains(token.getType()) {
-            if token.getType() == .leftQuote {
-                try moveToken(.leftQuote)
-                result += try termString()
-            } else if token.getType() == .rightQuote {
-                try moveToken(.rightQuote)
-                result += try termString()
-            } else if token.getType() == .plus {
-                try moveToken(.plus)
-                result += try termString()
-            } else if possibleTokens.contains(token.getType()){
-                try moveToken(token.getType())
-                let factorValue = try factorString()
- 
-                switch token.getType() {
-                case .equal:
-                    result = result == factorValue ? "true" : "false"
-                case .notEqual:
-                    result = result != factorValue ? "true" : "false"
-                case .greater:
-                    result = result > factorValue ? "true" : "false"
-                case .less:
-                    result = result < factorValue ? "true" : "false"
-                case .greaterEqual:
-                    result = result >= factorValue ? "true" : "false"
-                case .lessEqual:
-                    result = result <= factorValue ? "true" : "false"
-                case .logicalAnd:
-                    result = result != ""  && factorValue != ""  ? "true" : "false"
-                case .logicalOr:
-                    result = result != "" || factorValue != ""  ? "true" : "false"
-                default:
-                    throw ErrorType.invalidTokenTypeError
-                }
-            }
-        }
-        return result
     }
  
     private func termString() throws -> String {

@@ -17,7 +17,6 @@ final class InterpreterManager {
     
     func getConsoleContent(blocks: [IBlock]) -> String {
         tree.setBlocks(blocks)
-        tree.buildTree()
         
         do {
             try interpreter.setTreeAST(tree.rootNode)
@@ -27,7 +26,10 @@ final class InterpreterManager {
             interpreter.setPrintResult(String(describing: error))
         }
         
-        return interpreter.getPrintResult()
+        let result = interpreter.getPrintResult()
+        
+        return result
+
     }
     
 }

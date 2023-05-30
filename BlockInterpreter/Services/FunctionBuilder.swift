@@ -15,21 +15,23 @@ class FunctionBuilder{
         self.nodeId = nodeId
     }
  
-    public func getFunctionName() -> String{
+    func getFunctionName() -> String{
         return functionName
     }
  
-    public func getFunctionReturnType() -> VariableType{
+    func getFunctionReturnType() -> VariableType{
         return functionReturnType
     }
  
-    public func getFunctionParameters() -> [String: VariableType]{
+    func getFunctionParameters() -> [String: VariableType]{
         return parameters
     }
-    public func getParametersCount() -> Int{
+    
+    func getParametersCount() -> Int{
         return parameters.count
     }
-    public func getChidren() -> [Node]{
+    
+    func getChidren() -> [Node]{
         return children
     }
 }

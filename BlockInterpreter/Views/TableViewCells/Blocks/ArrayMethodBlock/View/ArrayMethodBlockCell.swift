@@ -8,9 +8,19 @@
 import UIKit
 import Combine
 
-class ArrayMethodBlockCell: BlockCell {
+protocol ReuseIdentifier: AnyObject {
+    static var reuseIdentirier: String { get set }
+}
 
-    static let identifier = "ArrayMethodBlockCell"
+extension ReuseIdentifier {
+    static var reuseIdentirier: String {
+        String(describing: self)
+    }
+}
+
+class ArrayMethodBlockCell: BlockCell  {
+
+    static let identifier = "ArrayMethodBlockCel"
     
     var subscriptions = Set<AnyCancellable>()
     

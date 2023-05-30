@@ -36,7 +36,7 @@ private extension WorkspaceCoordinator {
         
         consoleViewController.navigationItem.title = "Console"
         let consoleNavController = UINavigationController(rootViewController: consoleViewController)
-
+        
         if #available(iOS 15.0, *) {
             if let sheet = consoleNavController.sheetPresentationController {
                 sheet.prefersGrabberVisible = true

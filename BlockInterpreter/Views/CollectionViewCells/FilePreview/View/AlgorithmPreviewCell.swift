@@ -10,6 +10,7 @@ final class AlgorithmPreviewCell: UICollectionViewCell {
     static let identifier = "AlgorithmPreviewCell"
     
     private enum Constants {
+        
             enum SuperView {
                 static let cornerRadius: CGFloat = 15
             }
@@ -26,6 +27,7 @@ final class AlgorithmPreviewCell: UICollectionViewCell {
                 static let insetSide: CGFloat = 10
                 static let insetBottom: CGFloat = 5
             }
+        
     }
     
     private let documentNameTitleLabel = UILabel()
