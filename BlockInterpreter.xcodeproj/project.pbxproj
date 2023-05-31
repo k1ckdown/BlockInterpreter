@@ -119,6 +119,13 @@
 		492BA4162A0AB0430019EFBE /* BlockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockType.swift; sourceTree = "<group>"; };
 		492BA4182A0AB83F0019EFBE /* BlockCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCellStyle.swift; sourceTree = "<group>"; };
 		492E820B29FEFA2F000C909A /* UIColor+AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AppColors.swift"; sourceTree = "<group>"; };
+		49369A972A26D6C400DEF637 /* blocks-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo2.png"; sourceTree = "<group>"; };
+		49369A982A26D6C400DEF637 /* blocks-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo3.png"; sourceTree = "<group>"; };
+		49369A992A26D6C400DEF637 /* workspace-demo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo2.png"; sourceTree = "<group>"; };
+		49369A9A2A26D6C400DEF637 /* blocks-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blocks-demo1.png"; sourceTree = "<group>"; };
+		49369A9B2A26D6C400DEF637 /* workspace-demo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo1.png"; sourceTree = "<group>"; };
+		49369A9C2A26D6C400DEF637 /* workspace-demo3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "workspace-demo3.png"; sourceTree = "<group>"; };
+		49369A9D2A26D75800DEF637 /* hub-demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hub-demo.png"; sourceTree = "<group>"; };
 		495128842A131760004717B5 /* SeparatorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorType.swift; sourceTree = "<group>"; };
 		495147802A08CF8B00FD13AB /* BlockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCell.swift; sourceTree = "<group>"; };
 		495147822A09386000FD13AB /* BlockCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCellViewModel.swift; sourceTree = "<group>"; };
@@ -345,6 +352,20 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		49369A962A26D68900DEF637 /* IMG */ = {
+			isa = PBXGroup;
+			children = (
+				49369A9D2A26D75800DEF637 /* hub-demo.png */,
+				49369A9A2A26D6C400DEF637 /* blocks-demo1.png */,
+				49369A972A26D6C400DEF637 /* blocks-demo2.png */,
+				49369A982A26D6C400DEF637 /* blocks-demo3.png */,
+				49369A9B2A26D6C400DEF637 /* workspace-demo1.png */,
+				49369A992A26D6C400DEF637 /* workspace-demo2.png */,
+				49369A9C2A26D6C400DEF637 /* workspace-demo3.png */,
+			);
+			path = IMG;
+			sourceTree = "<group>";
+		};
 		493C8D482A0A9AA100753F20 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -406,6 +427,7 @@
 		495B415F29FCEFD300DEF375 = {
 			isa = PBXGroup;
 			children = (
+				49369A962A26D68900DEF637 /* IMG */,
 				49EA38482A26950A00E02F32 /* demo.gif */,
 				49EA382D2A267E6300E02F32 /* README.md */,
 				495B416A29FCEFD300DEF375 /* BlockInterpreter */,

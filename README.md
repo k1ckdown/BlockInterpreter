@@ -1,6 +1,7 @@
 # 🔳 Block Interpreter
 
 [![iOS](https://img.shields.io/badge/platform-iOS-green.svg)](https://github.com/hackv01d/BlockInterpreter)
+[![Swift 5](https://img.shields.io/badge/Swift-5-orange.svg?style=flat)](https://developer.apple.com/swift/)
 
 ## 🛠 Used Tech
 - Swift
@@ -15,11 +16,6 @@
 ### 🎓 This project was completed as part of the educational module at the Higher IT School of TSU (Tomsk State University) on mobile development
 
 ### 📱 It was necessary to implement an algorithm interpreter in the form of a mobile application 
-
-## Demo ##
-<p align="center">
-  <img src="demo.gif" alt="demo"  width="240" height="520">
-</p>
 
 ### ✅ App Features:
 
@@ -52,6 +48,32 @@
 * Type conversion and automatic type inference
 * Type checking for variables
 * String concatenation for any string types
+
+## Demo ##
+<p align="center">
+  <img src="demo.gif" alt="demo"  width="240" height="520">
+</p>
+
+## Screenshots
+
+## Workspace ##
+<p align="center">
+    <img src="IMG/workspace-demo1.png" width="240" height="450">
+    <img src="IMG/workspace-demo2.png" width="240" height="450">
+    <img src="IMG/workspace-demo3.png" width="240" height="450">
+</p>
+
+## List of blocks ##
+<p align="center">
+    <img src="IMG/blocks-demo1.png" width="240" height="450">
+    <img src="IMG/blocks-demo2.png" width="240" height="450">
+    <img src="IMG/blocks-demo3.png" width="240" height="450">
+</p>
+
+## Hub ##
+<p>
+    <img src="IMG/hub-demo.png" width="240" height="450">
+</p>
 
 ## How to run
 
